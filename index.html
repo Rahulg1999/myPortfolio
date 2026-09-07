@@ -928,7 +928,7 @@ footer{padding:44px 0 46px}
       label:'Galaxy S21 Ultra · Android', app:'FireArrest',
       meta:'v10.0.0 · live on both stores · Flutter',
       model:'assets/models/galaxy-s21-ultra.glb', screen:'Screen',
-      spin:[0, Math.PI, 0], inset:[0.045, 0.012],
+      spin:[0, Math.PI, 0], inset:[0.045, 0.012], glow:0.55,
       shots:[
         ['assets/shots/firearrest-1.jpg','Company ID, email and password — and the build number on the login screen, so support knows exactly what is in the field.'],
         ['assets/shots/firearrest-2.jpg','<b>Unsynced work is the first thing you see.</b> Pins, photos, forms and tasks each carry their own queue count.'],
@@ -942,7 +942,7 @@ footer{padding:44px 0 46px}
       label:'iPhone 17 Pro · iOS', app:'ClockedIn HRM',
       meta:'2 live listings · multi-tenant · Flutter',
       model:'assets/models/iphone-17-pro.glb', screen:'OLED',
-      spin:[0, 0, 0], inset:[0.02, 0.01],
+      spin:[0, Math.PI, 0], inset:[0.02, 0.01], glow:1.35,
       shots:[
         ['assets/shots/hrm-1.jpg','One codebase, two client brands — the flavour decides the mark above the login form.'],
         ['assets/shots/hrm-2.jpg','<b>Clock in and out against a branch and a job</b>, with leave, WFH and balances one tap away.'],
@@ -1020,9 +1020,9 @@ footer{padding:44px 0 46px}
     stage.appendChild(cv);
 
     var renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.32;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     var scene = new THREE.Scene();
@@ -1035,7 +1035,7 @@ footer{padding:44px 0 46px}
 
     var pivot = new THREE.Group(); scene.add(pivot);
     var loader = new GLTFLoader(), texloader = new THREE.TextureLoader();
-    var current = null, mat = null, uvfit = null, yaw = 0, pitch = 0, drift = 0, dragging = false, px = 0, py = 0, raf = 0;
+    var current = null, mat = null, yaw = 0, pitch = 0, drift = 0, dragging = false, px = 0, py = 0, raf = 0;
 
     function size(){
       var w = stage.clientWidth, h = stage.clientHeight;
@@ -1055,23 +1055,48 @@ footer{padding:44px 0 46px}
       x.drawImage(img, mx, my, c.width - mx * 2, c.height - my * 2);
       return c;
     }
+    /* The screen mesh is a curved, unevenly-mapped panel: its own UVs bend the
+       hairline rules in a screenshot into waves. Re-project the shot flat onto
+       the screen's front face instead, in the model's own upright orientation,
+       so straight lines stay straight and every device reads the same way up. */
+    function planarUV(mesh){
+      var pos = mesh.geometry.attributes.position, uv = mesh.geometry.attributes.uv;
+      if(!pos || !uv) return;
+      mesh.updateWorldMatrix(true, false);
+      var v = new THREE.Vector3(), xs = new Float32Array(pos.count), ys = new Float32Array(pos.count);
+      var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity, i;
+      for(i = 0; i < pos.count; i++){
+        v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld);
+        xs[i] = v.x; ys[i] = v.y;
+        if(v.x < x0) x0 = v.x; if(v.x > x1) x1 = v.x;
+        if(v.y < y0) y0 = v.y; if(v.y > y1) y1 = v.y;
+      }
+      var w = Math.max(x1 - x0, 1e-6), h = Math.max(y1 - y0, 1e-6);
+      for(i = 0; i < pos.count; i++) uv.setXY(i, (xs[i] - x0) / w, (ys[i] - y0) / h);
+      uv.needsUpdate = true;
+    }
+
     function setShot(url){
       if(!mat) return;
       var d = DEV[key];
       texloader.load(url, function(t){
         t = new THREE.CanvasTexture(plate(t.image, d));
         t.colorSpace = THREE.SRGBColorSpace;
-        var old = mat.map;
-        if(old && old.channel !== undefined) t.channel = old.channel;
         t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
         t.flipY = true;
-        if(uvfit){ t.repeat.set(uvfit[2], uvfit[3]); t.offset.set(uvfit[0], uvfit[1]); }
+        /* hairline rules in a screenshot alias badly on a tilted screen */
+        t.generateMipmaps = true;
+        t.minFilter = THREE.LinearMipmapLinearFilter;
+        t.magFilter = THREE.LinearFilter;
+        t.anisotropy = renderer.capabilities.getMaxAnisotropy();
         t.needsUpdate = true;
         mat.map = t;
+        /* a display makes its own light — drive it with emission so a light UI
+           does not read as grey under the scene's tone curve */
         if('emissiveMap' in mat){
           mat.emissiveMap = t;
           mat.emissive = new THREE.Color(0xffffff);
-          mat.emissiveIntensity = 0.55;
+          mat.emissiveIntensity = d.glow;
         }
         mat.needsUpdate = true;
       });
@@ -1084,28 +1109,17 @@ footer{padding:44px 0 46px}
       loader.load(d.model, function(gltf){
         if(current) pivot.remove(current);
         current = gltf.scene; mat = null;
-        uvfit = null;
+        current.rotation.set(d.spin[0], d.spin[1], d.spin[2]);
+        current.updateMatrixWorld(true);
         current.traverse(function(o){
           if(!o.isMesh) return;
           var list = Array.isArray(o.material) ? o.material : [o.material];
           list.forEach(function(mm){
             if(!mm || mm.name !== d.screen) return;
             mat = mm;
-            /* the screen's UVs rarely fill 0-1, so fit the shot to the island they do use */
-            var uv = o.geometry.attributes.uv;
-            if(!uv) return;
-            var u0 = Infinity, u1 = -Infinity, v0 = Infinity, v1 = -Infinity;
-            for(var i = 0; i < uv.count; i++){
-              var u = uv.getX(i), v = uv.getY(i);
-              if(u < u0) u0 = u; if(u > u1) u1 = u;
-              if(v < v0) v0 = v; if(v > v1) v1 = v;
-            }
-            var rx = 1 / Math.max(u1 - u0, 1e-4), ry = 1 / Math.max(v1 - v0, 1e-4);
-            uvfit = [-u0 * rx, -v0 * ry, rx, ry];
+            planarUV(o);
           });
         });
-        current.rotation.set(d.spin[0], d.spin[1], d.spin[2]);
-        current.updateMatrixWorld(true);
         var box = new THREE.Box3().setFromObject(current);
         var c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
         current.position.sub(c);
@@ -1139,14 +1153,36 @@ footer{padding:44px 0 46px}
     function up(){ dragging = false; }
     cv.addEventListener('pointerup', up);
     cv.addEventListener('pointercancel', up);
+    /* a pointerup lost outside the canvas would otherwise leave it stuck in a drag */
+    addEventListener('pointerup', up);
+    addEventListener('pointercancel', up);
+    addEventListener('blur', up);
 
-    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = 0;
-    function tick(){
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var t0 = 0, last = 0, awake = true, FRAME = 1000 / 30;
+
+    /* nothing renders while the section is off-screen or the tab is hidden,
+       and 30fps is plenty for a sway — a full-rate loop is what made this heavy */
+    function wake(on){
+      awake = on;
+      if(on && !raf) tick();
+    }
+    if(window.IntersectionObserver){
+      new IntersectionObserver(function(en){ wake(en[0].isIntersecting); },
+        {rootMargin:'120px'}).observe(rig);
+    }
+    document.addEventListener('visibilitychange', function(){ wake(!document.hidden); });
+
+    function tick(now){
+      if(!awake || document.hidden){ raf = 0; return; }
       raf = requestAnimationFrame(tick);
+      now = now || performance.now();
+      if(!dragging && now - last < FRAME) return;
+      last = now;
       /* the screen has to stay readable, so it sways rather than spins */
       if(!dragging && !reduce){
-        if(!t0) t0 = performance.now();
-        var t = (performance.now() - t0) / 1000;
+        if(!t0) t0 = now;
+        var t = (now - t0) / 1000;
         drift = Math.sin(t * 0.42) * 0.3;
         pivot.rotation.x = pitch + Math.sin(t * 0.29) * 0.045;
       } else {
