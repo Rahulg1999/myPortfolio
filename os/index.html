@@ -275,7 +275,7 @@ html.cur-live #tdot{opacity:1}
 :root[data-skin="terminal"] .dock,:root[data-skin="blueprint"] .dock{background:rgba(255,255,255,.08)}
 :root[data-skin="riso"] .dock{background:var(--accent-ink);border:2px solid var(--line)}
 .dock .app .nm{display:none}
-.dock .app .ic{width:46px;height:46px;font-size:19px}
+.dock .app .ic{width:100%;max-width:46px;height:auto;aspect-ratio:1;font-size:19px}
 
 /* in-app chrome */
 .nav{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:10px;padding:11px 13px;background:color-mix(in srgb,var(--screen) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
@@ -289,7 +289,7 @@ html.cur-live #tdot{opacity:1}
 .body h4{font-size:15px;margin-top:4px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:13px;transition:transform .3s cubic-bezier(.2,.8,.3,1),border-color .3s ease}
 .card:hover{transform:translateY(-2px);border-color:var(--accent)}
-.card .t{font-family:var(--display);font-weight:700;font-size:14.5px}
+.card .t{display:block;font-family:var(--display);font-weight:700;font-size:14.5px}
 .stores{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .stores a{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;
   text-transform:uppercase;text-decoration:none;border:1px solid var(--line);border-radius:100px;padding:5px 9px;color:var(--fg-soft)}
@@ -301,7 +301,7 @@ html.cur-live #tdot{opacity:1}
 .case .owned{font-family:var(--mono);font-size:11.2px;color:var(--fg);letter-spacing:.02em}
 .case.res{border-left-color:var(--accent)}
 .case.res p{color:var(--fg);font-weight:500}
-.card .s{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:4px}
+.card .s{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:4px}
 .card p{margin-top:8px;font-size:12.8px}
 .rowbtn{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:11px 12px;display:flex;align-items:center;gap:11px;cursor:pointer;color:inherit;transition:transform .2s ease,border-color .2s ease}
 .rowbtn:hover{border-color:var(--accent);transform:translateX(2px)}
@@ -321,7 +321,7 @@ html.cur-live #tdot{opacity:1}
 .bar-row{display:grid;grid-template-columns:96px 1fr auto;gap:9px;align-items:center;font-family:var(--mono);font-size:10.5px}
 .bar-row .track{height:7px;background:var(--panel-2);border-radius:100px;overflow:hidden}
 :root[data-skin="riso"] .bar-row .track{border-radius:0;border:1px solid var(--line)}
-.bar-row .fill{height:100%;width:0;background:var(--accent);transition:width 1.1s cubic-bezier(.2,.8,.3,1)}
+.bar-row .fill{display:block;height:100%;width:0;background:var(--accent);transition:width 1.1s cubic-bezier(.2,.8,.3,1)}
 .bar-row .lg{display:flex;align-items:center;gap:6px}
 .bar-row .lg svg{flex:0 0 auto;color:var(--accent)}
 .rowbtn .ic img{border-radius:8px;display:block}
@@ -562,7 +562,7 @@ footer a:hover{color:var(--accent)}
       return '<div class="body">' +
         '<div class="card"><span class="t">Mobile Lead</span><span class="s">Sublimity Softwares · Dec 2021 → present</span>' +
         '<p>Led development of one of the team\'s largest mobile codebases; built the offline background-sync engine, dynamic form rendering, on-image annotation, QR scanning and in-app PDF reports. Shipped and maintained to v10.x as a production client product.</p></div>' +
-        '<div class="card"><span class="t">Flutter Developer → Lead</span><span class="s">Same firm, earlier</span>' +
+        '<div class="card"><span class="t">Flutter Developer</span><span class="s">Promoted to Lead · same firm, earlier</span>' +
         '<p>Employee clock-in/out with PIN codes, geofencing and biometric login; custom schedules, real-time attendance dashboard, push notifications and in-app update checks for a shipped enterprise product with a team of 6+.</p></div>' +
         '<div class="card"><span class="t">Self-driven</span><span class="s">AI · extensions</span>' +
         '<p>A Manifest V3 Chrome extension that extracts and filters B2B sales leads with rule-based heuristics, and around a dozen small Gemini-API tools — chatbots, content generators, a document Q&amp;A helper and an image-analysis demo.</p></div>' +
@@ -927,7 +927,7 @@ footer a:hover{color:var(--accent)}
   var FRAMES = [
     null,
     {id:'iphone', label:'iPhone 17 Pro',   model:'../assets/models/iphone-17-pro.glb',    screen:'OLED',   spin:[0, 0, 0],        fit:[0.985, 0.985], radius:0.088},
-    {id:'galaxy', label:'Galaxy S21 Ultra', model:'../assets/models/galaxy-s21-ultra.glb', screen:'Screen', spin:[0, Math.PI, 0], fit:[0.878, 0.974], radius:0.072}
+    {id:'galaxy', label:'Galaxy S21 Ultra', model:'../assets/models/galaxy-s21-ultra.glb', screen:'Screen', spin:[0, Math.PI, 0], fit:[0.9, 0.974], radius:0.072}
   ];
   var at = 0, gl = null, busy = false;
 
