@@ -11,6 +11,10 @@
 <meta property="og:title" content="RahulOS">
 <meta property="og:description" content="RahulOS — Rahul Gupta&#x27;s portfolio as a phone you operate, with four switchable design themes.">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon-rahulos.svg">
+<link rel="icon" type="image/png" sizes="180x180" href="../assets/icons/rahulos-180.png">
+<link rel="apple-touch-icon" href="../assets/icons/rahulos-180.png">
+<meta property="og:image" content="https://portfoliorahulgupta.netlify.app/assets/icons/rahulos-og.jpg">
+<meta name="twitter:card" content="summary">
 <style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -362,6 +366,22 @@ html.cur-live #tdot{opacity:1}
 footer{max-width:1100px;margin:0 auto;padding:0 26px 54px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
 footer a{text-decoration:none;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase}
 footer a:hover{color:var(--accent)}
+
+/* ---------- the real handset, as the frame around the live screen ---------- */
+.dev3d{position:absolute;inset:-4% -13%;width:126%;height:108%;z-index:0;opacity:0;
+  transition:opacity .7s ease;pointer-events:none}
+.dev-box{position:relative}
+.device.d3 .dev-box{aspect-ratio:326/668}
+.device.d3 .dev3d{opacity:1}
+.device.d3 .phone{position:absolute;z-index:2;background:none;box-shadow:none;padding:0;
+  border-radius:0;aspect-ratio:auto;border:0;transform:none!important}
+.device.d3 .glass{background:var(--screen)}
+.device.d3 .notch{display:none}
+.frame-ctl{margin-top:10px;text-align:center}
+.frame-ctl button{border:1px solid var(--line);background:none;color:var(--fg-faint);cursor:pointer;
+  border-radius:100px;padding:6px 13px;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+  text-transform:uppercase;transition:color .25s ease,border-color .25s ease}
+.frame-ctl button:hover{color:var(--fg);border-color:var(--accent)}
 </style>
 
 <div id="bootos">
@@ -407,6 +427,8 @@ footer a:hover{color:var(--accent)}
   </div>
 
   <div class="device">
+    <div class="dev-box">
+    <canvas class="dev3d" aria-hidden="true"></canvas>
     <div class="phone">
       <div class="glass">
         <span class="notch"></span>
@@ -428,7 +450,9 @@ footer a:hover{color:var(--accent)}
         <div class="home-ind"><button type="button" id="homeBtn" aria-label="Home"></button></div>
       </div>
     </div>
+    </div>
     <p class="hint"><span class="fine">Tap an app · Esc or the bar goes home</span><span class="coarse">Tap an app · swipe right or tap the bar to go back</span></p>
+    <div class="frame-ctl"><button type="button" id="frameBtn">Frame · flat</button></div>
   </div>
 </div>
 
@@ -478,16 +502,16 @@ footer a:hover{color:var(--accent)}
      facts:[['Role','Core developer'],['Gates','PIN · geofence · biometric'],['Live','Real-time dashboard'],['State','GetX']],
      tags:['getx','geolocator','local_auth','firebase']},
     {id:'hrm', icon:'🗂', img:'hrm', name:'HRM OTM', kicker:'Flutter · multi-tenant HR & leave', status:'Shipped',
-     problem:"Two clients needed the same HR app with different branding, rules and storage \u2014 without maintaining two codebases.", built:"A multi-tenant, multi-flavor build from one codebase: leave and balance tracking, clock-in/out and reporting, OAuth2 auth and MinIO/S3 documents, with ObjectBox keeping lists instant on the device.", owned:"Feature developer \u00b7 leave and balance \u00b7 reporting \u00b7 storage", result:"Shipped for both clients from a single codebase.",
-     facts:[['Role','Feature developer'],['Tenancy','Two clients, one codebase'],['Store','ObjectBox · MinIO/S3'],['Auth','OAuth2']],
-     tags:['getx','objectbox','oauth2','minio/s3']},
-    {id:'crm', icon:'📈', name:'Funnel CRM', kicker:'Next.js 16 · React 19 · Postgres', status:'Phase 1',
+     problem:"Two clients needed the same HR app with different branding, rules and storage \u2014 without maintaining two codebases.", built:"A multi-tenant, multi-flavor build from one codebase \u2014 separate application IDs and signing per client. Leave and balance tracking, clock-in/out and reporting, OAuth2 login that injects the tenant header from the cached company record, and face attendance that runs entirely on the handset: MobileFaceNet embeddings and a MiniFASNetV2-SE anti-spoof classifier, so no face image leaves the phone. The session policy coaches framing and head tilt rather than failing people, and is covered by unit tests.", owned:"Feature developer \u00b7 auth and tenancy \u00b7 face attendance and liveness \u00b7 release builds", result:"Shipped for both clients from a single codebase.",
+     facts:[['Role','Feature developer'],['Tenancy','Two clients, one codebase'],['Store','ObjectBox · MinIO/S3'],['Auth','OAuth2 · tenant header'],['Liveness','On device · no image leaves the phone']],
+     tags:['getx','objectbox','oauth2','tflite','onnx runtime','minio/s3']},
+    {id:'crm', icon:'📈', name:'Funnel CRM', kicker:'Next.js 16 · React 19 · Postgres', status:'In development',
      problem:"A business selling over WhatsApp could not see where enquiries died, and lead attribution kept getting overwritten as records were touched.", built:"Attribution that locks on first touch and never rewrites itself, a funnel computed as a live SQL aggregate with per-step drop-off, filtering in Postgres rather than the browser, and an audit trail on every write.", owned:"Built the Phase 1 console end to end", result:"Phase 1 delivered: worklists surface the cases needing a human.",
-     facts:[['Queries','Filtered in Postgres'],['Sessions','DB-backed, httpOnly'],['Audit','Every write attributed'],['Setup','Self-migrating']],
+     facts:[['Queries','Filtered in Postgres'],['Sessions','DB-backed, httpOnly'],['Audit','Every write attributed'],['Status','Phase 1 built · not released']],
      tags:['next 16','react 19','typescript','drizzle','postgres']},
-    {id:'rankplus', icon:'🎓', name:'Rankplus', kicker:'Flutter · exam prep, Class 8–12 / JEE / NEET', status:'Earlier',
+    {id:'rankplus', icon:'🎓', name:'Rankplus', kicker:'Flutter · exam prep, Class 8–12 / JEE / NEET', status:'Delisted · rebranding',
      problem:"Students on cheap Android handsets and patchy home connections needed live classes and mock tests that did not fall over.", built:"A consumer education app with live lectures, mock tests and Razorpay payments, tuned for low-end devices.", owned:"Consumer app development \u00b7 payments \u00b7 live video", result:"Shipped to Class 8\u201312 / JEE / NEET students.",
-     facts:[['Audience','Class 8–12 · JEE · NEET'],['Payments','Razorpay'],['Content','Live lectures · mock tests']],
+     facts:[['Audience','Class 8–12 · JEE · NEET'],['Payments','Razorpay'],['Content','Live lectures · mock tests'],['Status','Pulled from Google Play for a rebrand']],
      tags:['flutter','firebase','razorpay']}
   ];
   var SKILLS = [
@@ -883,5 +907,178 @@ footer a:hover{color:var(--accent)}
 @media print{.rg-back,.rg-foot,.rg-top{display:none}}
 </style>
 <div class="rg-foot"><a class="rg-back" href="../" aria-label="Back to all five interfaces">&larr; All interfaces</a></div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+/* ---------- RahulOS in a real handset ----------
+   The screen stays live DOM. The body around it is the actual device model,
+   rendered once, head-on, with the live screen laid over the model's own
+   display area. Opt-in: nothing is fetched until the frame is switched on. */
+(function(){
+  var device = document.querySelector('.device');
+  var devbox = device && device.querySelector('.dev-box');
+  var cv     = device && device.querySelector('.dev3d');
+  var phone  = device && device.querySelector('.phone');
+  var glass  = device && device.querySelector('.glass');
+  var btn    = document.getElementById('frameBtn');
+  if(!device || !devbox || !cv || !phone || !btn) return;
+
+  var FRAMES = [
+    null,
+    {id:'iphone', label:'iPhone 17 Pro',   model:'../assets/models/iphone-17-pro.glb',    screen:'OLED',   spin:[0, 0, 0],        fit:[0.985, 0.985], radius:0.088},
+    {id:'galaxy', label:'Galaxy S21 Ultra', model:'../assets/models/galaxy-s21-ultra.glb', screen:'Screen', spin:[0, Math.PI, 0], fit:[0.878, 0.974], radius:0.072}
+  ];
+  var at = 0, gl = null, busy = false;
+
+  function label(){
+    btn.textContent = 'Frame · ' + (FRAMES[at] ? FRAMES[at].label : 'flat');
+  }
+  function apply(){
+    var f = FRAMES[at];
+    label();
+    if(!f){
+      device.classList.remove('d3');
+      phone.removeAttribute('style');
+      if(glass) glass.style.borderRadius = '';
+      if(gl) gl.clear();
+      return;
+    }
+    if(gl){ gl.show(f); return; }
+    if(busy) return;
+    busy = true;
+    btn.textContent = 'Frame · loading…';
+    Promise.all([
+      import('three'),
+      import('three/addons/loaders/GLTFLoader.js'),
+      import('three/addons/environments/RoomEnvironment.js')
+    ]).then(function(m){
+      gl = make(m[0], m[1].GLTFLoader, m[2].RoomEnvironment);
+      busy = false;
+      gl.show(FRAMES[at] || f);
+      label();
+    }).catch(function(){
+      busy = false; at = 0; label();
+      btn.disabled = true; btn.textContent = 'Frame · unavailable';
+    });
+  }
+  btn.addEventListener('click', function(){
+    at = (at + 1) % FRAMES.length;
+    try{ localStorage.setItem('rahulos-frame', String(at)); }catch(e){}
+    apply();
+  });
+
+  function make(THREE, GLTFLoader, RoomEnvironment){
+    var renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    var scene  = new THREE.Scene();
+    var pmrem  = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    var camera = new THREE.PerspectiveCamera(22, 1, 0.1, 1000);
+    var k1 = new THREE.DirectionalLight(0xffffff, 2.1); k1.position.set(2, 3, 4);  scene.add(k1);
+    var k2 = new THREE.DirectionalLight(0xffffff, 0.8); k2.position.set(-3, 1, -2); scene.add(k2);
+
+    var loader = new GLTFLoader();
+    var cache = {}, current = null, screenMesh = null, cfg = null;
+
+    function place(){
+      if(!cfg || !screenMesh) return;
+      var w = cv.clientWidth, h = cv.clientHeight;
+      if(!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      camera.updateMatrixWorld();
+
+      var box = new THREE.Box3().setFromObject(screenMesh);
+      var v = new THREE.Vector3(), x0 = 9, x1 = -9, y0 = 9, y1 = -9;
+      for(var i = 0; i < 8; i++){
+        v.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z);
+        v.project(camera);
+        if(v.x < x0) x0 = v.x; if(v.x > x1) x1 = v.x;
+        if(v.y < y0) y0 = v.y; if(v.y > y1) y1 = v.y;
+      }
+      var left = (x0 * 0.5 + 0.5) * w, right = (x1 * 0.5 + 0.5) * w;
+      var top  = (0.5 - y1 * 0.5) * h, bottom = (0.5 - y0 * 0.5) * h;
+      var pw = (right - left) * cfg.fit[0], ph = (bottom - top) * cfg.fit[1];
+      var cx = (left + right) / 2, cy = (top + bottom) / 2;
+      /* the canvas is inset beyond .dev-box, so shift into the box's own frame */
+      var dr = devbox.getBoundingClientRect(), cr = cv.getBoundingClientRect();
+      var dx = cr.left - dr.left, dy = cr.top - dr.top;
+
+      phone.style.left   = (dx + cx - pw / 2) + 'px';
+      phone.style.top    = (dy + cy - ph / 2) + 'px';
+      phone.style.width  = pw + 'px';
+      phone.style.height = ph + 'px';
+      if(glass) glass.style.borderRadius = (pw * cfg.radius) + 'px';
+      renderer.render(scene, camera);
+    }
+
+    function mount(root, d){
+      if(current) scene.remove(current);
+      current = root; cfg = d; screenMesh = null;
+      root.rotation.set(d.spin[0], d.spin[1], d.spin[2]);
+      root.updateMatrixWorld(true);
+      var box = new THREE.Box3().setFromObject(root);
+      var c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+      root.position.sub(c);
+      root.updateMatrixWorld(true);
+      root.traverse(function(o){
+        if(!o.isMesh) return;
+        var list = Array.isArray(o.material) ? o.material : [o.material];
+        list.forEach(function(mm){
+          if(!mm || mm.name !== d.screen) return;
+          screenMesh = o;
+          /* the display is the live DOM above, so the model's own screen goes dark */
+          mm.map = null; mm.emissiveMap = null;
+          if(mm.emissive) mm.emissive.setHex(0x000000);
+          if(mm.color) mm.color.setHex(0x050506);
+          mm.roughness = 0.22; mm.metalness = 0.1;
+          mm.needsUpdate = true;
+        });
+      });
+      scene.add(root);
+      var dist = (s.y / (2 * Math.tan(camera.fov * Math.PI / 360))) * 1.02 + s.z;
+      camera.position.set(0, 0, dist);
+      camera.near = dist / 500; camera.far = dist * 6;
+      camera.lookAt(0, 0, 0); camera.updateProjectionMatrix();
+      device.classList.add('d3');
+      requestAnimationFrame(place);
+    }
+
+    function show(d){
+      if(cache[d.id]){ mount(cache[d.id], d); return; }
+      btn.textContent = 'Frame · loading…';
+      loader.load(d.model, function(gltf){
+        cache[d.id] = gltf.scene;
+        mount(gltf.scene, d);
+        label();
+      }, null, function(){
+        at = 0; device.classList.remove('d3'); phone.removeAttribute('style');
+        btn.disabled = true; btn.textContent = 'Frame · unavailable';
+      });
+    }
+    addEventListener('resize', function(){ if(device.classList.contains('d3')) place(); });
+    return {show:show, clear:function(){
+      device.classList.remove('d3');
+      if(glass) glass.style.borderRadius = '';
+    }};
+  }
+
+  /* the real handset is the default on a screen with room for it; the reader's
+     own choice wins, and nothing is fetched on a phone or a metered connection */
+  var saved = null;
+  try{ saved = localStorage.getItem('rahulos-frame'); }catch(e){}
+  var conn = navigator.connection || {};
+  var roomy = innerWidth >= 760 && !conn.saveData && !/2g/.test(conn.effectiveType || '');
+  at = saved === null ? (roomy ? 1 : 0) : (parseInt(saved, 10) || 0);
+  if(at && !roomy) at = 0;
+  if(at) apply(); else label();
+})();
+</script>
+
 </body>
 </html>

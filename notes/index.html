@@ -11,6 +11,10 @@
 <meta property="og:title" content="Field Notes — Rahul Gupta">
 <meta property="og:description" content="Field Notes — Rahul Gupta, Mobile Lead. Offline-first Flutter apps, set in two-ink riso print.">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon-fieldnotes.svg">
+<link rel="icon" type="image/png" sizes="180x180" href="../assets/icons/fieldnotes-180.png">
+<link rel="apple-touch-icon" href="../assets/icons/fieldnotes-180.png">
+<meta property="og:image" content="https://portfoliorahulgupta.netlify.app/assets/icons/fieldnotes-og.jpg">
+<meta name="twitter:card" content="summary">
 <style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -368,11 +372,12 @@ footer{padding:56px 0 42px;font-family:var(--mono);font-size:11.5px;letter-spaci
         <span class="r-meta">Shipped</span>
       </div>
       <div class="r-body">
-        <p class="r-note">A multi-tenant HR app running as a two-client, multi-flavor build from one codebase. I contributed leave and balance tracking, clock-in/out and reporting, with OAuth2 auth and MinIO/S3 document storage — ObjectBox keeping it responsive on the device rather than round-tripping every list.</p>
+        <p class="r-note">A multi-tenant HR app running as a two-client, multi-flavor build from one codebase, with separate application IDs and signing per client. I contributed leave and balance tracking, clock-in/out and reporting, OAuth2 login that injects the tenant header from the cached company record, and the face-attendance path — Face attendance runs entirely on the handset — MobileFaceNet embeddings and a MiniFASNetV2-SE anti-spoof classifier, so no face image leaves the phone — with a session policy that coaches framing and head tilt instead of failing people, covered by unit tests.</p>
         <dl class="r-facts">
           <dt>Role</dt><dd>Feature developer</dd>
           <dt>Tenancy</dt><dd>Two clients, one codebase</dd>
           <dt>Store</dt><dd>ObjectBox · MinIO/S3</dd>
+          <dt>Liveness</dt><dd>On device · no image leaves the phone</dd>
         </dl>
       </div>
     </article>
@@ -381,7 +386,7 @@ footer{padding:56px 0 42px;font-family:var(--mono);font-size:11.5px;letter-spaci
       <div class="r-top">
         <span class="r-num">05</span>
         <div><h3 class="r-name">Funnel CRM</h3><p class="r-kicker">Next.js 16 · React 19 · Postgres</p></div>
-        <span class="r-meta">Phase 1</span>
+        <span class="r-meta">In development</span>
       </div>
       <div class="r-body">
         <p class="r-note">The web side. A CRM for a business that sells over WhatsApp, where attribution locks on first touch and never quietly rewrites itself. The funnel is a live SQL aggregate with per-step drop-off, filtering happens in Postgres rather than the browser, and every write lands in an audit trail recording who or what said so.</p>
@@ -397,7 +402,7 @@ footer{padding:56px 0 42px;font-family:var(--mono);font-size:11.5px;letter-spaci
       <div class="r-top">
         <span class="r-num">06</span>
         <div><h3 class="r-name">Rankplus</h3><p class="r-kicker">Flutter · exam prep for Class 8–12 / JEE / NEET</p></div>
-        <span class="r-meta">Earlier</span>
+        <span class="r-meta">Delisted · rebranding</span>
       </div>
       <div class="r-body">
         <p class="r-note">A consumer education app: live lectures, mock tests and Razorpay payments, built for students on cheap Android handsets and patchy home connections. Different pressure from enterprise field work — the failure mode isn't a lost inspection, it's a teenager missing a class the night before an exam.</p>

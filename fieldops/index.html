@@ -11,6 +11,10 @@
 <meta property="og:title" content="fieldops — rahul">
 <meta property="og:description" content="fieldops — Rahul Gupta&#x27;s portfolio as a terminal you can type into. Or just scroll.">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon-fieldops.svg">
+<link rel="icon" type="image/png" sizes="180x180" href="../assets/icons/fieldops-180.png">
+<link rel="apple-touch-icon" href="../assets/icons/fieldops-180.png">
+<meta property="og:image" content="https://portfoliorahulgupta.netlify.app/assets/icons/fieldops-og.jpg">
+<meta name="twitter:card" content="summary">
 <style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -199,6 +203,7 @@ html.cur-live .tp.p3{opacity:.12}
 .kv dt{color:var(--faint);white-space:nowrap}
 .kv dt::after{content:" ...."}
 .kv dd{margin:0;color:var(--fg)}
+.not{margin-top:12px;padding-left:11px;border-left:2px solid var(--amber);color:var(--dim)}
 .pkgs{margin-top:14px;font-size:12px;color:var(--faint);word-spacing:.4em}
 .pkgs b{color:var(--dim);font-weight:400}
 
@@ -362,8 +367,8 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">04</span><span class="nm">HRM OTM<em>Flutter · multi-tenant HR &amp; leave</em></span><span class="st">shipped</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase. I contributed leave and balance tracking, clock-in/out and reporting, with OAuth2 auth and MinIO/S3 document storage — ObjectBox keeping it responsive on the device rather than round-tripping every list.</p>
-          <p class="pkgs"><b>getx</b> <b>objectbox</b> <b>oauth2</b> <b>minio/s3</b></p>
+          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase, with separate application IDs and signing per client. I contributed leave and balance tracking, clock-in/out and reporting, and OAuth2 login that injects the tenant header from the cached company record. I also built the face-attendance path: Face attendance runs entirely on the handset — MobileFaceNet embeddings and a MiniFASNetV2-SE anti-spoof classifier, so no face image leaves the phone, with a session policy that coaches framing and head tilt instead of failing people, covered by unit tests.</p>
+          <p class="pkgs"><b>getx</b> <b>objectbox</b> <b>oauth2</b> <b>tflite</b> <b>onnxruntime</b> <b>minio/s3</b></p>
         </div>
         <dl class="kv">
           <dt>role</dt><dd>Feature developer</dd>
@@ -374,10 +379,11 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
     </details>
 
     <details class="rec">
-      <summary class="rec-btn"><span class="idx">05</span><span class="nm">WhatsApp-Led Funnel CRM<em>Next.js 16 · React 19 · Postgres</em></span><span class="st">phase 1</span><span class="tog">▾</span></summary>
+      <summary class="rec-btn"><span class="idx">05</span><span class="nm">WhatsApp-Led Funnel CRM<em>Next.js 16 · React 19 · Postgres</em></span><span class="st">in development</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
           <p>The web side. A CRM for a business that sells over WhatsApp, where attribution locks on first touch and never quietly rewrites itself. The funnel is a live SQL aggregate with per-step drop-off, filtering happens in Postgres rather than the browser, and worklists surface the cases needing a human. Every write lands in an audit trail recording who or what said so.</p>
+          <p class="not">Phase 1 is built end to end. It is still in development and has not been released.</p>
           <p class="pkgs"><b>next 16</b> <b>react 19</b> <b>typescript</b> <b>drizzle-orm</b> <b>postgres</b> <b>tailwind 4</b></p>
         </div>
         <dl class="kv">
@@ -389,10 +395,11 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
     </details>
 
     <details class="rec">
-      <summary class="rec-btn"><span class="idx">06</span><span class="nm">Rankplus &amp; earlier<em>Flutter · exam prep, reception, delivery</em></span><span class="st">earlier</span><span class="tog">▾</span></summary>
+      <summary class="rec-btn"><span class="idx">06</span><span class="nm">Rankplus &amp; earlier<em>Flutter · exam prep, reception, delivery</em></span><span class="st">delisted · rebranding</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
           <p>Consumer work: Rankplus, a Class 8–12 / JEE / NEET app with live lectures, mock tests and Razorpay payments, built for cheap Android handsets on patchy home connections. Plus reception-management and food-delivery apps, a Manifest V3 Chrome extension that extracts and filters B2B leads, and around a dozen small Gemini tools.</p>
+          <p class="not">Rankplus has since been pulled from Google Play by the client for a rebrand, so there is no live listing to link.</p>
           <p class="pkgs"><b>flutter</b> <b>firebase</b> <b>razorpay</b> <b>chrome mv3</b> <b>gemini api</b></p>
         </div>
         <dl class="kv">
@@ -636,18 +643,18 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
     },
     hrm: {
       title: 'HRM OTM — multi-tenant HR and leave management',
-      rows: [['role','Feature developer'],['tenancy','Two clients, one codebase'],['store','ObjectBox, MinIO/S3'],['auth','OAuth2']],
-      note: 'Leave and balance tracking, clock-in/out and reporting across a two-client multi-flavor build.'
+      rows: [['role','Feature developer'],['tenancy','Two clients, one codebase'],['store','ObjectBox, MinIO/S3'],['auth','OAuth2 + tenant header'],['liveness','On device, no image leaves the phone']],
+      note: 'Leave, clock-in/out and reporting across a two-client multi-flavor build, plus face attendance with on-device liveness and passive anti-spoofing.'
     },
     crm: {
       title: 'WhatsApp-Led Funnel CRM — Next.js 16, React 19, Postgres',
       rows: [['queries','Filtered in Postgres, not the browser'],['sessions','DB-backed, httpOnly'],['audit','Every write attributed'],['stack','Drizzle ORM, Tailwind 4']],
-      note: 'Attribution locks on first touch and never quietly rewrites itself. Drop-off is a live SQL aggregate, and worklists surface the cases needing a human.'
+      note: 'Attribution locks on first touch and never quietly rewrites itself. Drop-off is a live SQL aggregate. Phase 1 is built end to end, still in development, not released.'
     },
     rankplus: {
       title: 'Rankplus — exam prep for Class 8-12 / JEE / NEET',
       rows: [['audience','Students on cheap Android handsets'],['payments','Razorpay'],['content','Live lectures, mock tests']],
-      note: 'Built for patchy home connections. The failure mode is a teenager missing a class the night before an exam.'
+      note: 'Built for patchy home connections. Since pulled from Google Play by the client for a rebrand, so there is no live listing to link.'
     }
   };
   var ALIASES = {fire:'firearrest', clocked:'clockedin', 'hrm-otm':'hrm', funnel:'crm', rank:'rankplus'};
@@ -703,8 +710,8 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
         ['2 sentinel','API monitoring with a Gemini assistant'],
         ['3 clockedin','Attendance with geofencing and biometrics'],
         ['4 hrm','Multi-tenant HR and leave management'],
-        ['5 crm','WhatsApp-led funnel CRM on Next.js and Postgres'],
-        ['6 rankplus','Exam prep with live lectures and payments']
+        ['5 crm','WhatsApp-led funnel CRM on Next.js and Postgres (in development)'],
+        ['6 rankplus','Exam prep with live lectures and payments (delisted, rebranding)']
       ]));
       print('<span class="dim">try <span class="k">open firearrest</span> — or scroll down for the full records</span>');
     },

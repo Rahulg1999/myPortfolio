@@ -11,6 +11,10 @@
 <meta property="og:title" content="Rahul Gupta">
 <meta property="og:description" content="Drawing 001 — Rahul Gupta&#x27;s portfolio as a CAD sheet, with three live technical drawings.">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon-drawing001.svg">
+<link rel="icon" type="image/png" sizes="180x180" href="../assets/icons/drawing001-180.png">
+<link rel="apple-touch-icon" href="../assets/icons/drawing001-180.png">
+<meta property="og:image" content="https://portfoliorahulgupta.netlify.app/assets/icons/drawing001-og.jpg">
+<meta name="twitter:card" content="summary">
 <style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -70,6 +74,9 @@ h1,h2,h3{font-family:var(--display);font-weight:800;text-wrap:balance;margin:0;l
 p{margin:0}
 a{color:inherit}
 code{font-family:var(--mono);font-size:.88em;color:var(--cyan)}
+/* selection reads as plotter ink, not the browser default blue */
+::selection{background:var(--cyan);color:var(--paper);text-shadow:none}
+::-moz-selection{background:var(--cyan);color:var(--paper);text-shadow:none}
 :focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
 .anno{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin:0}
 .anno b{font-weight:500;color:var(--cyan)}
@@ -512,16 +519,17 @@ footer{padding:0 0 40px}
       </div>
       <div class="proj-body">
         <div>
-          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase. I contributed leave and balance tracking, clock-in/out and reporting, with OAuth2 auth and MinIO/S3 for document storage — and ObjectBox keeping the whole thing responsive on the device rather than round-tripping every list.</p>
+          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase, with separate application IDs and signing per client. I contributed leave and balance tracking, clock-in/out and reporting, and OAuth2 login that injects the tenant header from the cached company record. I also built the face-attendance path: Face attendance runs entirely on the handset — MobileFaceNet embeddings and a MiniFASNetV2-SE anti-spoof classifier, so no face image leaves the phone, with a session policy that coaches framing and head tilt instead of failing people, covered by unit tests.</p>
           <div class="tags">
-            <span class="tag">getx</span><span class="tag">objectbox</span><span class="tag">oauth2</span><span class="tag">minio / s3</span><span class="tag">multi-flavor builds</span>
+            <span class="tag">getx</span><span class="tag">objectbox</span><span class="tag">oauth2</span><span class="tag">tflite</span><span class="tag">onnx runtime</span><span class="tag">multi-flavor builds</span>
           </div>
         </div>
         <dl class="spec">
           <dt>Role</dt><dd>Feature developer</dd>
           <dt>Tenancy</dt><dd>Two clients, one codebase</dd>
           <dt>Storage</dt><dd>ObjectBox · MinIO/S3</dd>
-          <dt>Auth</dt><dd>OAuth2</dd>
+          <dt>Auth</dt><dd>OAuth2 · tenant header</dd>
+          <dt>Liveness</dt><dd>On device · MobileFaceNet + ONNX anti-spoof</dd>
         </dl>
       </div>
     </article>
@@ -533,7 +541,7 @@ footer{padding:0 0 40px}
           <h2><span class="ln"><i>WhatsApp-Led Funnel CRM</i></span></h2>
           <p class="role">Next.js 16 · React 19 · Postgres</p>
         </div>
-        <span class="rev">PHASE 1</span>
+        <span class="rev">IN DEVELOPMENT</span>
       </div>
       <div class="proj-body">
         <div>
@@ -548,6 +556,7 @@ footer{padding:0 0 40px}
           <dt>Access</dt><dd>Role-based, proxy gate</dd>
           <dt>Audit</dt><dd>Every write attributed</dd>
           <dt>Setup</dt><dd>Self-migrating, no Docker</dd>
+          <dt>Status</dt><dd>Phase 1 built, not released</dd>
         </dl>
       </div>
     </article>
@@ -559,7 +568,7 @@ footer{padding:0 0 40px}
           <h2><span class="ln"><i>Rankplus</i></span></h2>
           <p class="role">Flutter · Exam prep, Class 8–12 / JEE / NEET</p>
         </div>
-        <span class="rev quiet">EARLIER</span>
+        <span class="rev quiet">DELISTED · REBRANDING</span>
       </div>
       <div class="proj-body">
         <div>
@@ -572,6 +581,7 @@ footer{padding:0 0 40px}
           <dt>Audience</dt><dd>Class 8–12 · JEE · NEET</dd>
           <dt>Payments</dt><dd>Razorpay</dd>
           <dt>Content</dt><dd>Live lectures · mock tests</dd>
+          <dt>Status</dt><dd>Pulled from Google Play for a rebrand</dd>
         </dl>
       </div>
     </article>
