@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rahul Gupta</title>
+<meta name="description" content="Drawing 001 — Rahul Gupta&#x27;s portfolio as a CAD sheet, with three live technical drawings.">
+<meta name="author" content="Rahul Gupta">
+<meta name="theme-color" content="#111013">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rahul Gupta">
+<meta property="og:description" content="Drawing 001 — Rahul Gupta&#x27;s portfolio as a CAD sheet, with three live technical drawings.">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon-drawing001.svg">
+<style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<script>document.documentElement.className += " js";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap">
+<style>
+:root{
+  --paper:#E9EDF1; --surface:#F6F8FA; --surface-2:#FFFFFF;
+  --ink:#0D1E30; --ink-soft:#47596B; --ink-faint:#8493A2;
+  --rule:#C0CCD7; --rule-soft:#DBE3EA;
+  --cyan:#0C7A89; --cyan-dim:#8ABDC5; --ember:#C2431D;
+  --grid:rgba(13,30,48,.05); --grid-major:rgba(13,30,48,.095);
+  --glow:rgba(12,122,137,.16); --wash:rgba(12,122,137,.05);
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#08131E; --surface:#0D1D2B; --surface-2:#102434;
+    --ink:#DEE9F1; --ink-soft:#94A9BB; --ink-faint:#5E7387;
+    --rule:#1B2F42; --rule-soft:#152738;
+    --cyan:#54D3E1; --cyan-dim:#2B6E7B; --ember:#FF7A4D;
+    --grid:rgba(84,211,225,.05); --grid-major:rgba(84,211,225,.095);
+    --glow:rgba(84,211,225,.15); --wash:rgba(84,211,225,.045);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#08131E; --surface:#0D1D2B; --surface-2:#102434;
+  --ink:#DEE9F1; --ink-soft:#94A9BB; --ink-faint:#5E7387;
+  --rule:#1B2F42; --rule-soft:#152738;
+  --cyan:#54D3E1; --cyan-dim:#2B6E7B; --ember:#FF7A4D;
+  --grid:rgba(84,211,225,.05); --grid-major:rgba(84,211,225,.095);
+  --glow:rgba(84,211,225,.15); --wash:rgba(84,211,225,.045);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--body); font-size:17px; line-height:1.62;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+    linear-gradient(var(--grid-major) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-major) 1px,transparent 1px);
+  background-size:8px 8px,8px 8px,48px 48px,48px 48px;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.sheet{max-width:1200px;margin:0 auto;padding:0 26px}
+h1,h2,h3{font-family:var(--display);font-weight:800;text-wrap:balance;margin:0;letter-spacing:-.022em;line-height:1.04}
+p{margin:0}
+a{color:inherit}
+code{font-family:var(--mono);font-size:.88em;color:var(--cyan)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.anno{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin:0}
+.anno b{font-weight:500;color:var(--cyan)}
+
+/* plotter progress bar under the masthead */
+.progress{position:absolute;left:0;right:0;bottom:-1px;height:1px;background:transparent}
+.progress i{display:block;height:1px;width:0;background:var(--cyan);box-shadow:0 0 6px var(--glow)}
+
+/* load sequence: the sheet is drawn on */
+@keyframes plot-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rule-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.load{animation:plot-in .85s cubic-bezier(.22,.68,.28,1) backwards}
+.load-1{animation-delay:.05s}.load-2{animation-delay:.16s}.load-3{animation-delay:.27s}
+.load-4{animation-delay:.38s}.load-5{animation-delay:.49s}
+@media (prefers-reduced-motion:reduce){.load{animation:none}}
+
+/* line-mask type reveal */
+.ln{display:block;overflow:hidden;padding-bottom:.04em}
+.ln>i{display:block;font-style:normal;will-change:transform}
+.js .ln>i{transform:translateY(108%);transition:transform 1s cubic-bezier(.16,.84,.3,1)}
+.js .ln.go>i,.js .in .ln>i{transform:none}
+.js .ln:nth-child(2)>i{transition-delay:.09s}
+.js .ln:nth-child(3)>i{transition-delay:.18s}
+@media (prefers-reduced-motion:reduce){.js .ln>i{transform:none;transition:none}}
+
+/* word stagger for sheet headings */
+.wd{display:inline-block}
+.js .wd{opacity:0;transform:translateY(.5em);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1)}
+.js .in .wd{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .wd{opacity:1;transform:none;transition:none}}
+
+/* reveal: rests visible, lifts on entry */
+.rise{opacity:.55;transform:translateY(10px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.rise.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* ============ plotter loader: the title block draws itself, then the sheet lifts ============ */
+#plot{position:fixed;inset:0;z-index:100;background:var(--paper);display:grid;place-items:center;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:8px 8px,8px 8px;
+  animation:sheetUp .75s cubic-bezier(.76,0,.24,1) 2s forwards}
+#plot .block{width:min(420px,84vw);border:1px solid var(--rule);background:var(--surface);position:relative}
+#plot .block::before,#plot .block::after{content:"";position:absolute;background:var(--cyan);transform-origin:left}
+#plot .block::before{left:0;right:0;top:-1px;height:1px;animation:drawX 1s cubic-bezier(.4,0,.2,1) .1s backwards}
+#plot .block::after{left:0;right:0;bottom:-1px;height:1px;animation:drawX 1s cubic-bezier(.4,0,.2,1) .35s backwards}
+@keyframes drawX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes sheetUp{to{transform:translateY(-101%)}}
+#plot .r{display:flex;justify-content:space-between;gap:14px;padding:12px 15px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);
+  opacity:0;animation:ink .01s linear forwards}
+#plot .r:last-child{border-bottom:0}
+#plot .r:nth-child(1){animation-delay:.5s}#plot .r:nth-child(2){animation-delay:.8s}
+#plot .r:nth-child(3){animation-delay:1.1s}#plot .r:nth-child(4){animation-delay:1.4s}
+@keyframes ink{to{opacity:1}}
+#plot .r b{color:var(--cyan);font-weight:500}
+#plot .ttl{font-family:var(--display);font-weight:800;font-size:clamp(22px,4vw,34px);letter-spacing:-.03em;color:var(--ink);text-transform:none}
+#plot .bar{position:absolute;left:0;bottom:0;height:2px;background:var(--cyan);width:0;animation:fill 1.95s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes fill{to{width:100%}}
+html:not(.js) #plot{display:none}
+@media (prefers-reduced-motion:reduce){#plot{display:none}}
+
+/* the pointer is a surveyor crosshair reading off the sheet */
+@media (hover:hover) and (pointer:fine){
+  html.cur-on,html.cur-on *{cursor:none!important}
+}
+#xh{position:fixed;top:0;left:0;pointer-events:none;z-index:40;opacity:0;transition:opacity .3s ease;
+  width:0;height:0}
+html.cur-live #xh{opacity:1}
+#xh i{position:absolute;background:var(--cyan);display:block}
+#xh i.v{left:-.5px;top:-15px;width:1px;height:30px}
+#xh i.h{top:-.5px;left:-15px;height:1px;width:30px}
+#xh .box{position:absolute;left:-19px;top:-19px;width:38px;height:38px;border:1px solid var(--cyan-dim);
+  transition:width .28s cubic-bezier(.2,.8,.3,1),height .28s cubic-bezier(.2,.8,.3,1),left .28s cubic-bezier(.2,.8,.3,1),top .28s cubic-bezier(.2,.8,.3,1),background .28s ease}
+#xh.lock .box{left:-31px;top:-31px;width:62px;height:62px;background:var(--wash);border-color:var(--cyan)}
+#xh .co{position:absolute;left:26px;top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--cyan);white-space:nowrap;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){
+  #xh{display:none!important}
+  html.cur-on,html.cur-on *{cursor:auto!important}
+}
+
+/* masthead */
+.masthead{position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top);border-bottom:1px solid var(--rule);background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px)}
+.masthead .sheet{display:flex;align-items:center;justify-content:space-between;gap:16px;height:48px}
+.mark{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px}
+.mark i{width:7px;height:7px;background:var(--ember);display:inline-block;font-style:normal;animation:blip 2.6s ease-in-out infinite}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.mark i{animation:none}}
+.masthead nav{display:flex;gap:20px}
+.masthead nav a{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;position:relative}
+.masthead nav a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:1px;background:var(--cyan);transition:right .35s ease}
+.masthead nav a:hover::after{right:0}
+@media (max-width:700px){.masthead nav a:nth-child(-n+2){display:none}}
+
+/* hero */
+.hero{padding:52px 0 0}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,1fr);gap:44px;align-items:end}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr;gap:32px}}
+.hero h1{font-size:clamp(42px,7vw,80px)}
+.hero h1 em{font-style:normal;color:var(--cyan)}
+.lede{font-size:19px;font-weight:300;color:var(--ink-soft);max-width:54ch;margin-top:20px}
+.lede strong{color:var(--ink);font-weight:500}
+.hero-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--rule);padding:5px 9px;background:var(--surface);transition:color .3s ease,border-color .3s ease,transform .3s cubic-bezier(.2,.7,.3,1)}
+.chip:hover{color:var(--cyan);border-color:var(--cyan-dim);transform:translateY(-2px)}
+.tag{transition:color .25s ease,border-color .25s ease}
+.tag:hover{color:var(--cyan);border-color:var(--cyan-dim)}
+
+/* viewport */
+.viewport{position:relative;border:1px solid var(--rule);background:var(--surface);box-shadow:0 0 70px -34px var(--glow)}
+.viewport canvas{display:block;width:100%;height:390px;touch-action:pan-y;cursor:crosshair}
+@media (max-width:900px){.viewport canvas{height:300px}}
+.vp-tabs{display:flex;gap:0;border-bottom:1px solid var(--rule)}
+.vt{flex:1;background:none;border:0;border-right:1px solid var(--rule);color:var(--ink-faint);font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;padding:9px 6px;cursor:pointer;transition:color .25s ease,background .25s ease}
+.vt:last-child{border-right:0}
+.vt:hover{color:var(--ink)}
+.vt.on{color:var(--cyan);background:var(--wash)}
+.vp-label{position:absolute;top:47px;left:11px;z-index:2;pointer-events:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--cyan);margin:0}
+.vp-label span{display:block;color:var(--ink-faint);margin-top:3px;letter-spacing:.1em}
+.vp-corner{position:absolute;width:9px;height:9px;border:1px solid var(--cyan-dim);pointer-events:none}
+.vp-corner.tl{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.vp-corner.tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
+.vp-corner.bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
+.vp-corner.br{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.vp-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--rule);padding:7px 10px;flex-wrap:wrap}
+.readout{font-family:var(--mono);font-size:11px;letter-spacing:.07em;color:var(--ink-faint);font-variant-numeric:tabular-nums}
+.readout b{color:var(--cyan);font-weight:500}
+.readout .warn{color:var(--ember)}
+
+/* dimension divider */
+.dim{display:flex;align-items:center;gap:12px;margin:74px 0 24px}
+.dim::before{content:"";height:1px;background:var(--rule);flex:0 0 20px}
+.dim::after{content:"";height:1px;background:var(--rule);flex:1;transform-origin:left;transform:scaleX(0);transition:transform 1.1s cubic-bezier(.2,.7,.3,1) .1s}
+.dim.in::after{transform:scaleX(1)}
+@media (prefers-reduced-motion:reduce){.dim::after{transform:none;transition:none}}
+.dim .anno{white-space:nowrap}
+
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border:1px solid var(--rule);background:var(--surface);margin-top:34px}
+.stat{padding:18px 20px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+@media (max-width:760px){.stat{border-right:0;border-bottom:1px solid var(--rule)}.stat:last-child{border-bottom:0}}
+.stat{transition:background .35s ease}
+.stat:hover{background:var(--wash)}
+.stat .n{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat .n span{color:var(--cyan)}
+.stat .anno{margin-top:5px}
+
+/* practice */
+.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));border:1px solid var(--rule);background:var(--surface)}
+.cap{padding:26px 24px 28px;border-right:1px solid var(--rule);position:relative;overflow:hidden}
+.cap:last-child{border-right:0}
+@media (max-width:900px){.cap{border-right:0;border-bottom:1px solid var(--rule)}.cap:last-child{border-bottom:0}}
+.cap::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,var(--wash) 0 1px,transparent 1px 7px);opacity:0;transition:opacity .45s ease;pointer-events:none}
+.cap:hover::before{opacity:1}
+.cap h3{font-size:20px;margin:11px 0 10px}
+.cap p{font-size:16px;font-weight:300;color:var(--ink-soft)}
+.cap ul{margin:15px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.cap li{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-faint);display:flex;gap:8px}
+.cap li::before{content:"—";color:var(--cyan-dim)}
+
+/* project rows */
+.work{border-top:1px solid var(--rule)}
+.proj{border-bottom:1px solid var(--rule);position:relative}
+.proj::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:100%;background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.2,.7,.3,1)}
+.proj:hover::after{transform:scaleX(1)}
+.proj:hover .proj-idx{color:var(--ember)}
+.proj-idx{transition:color .3s ease}
+@media (prefers-reduced-motion:reduce){.proj::after{display:none}.proj-head{transition:none}}
+.proj-head{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:20px;align-items:baseline;padding:26px 4px 8px;transition:padding-left .4s cubic-bezier(.2,.7,.3,1)}
+.proj:hover .proj-head{padding-left:14px}
+.proj-idx{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-faint);padding-top:6px}
+.proj h2{font-size:clamp(27px,4vw,42px)}
+.proj:hover h2{color:var(--cyan)}
+.proj h2{transition:color .3s ease}
+.proj .role{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--cyan);margin-top:9px}
+.rev{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--paper);background:var(--cyan);padding:3px 7px;white-space:nowrap}
+.rev.live{background:var(--ember)}
+.rev.quiet{background:transparent;color:var(--ink-faint);border:1px solid var(--rule)}
+.proj-body{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:34px;padding:6px 4px 30px}
+@media (max-width:860px){.proj-head{grid-template-columns:44px 1fr;gap:12px}.proj-head .rev{grid-column:2}.proj-body{grid-template-columns:1fr;gap:20px;padding-left:0}}
+.proj-body p{font-weight:300;color:var(--ink-soft);max-width:62ch}
+.spec{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;align-items:baseline;border-left:1px solid var(--rule);padding-left:20px}
+@media (max-width:860px){.spec{border-left:0;padding-left:0;border-top:1px solid var(--rule-soft);padding-top:16px}}
+.spec dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
+.spec dd{margin:0;font-family:var(--mono);font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums}
+.tags{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:18px}
+.tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink-soft);border-bottom:1px solid var(--rule);padding:2px 0}
+
+/* minor works */
+.minor{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));border:1px solid var(--rule);background:var(--surface)}
+.mw{padding:20px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+@media (max-width:900px){.mw{border-right:0}}
+.mw{transition:background .35s ease}
+.mw:hover{background:var(--wash)}
+.mw h4{font-family:var(--display);font-weight:600;font-size:16.5px;margin:0 0 7px;letter-spacing:-.01em}
+.mw p{font-size:15px;font-weight:300;color:var(--ink-soft)}
+.mw .anno{margin-top:10px}
+
+/* legend */
+.legend{width:100%;border-collapse:collapse;border:1px solid var(--rule);background:var(--surface);font-family:var(--mono);font-size:12.5px}
+.legend th,.legend td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--rule-soft)}
+.legend th{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:400;border-bottom:1px solid var(--rule)}
+.legend tr:last-child td{border-bottom:0}
+.legend tbody tr{transition:background .3s ease,opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1)}
+.legend tbody tr:hover{background:var(--wash)}
+.legend-wrap.rise tbody tr{opacity:.5;transform:translateY(6px)}
+.legend-wrap.rise.in tbody tr{opacity:1;transform:none}
+.legend-wrap.rise.in tbody tr:nth-child(1){transition-delay:.02s}
+.legend-wrap.rise.in tbody tr:nth-child(2){transition-delay:.07s}
+.legend-wrap.rise.in tbody tr:nth-child(3){transition-delay:.12s}
+.legend-wrap.rise.in tbody tr:nth-child(4){transition-delay:.17s}
+.legend-wrap.rise.in tbody tr:nth-child(5){transition-delay:.22s}
+.legend-wrap.rise.in tbody tr:nth-child(6){transition-delay:.27s}
+.legend-wrap.rise.in tbody tr:nth-child(7){transition-delay:.32s}
+.legend-wrap.rise.in tbody tr:nth-child(8){transition-delay:.37s}
+.legend-wrap.rise.in tbody tr:nth-child(9){transition-delay:.42s}
+@media (prefers-reduced-motion:reduce){.legend-wrap.rise tbody tr{opacity:1;transform:none;transition:none}}
+.legend td:first-child{color:var(--cyan);white-space:nowrap}
+.legend td:last-child{color:var(--ink-soft)}
+.legend-wrap{overflow-x:auto}
+@media (max-width:640px){.legend{font-size:11.5px}.legend th,.legend td{padding:9px 11px}}
+
+/* title block */
+.contact-head{padding:30px 0 22px}
+.contact-head h2{font-size:clamp(29px,4.4vw,46px)}
+.contact-head p{margin-top:14px;font-weight:300;color:var(--ink-soft);max-width:52ch}
+.titleblock{border:1px solid var(--rule);background:var(--surface);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:26px}
+.tb-cell{padding:17px 20px;border-right:1px solid var(--rule)}
+.tb-cell:last-child{border-right:0}
+@media (max-width:760px){.tb-cell{border-right:0;border-bottom:1px solid var(--rule)}.tb-cell:last-child{border-bottom:0}}
+.tb-cell .anno{display:block;margin-bottom:6px}
+.tb-cell a,.tb-val{font-family:var(--display);font-weight:500;font-size:15px;text-decoration:none;overflow-wrap:break-word;hyphens:none;line-height:1.35;display:block}
+.tb-cell a[href^="mailto"]{font-size:13.5px;letter-spacing:-.005em}
+.tb-cell{transition:background .35s ease}
+.tb-cell:hover{background:var(--wash)}
+.tb-cell a:hover{color:var(--cyan)}
+footer{padding:0 0 40px}
+</style>
+
+<div id="plot">
+  <div class="block">
+    <div class="r"><span class="ttl">Rahul Gupta</span><span>Rev 10.0</span></div>
+    <div class="r"><span>Drawing</span><b>001 · Field-grade software</b></div>
+    <div class="r"><span>Sheets</span><b>06</b></div>
+    <div class="r"><span>Status</span><b>Plotting…</b></div>
+    <span class="bar"></span>
+  </div>
+</div>
+
+<div id="xh" aria-hidden="true"><i class="v"></i><i class="h"></i><span class="box"></span><span class="co"></span></div>
+
+<header class="masthead">
+  <div class="sheet">
+    <a class="mark" href="#top"><i></i>RG · Mobile Lead</a>
+    <nav>
+      <a class="rg-top" href="../">&larr; All interfaces</a>
+      <a href="#practice">Practice</a>
+      <a href="#work">Work</a>
+      <a href="#stack">Stack</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="progress"><i id="prog"></i></div>
+  </div>
+</header>
+
+<main id="top">
+<section class="sheet hero">
+  <div class="hero-grid">
+    <div>
+      <p class="anno load load-1">Sheet 01 &nbsp;·&nbsp; Rahul Gupta &nbsp;·&nbsp; Jaipur, India</p>
+      <h1><span class="ln"><i>Apps that work</i></span><span class="ln"><i>where the <em>signal</em></i></span><span class="ln"><i><em>doesn't</em>.</i></span></h1>
+      <p class="lede load load-3">Mobile Lead at Sublimity Softwares. Four years of <strong>Flutter</strong> shipped into buildings, warehouses and shop floors — offline-first inspection and attendance systems, native device integrations, and <strong>Gemini-powered</strong> tooling that earns its place. I own products end to end and mentor the team that builds them.</p>
+      <div class="hero-meta load load-4">
+        <span class="chip">Flutter · Dart</span>
+        <span class="chip">BLoC · GetX</span>
+        <span class="chip">Offline sync</span>
+        <span class="chip">Gemini API</span>
+        <span class="chip">Next.js · Postgres</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="viewport load load-3">
+        <span class="vp-corner tl"></span><span class="vp-corner tr"></span>
+        <span class="vp-corner bl"></span><span class="vp-corner br"></span>
+        <div class="vp-tabs" role="group" aria-label="Choose a drawing">
+          <button class="vt on" type="button" data-mode="0">01 Site model</button>
+          <button class="vt" type="button" data-mode="1">02 Geofence plan</button>
+          <button class="vt" type="button" data-mode="2">03 Funnel drop-off</button>
+        </div>
+        <p class="vp-label" id="vp-cap">FireArrest <span>4 storeys · 14 fire-safety assets</span></p>
+        <canvas id="cad" aria-label="Interactive wireframe of a four-storey site model. Inspection pins upload from unsynced to synced; moving the pointer reveals each pin's asset tag."></canvas>
+        <div class="vp-bar">
+          <span class="readout">SITE MODEL · <span id="ro-az">AZ 000°</span> · <span id="ro-el">EL 00°</span></span>
+          <span class="readout" id="ro-sync">QUEUE <b>0</b>/14 SYNCED</span>
+        </div>
+      </div>
+      <p class="anno load load-5" style="margin-top:9px">Drag to orbit · hover a pin to read its tag · queue uploads on reconnect</p>
+    </div>
+  </div>
+
+  <div class="stats rise">
+    <div class="stat"><p class="n"><span class="cnt" data-to="4">4</span><span>+</span></p><p class="anno">Years shipping Flutter</p></div>
+    <div class="stat"><p class="n">v10<span>.0</span></p><p class="anno">FireArrest in service</p></div>
+    <div class="stat"><p class="n"><span class="cnt" data-to="50">50</span><span>+</span></p><p class="anno">Client systems at the firm</p></div>
+    <div class="stat"><p class="n"><span class="cnt" data-to="6">6</span><span>+</span></p><p class="anno">Developers mentored</p></div>
+    <div class="stat"><p class="n">Dec<span> '21</span></p><p class="anno">Dev → Mobile Lead</p></div>
+  </div>
+</section>
+
+<section class="sheet" id="practice">
+  <div class="dim rise"><p class="anno">Sheet 02 &nbsp;·&nbsp; <b>Practice</b></p></div>
+  <div class="caps rise">
+    <article class="cap">
+      <p class="anno">A —</p>
+      <h3>Offline is the default</h3>
+      <p>The network is treated as a bonus. Local database as the source of truth, a background sync engine that survives the app being killed, and conflicts resolved without losing an operative's afternoon of work.</p>
+      <ul>
+        <li>Drift · sqflite · ObjectBox</li>
+        <li>WorkManager &amp; foreground services</li>
+        <li>Conflict-aware sync queues</li>
+        <li>Unsynced counts on the dashboard</li>
+      </ul>
+    </article>
+    <article class="cap">
+      <p class="anno">B —</p>
+      <h3>Evidence, not vibes</h3>
+      <p>Compliance work needs a record of who said what, where, and when. Pin-level photo evidence on drawings, on-image markup, captured signatures, dynamic forms driven by a rule engine, PDF reports read in the app.</p>
+      <ul>
+        <li>Pin placement on scanned drawings</li>
+        <li>Signatures &amp; re-signing intervals</li>
+        <li>Geofencing · biometric auth · QR</li>
+        <li>MFA / OTP, multi-tenant access</li>
+      </ul>
+    </article>
+    <article class="cap">
+      <p class="anno">C —</p>
+      <h3>AI where it pays rent</h3>
+      <p>Gemini put to work on real internal problems: an assistant inside an API-monitoring tool that answers questions and drafts test cases and documentation, plus a dozen focused tools built on the same API.</p>
+      <ul>
+        <li>Google Gemini API integration</li>
+        <li>Prompt engineering for repeatable output</li>
+        <li>Document Q&amp;A, image analysis</li>
+        <li>Chrome MV3 automation extensions</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="sheet" id="work">
+  <div class="dim rise"><p class="anno">Sheet 03 &nbsp;·&nbsp; <b>Selected work</b></p></div>
+  <div class="work">
+
+    <article class="proj rise">
+      <div class="proj-head">
+        <span class="proj-idx">W-01</span>
+        <div>
+          <h2><span class="ln"><i>FireArrest</i></span></h2>
+          <p class="role">Flutter · Offline-first fire-safety compliance</p>
+        </div>
+        <span class="rev live">v10.0.0 · IN SERVICE</span>
+      </div>
+      <div class="proj-body">
+        <div>
+          <p>One of the team's largest mobile codebases, and the one I led. Inspectors work inside buildings with no reception: they drop pins on drawing images, attach photo evidence with on-image markup, complete dynamic forms driven by a rule engine, scan asset QR codes and sign method statements on screen. I built the background sync engine on WorkManager and foreground services so all of it uploads reliably — with conflict handling — the moment a signal returns. Shipped and maintained through ten major versions.</p>
+          <div class="tags">
+            <span class="tag">flutter_bloc</span><span class="tag">drift</span><span class="tag">sqflite</span><span class="tag">workmanager</span><span class="tag">background_fetch</span><span class="tag">dio</span><span class="tag">firebase_messaging</span><span class="tag">crashlytics</span><span class="tag">pro_image_editor</span><span class="tag">signature</span><span class="tag">flutter_pdfview</span>
+          </div>
+        </div>
+        <dl class="spec">
+          <dt>Role</dt><dd>Lead developer</dd>
+          <dt>Build</dt><dd>10.0.0+62</dd>
+          <dt>Platform</dt><dd>iOS · Android</dd>
+          <dt>Sync</dt><dd>WorkManager / BackgroundFetch</dd>
+          <dt>Local DB</dt><dd>Drift + sqlite3</dd>
+          <dt>Auth</dt><dd>Company ID + MFA / OTP</dd>
+          <dt>Envs</dt><dd>DEV · TEST · UAT · LIVE</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div class="proj-head">
+        <span class="proj-idx">W-02</span>
+        <div>
+          <h2><span class="ln"><i>Sentinel</i></span></h2>
+          <p class="role">Internal tooling · Gemini-powered assistant</p>
+        </div>
+        <span class="rev">INTERNAL</span>
+      </div>
+      <div class="proj-body">
+        <div>
+          <p>An API-monitoring tool for the team, with a Gemini assistant wired into it. Ask it what an endpoint does and it answers from context; ask for coverage and it drafts test cases and documentation from a prompt. The interesting work was prompt engineering the thing into producing output consistent enough that engineers actually kept using it instead of writing the cases by hand.</p>
+          <div class="tags">
+            <span class="tag">google gemini api</span><span class="tag">prompt engineering</span><span class="tag">python</span><span class="tag">rest monitoring</span>
+          </div>
+        </div>
+        <dl class="spec">
+          <dt>Role</dt><dd>Built end to end</dd>
+          <dt>Users</dt><dd>Internal engineering</dd>
+          <dt>Does</dt><dd>Q&amp;A · test cases · docs</dd>
+          <dt>Model</dt><dd>Gemini</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div class="proj-head">
+        <span class="proj-idx">W-03</span>
+        <div>
+          <h2><span class="ln"><i>ClockedIn Mobile</i></span></h2>
+          <p class="role">Flutter · Attendance &amp; time tracking</p>
+        </div>
+        <span class="rev">SHIPPED</span>
+      </div>
+      <div class="proj-body">
+        <div>
+          <p>Employee clock-in and clock-out built for sites, not desks: PIN codes, geofencing so a shift can only start where it should, and biometric login. Behind it, granular permission handling, custom schedules, a real-time attendance dashboard, push notifications, in-app update checks — and offline sync, because warehouses eat signal. Shipped as an enterprise product with a team of six.</p>
+          <div class="tags">
+            <span class="tag">getx</span><span class="tag">geolocator</span><span class="tag">local_auth</span><span class="tag">firebase</span><span class="tag">push notifications</span><span class="tag">offline sync</span>
+          </div>
+        </div>
+        <dl class="spec">
+          <dt>Role</dt><dd>Core developer, team of 6+</dd>
+          <dt>Gates</dt><dd>PIN · geofence · biometric</dd>
+          <dt>Live view</dt><dd>Real-time attendance</dd>
+          <dt>State</dt><dd>GetX</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div class="proj-head">
+        <span class="proj-idx">W-04</span>
+        <div>
+          <h2><span class="ln"><i>HRM OTM</i></span></h2>
+          <p class="role">Flutter · Multi-tenant HR &amp; leave</p>
+        </div>
+        <span class="rev">SHIPPED</span>
+      </div>
+      <div class="proj-body">
+        <div>
+          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase. I contributed leave and balance tracking, clock-in/out and reporting, with OAuth2 auth and MinIO/S3 for document storage — and ObjectBox keeping the whole thing responsive on the device rather than round-tripping every list.</p>
+          <div class="tags">
+            <span class="tag">getx</span><span class="tag">objectbox</span><span class="tag">oauth2</span><span class="tag">minio / s3</span><span class="tag">multi-flavor builds</span>
+          </div>
+        </div>
+        <dl class="spec">
+          <dt>Role</dt><dd>Feature developer</dd>
+          <dt>Tenancy</dt><dd>Two clients, one codebase</dd>
+          <dt>Storage</dt><dd>ObjectBox · MinIO/S3</dd>
+          <dt>Auth</dt><dd>OAuth2</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div class="proj-head">
+        <span class="proj-idx">W-05</span>
+        <div>
+          <h2><span class="ln"><i>WhatsApp-Led Funnel CRM</i></span></h2>
+          <p class="role">Next.js 16 · React 19 · Postgres</p>
+        </div>
+        <span class="rev">PHASE 1</span>
+      </div>
+      <div class="proj-body">
+        <div>
+          <p>The web side. A CRM for a business that sells over WhatsApp, where lead attribution locks on first touch and never quietly rewrites itself. The funnel is a live SQL aggregate with per-step drop-off, filtering happens in Postgres rather than the browser, and worklists surface the cases needing a human — failed sends, possible duplicates, paid-but-no-access. Every write lands in an audit trail recording who or what said so.</p>
+          <div class="tags">
+            <span class="tag">next 16</span><span class="tag">react 19</span><span class="tag">typescript</span><span class="tag">drizzle-orm</span><span class="tag">postgres</span><span class="tag">bcryptjs</span><span class="tag">tailwind 4</span>
+          </div>
+        </div>
+        <dl class="spec">
+          <dt>Queries</dt><dd>Filtered in Postgres</dd>
+          <dt>Sessions</dt><dd>DB-backed, httpOnly</dd>
+          <dt>Access</dt><dd>Role-based, proxy gate</dd>
+          <dt>Audit</dt><dd>Every write attributed</dd>
+          <dt>Setup</dt><dd>Self-migrating, no Docker</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div class="proj-head">
+        <span class="proj-idx">W-06</span>
+        <div>
+          <h2><span class="ln"><i>Rankplus</i></span></h2>
+          <p class="role">Flutter · Exam prep, Class 8–12 / JEE / NEET</p>
+        </div>
+        <span class="rev quiet">EARLIER</span>
+      </div>
+      <div class="proj-body">
+        <div>
+          <p>A consumer education app: live lectures, mock tests and Razorpay payments, built for students on cheap Android handsets and patchy home connections. Different pressure from enterprise field work — the failure mode isn't a lost inspection, it's a teenager missing a class the night before an exam.</p>
+          <div class="tags">
+            <span class="tag">flutter</span><span class="tag">firebase</span><span class="tag">razorpay</span><span class="tag">in-app purchases</span><span class="tag">live video</span>
+          </div>
+        </div>
+        <dl class="spec">
+          <dt>Audience</dt><dd>Class 8–12 · JEE · NEET</dd>
+          <dt>Payments</dt><dd>Razorpay</dd>
+          <dt>Content</dt><dd>Live lectures · mock tests</dd>
+        </dl>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="sheet">
+  <div class="dim rise"><p class="anno">Sheet 04 &nbsp;·&nbsp; <b>Also on the drawing board</b></p></div>
+  <div class="minor rise">
+    <div class="mw">
+      <h4>NurseryToolbox</h4>
+      <p>Contributed to a staff attendance app for nursery sites, built on Cubit/BLoC and <code>go_router</code>, where every failure is modelled as an <code>Either&lt;Failure, T&gt;</code> rather than a thrown exception.</p>
+      <p class="anno">Flutter · fpdart · geolocator</p>
+    </div>
+    <div class="mw">
+      <h4>Lead-automation extension</h4>
+      <p>A Manifest V3 Chrome extension that extracts and filters B2B sales leads with rule-based heuristics, so the sales team stops copying rows by hand.</p>
+      <p class="anno">Chrome MV3 · JavaScript</p>
+    </div>
+    <div class="mw">
+      <h4>AI app collection</h4>
+      <p>Around a dozen small Gemini-API tools: chatbots, content generators, a document Q&amp;A helper and an image-analysis demo — each one a test of how far prompt design gets you.</p>
+      <p class="anno">Python · Gemini API</p>
+    </div>
+    <div class="mw">
+      <h4>Reception &amp; food delivery</h4>
+      <p>Earlier client apps — visitor and reception management, and an ordering/delivery product — the work where the Flutter and Firebase habits were formed.</p>
+      <p class="anno">Flutter · Firebase</p>
+    </div>
+  </div>
+</section>
+
+<section class="sheet" id="stack">
+  <div class="dim rise"><p class="anno">Sheet 05 &nbsp;·&nbsp; <b>Legend</b></p></div>
+  <div class="legend-wrap rise">
+  <table class="legend">
+    <thead><tr><th scope="col">Symbol</th><th scope="col">Layer</th><th scope="col">Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Flutter · Dart</td><td>Mobile</td><td>iOS and Android from one codebase, four years in production</td></tr>
+      <tr><td>BLoC · GetX · get_it</td><td>Architecture</td><td>Predictable state, injectable services, testable boundaries</td></tr>
+      <tr><td>Drift · sqflite · ObjectBox</td><td>Device data</td><td>Local source of truth so the app never blocks on a request</td></tr>
+      <tr><td>WorkManager</td><td>Background</td><td>Sync that keeps running after the user closes the app</td></tr>
+      <tr><td>Firebase</td><td>Operations</td><td>Auth, Realtime DB, Messaging, Crashlytics on live builds</td></tr>
+      <tr><td>Gemini API</td><td>AI</td><td>Assistants, document Q&amp;A, image analysis, prompt engineering</td></tr>
+      <tr><td>Next.js · Postgres</td><td>Web</td><td>TypeScript, Drizzle ORM, aggregates computed in SQL</td></tr>
+      <tr><td>Native integrations</td><td>Device</td><td>Geolocation, biometrics, camera, QR, in-app purchases (Razorpay)</td></tr>
+      <tr><td>Dart · Python · C · C++ · Java</td><td>Languages</td><td>B.Tech Computer Science, Global Institute of Technology, Jaipur</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="sheet" id="contact">
+  <div class="dim rise"><p class="anno">Sheet 06 &nbsp;·&nbsp; <b>Title block</b></p></div>
+  <div class="contact-head rise">
+    <h2><span class="ln"><i>Got something that has</i></span><span class="ln"><i>to work in a basement?</i></span></h2>
+    <p>Building something for the field — inspections, attendance, compliance, logistics? Tell me what your team is doing when they open the app. I reply to every message within 24 hours.</p>
+  </div>
+  <div class="titleblock rise">
+    <div class="tb-cell"><span class="anno">Drawn by</span><span class="tb-val">Rahul Gupta</span></div>
+    <div class="tb-cell"><span class="anno">Email</span><a href="mailto:rahul3099gupta@gmail.com">rahul3099gupta@gmail.com</a></div>
+    <div class="tb-cell"><span class="anno">Résumé</span><a href="../assets/Rahul-Gupta-CV.pdf" download>CV.pdf ↓</a></div>
+    <div class="tb-cell"><span class="anno">Phone</span><a href="tel:+917891848737">+91 78918 48737</a></div>
+    <div class="tb-cell"><span class="anno">LinkedIn</span><a href="https://linkedin.com/in/rahul-gupta-894602188" target="_blank" rel="noopener noreferrer">rahul-gupta-894602188</a></div>
+    <div class="tb-cell"><span class="anno">GitHub</span><a href="https://github.com/Rahulg1999" target="_blank" rel="noopener noreferrer">github.com/Rahulg1999</a></div>
+  </div>
+</section>
+</main>
+
+<footer class="sheet">
+  <p class="anno">Drawing 001 &nbsp;·&nbsp; Rahul Gupta, Mobile Lead &nbsp;·&nbsp; Jaipur, India &nbsp;·&nbsp; Scale: not to scale</p>
+</footer>
+
+<script>
+/* ---------- the plotter sheet lifts, then the crosshair takes over ---------- */
+(function(){
+  var reduceQ = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var plot = document.getElementById('plot');
+  if(plot) setTimeout(function(){ plot.remove(); }, reduceQ ? 0 : 2900);
+
+  if(reduceQ || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  var docEl = document.documentElement, xh = document.getElementById('xh');
+  var co = xh.querySelector('.co');
+  docEl.classList.add('cur-on');
+  var seen = false;
+  window.addEventListener('pointermove', function(e){
+    if(!seen){ seen = true; docEl.classList.add('cur-live'); }
+    xh.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+    co.textContent = 'X ' + String(Math.round(e.clientX)).padStart(4,'0') + '  Y ' + String(Math.round(e.clientY)).padStart(4,'0');
+  }, {passive:true});
+  document.addEventListener('pointerleave', function(){ seen = false; docEl.classList.remove('cur-live'); });
+  document.querySelectorAll('a, button, .proj, .cap, .mw, canvas').forEach(function(el){
+    el.addEventListener('pointerenter', function(){ xh.classList.add('lock'); });
+    el.addEventListener('pointerleave', function(){ xh.classList.remove('lock'); });
+  });
+})();
+
+/* ---------- reveal on scroll (rests visible) ---------- */
+(function(){
+  var els = document.querySelectorAll('.rise');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(!en.isIntersecting) return;
+      en.target.classList.add('in');
+      en.target.querySelectorAll && en.target.querySelectorAll('.cnt').forEach(countUp);
+      io.unobserve(en.target);
+    });
+  }, {rootMargin:'0px 0px -8% 0px', threshold:0.05});
+  els.forEach(function(e){ io.observe(e); });
+})();
+
+/* ---------- type: run hero lines, split sheet headings into words ---------- */
+(function(){
+  var hero = document.querySelector('.hero h1');
+  if(hero){
+    var lines = hero.querySelectorAll('.ln');
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(function(){
+      lines.forEach(function(l, i){ setTimeout(function(){ l.classList.add('go'); }, 90 + i*110); });
+    });
+  }
+  document.querySelectorAll('.dim .anno, .contact-head p').forEach(function(el){
+    if(el.querySelector('.wd')) return;
+    var html = el.innerHTML.split(/(\s+)/).map(function(tok){
+      return /^\s+$/.test(tok) ? tok : '<span class="wd">' + tok + '</span>';
+    }).join('');
+    el.innerHTML = html;
+    var kids = el.querySelectorAll('.wd');
+    kids.forEach(function(k, i){ k.style.transitionDelay = (i * 0.035) + 's'; });
+  });
+})();
+
+/* ---------- count-ups ---------- */
+function countUp(el){
+  if(el.dataset.done) return;
+  el.dataset.done = '1';
+  var to = parseInt(el.dataset.to, 10);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = to; return; }
+  var t0 = null, dur = 900;
+  function tick(now){
+    if(t0 === null) t0 = now;
+    var k = Math.min((now - t0) / dur, 1);
+    var eased = 1 - Math.pow(1 - k, 3);
+    el.textContent = Math.round(to * eased);
+    if(k < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.cnt').forEach(function(el){ el.textContent = '0'; });
+}
+
+/* ---------- scroll progress ---------- */
+(function(){
+  var bar = document.getElementById('prog');
+  if(!bar) return;
+  var ticking = false;
+  function set(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var k = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+    bar.style.width = (k * 100).toFixed(2) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(set); }
+  }, {passive:true});
+  window.addEventListener('resize', set);
+  set();
+})();
+
+/* ---------- CAD site model ---------- */
+(function(){
+  var canvas = document.getElementById('cad');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var C = {};
+  function readPalette(){
+    var cs = getComputedStyle(document.documentElement);
+    C.line  = cs.getPropertyValue('--cyan').trim()      || '#0C7A89';
+    C.faint = cs.getPropertyValue('--cyan-dim').trim()  || '#8ABDC5';
+    C.ember = cs.getPropertyValue('--ember').trim()     || '#C2431D';
+    C.ink   = cs.getPropertyValue('--ink-faint').trim() || '#8493A2';
+  }
+  readPalette();
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if(mq.addEventListener) mq.addEventListener('change', readPalette);
+
+  /* model: four storeys, slabs, partitions, columns, roof plant */
+  var W = 1.5, D = 1.02, LVL = [-1.0, -0.34, 0.32, 0.98];
+  var segs = [];
+  function seg(a,b,c,d,e,f,w){ segs.push([a,b,c,d,e,f,w||0]); }
+  LVL.forEach(function(y,i){
+    seg(-W,y,-D, W,y,-D,0); seg(W,y,-D, W,y,D,0); seg(W,y,D, -W,y,D,0); seg(-W,y,D, -W,y,-D,0);
+    var p = (i % 2)
+      ? [[[-0.7,-D],[-0.7,0.1]],[[-0.7,0.1],[0.15,0.1]],[[0.15,0.1],[0.15,D]],[[0.85,-D],[0.85,0.45]],[[0.85,0.45],[W,0.45]],[[-W,0.55],[-0.7,0.55]]]
+      : [[[-0.45,-D],[-0.45,0.25]],[[-0.45,0.25],[0.62,0.25]],[[0.62,0.25],[0.62,D]],[[0.55,-D],[0.55,-0.2]],[[-W,-0.35],[-0.9,-0.35]]];
+    p.forEach(function(s){ seg(s[0][0],y,s[0][1], s[1][0],y,s[1][1], 1); });
+  });
+  [[-W,-D],[W,-D],[W,D],[-W,D],[-0.45,0.25],[0.55,-0.2]].forEach(function(c){
+    seg(c[0],LVL[0],c[1], c[0],LVL[3],c[1], 0);
+  });
+  var ry = LVL[3], py = ry + 0.24;
+  [[ry],[py]].forEach(function(a){
+    var y = a[0];
+    seg(-0.48,y,-0.34, 0.08,y,-0.34,0); seg(0.08,y,-0.34, 0.08,y,0.18,0);
+    seg(0.08,y,0.18, -0.48,y,0.18,0); seg(-0.48,y,0.18, -0.48,y,-0.34,0);
+  });
+  [[-0.48,-0.34],[0.08,-0.34],[0.08,0.18],[-0.48,0.18]].forEach(function(c){ seg(c[0],ry,c[1], c[0],py,c[1],0); });
+
+  var PINS = [
+    [0,-1.18,-0.68,'FD-01'],[0,0.88,-0.54,'SP-14'],[0,0.18,0.74,'FD-02'],
+    [1,-1.02,0.58,'DMP-07'],[1,0.34,-0.82,'SP-21'],[1,1.22,0.34,'FD-09'],
+    [2,-0.84,-0.4,'SP-33'],[2,0.72,0.68,'FD-11'],[2,1.26,-0.72,'DMP-12'],
+    [3,-1.12,0.14,'SP-40'],[3,0.04,-0.88,'FD-18'],[3,1.08,0.78,'SP-42'],
+    [1,-0.18,0.04,'CORE-1'],[2,-0.04,-0.06,'CORE-2']
+  ].map(function(p){ return {x:p[1], y:LVL[p[0]], z:p[2], id:p[3], synced:false, t:0}; });
+
+  var az = -0.62, el = 0.4, w = 0, h = 0, dpr = 1;
+  var plot = reduce ? 1 : 0, plotStart = null, PLOT_MS = 1500;
+  var mode = 0;
+
+  /* ---- drawing 02: a geofenced site, workers clocking in ---- */
+  var CREW = [
+    {n:'A. Sharma', a:2.7, r:1.62, in:false}, {n:'R. Verma', a:0.7, r:1.45, in:false},
+    {n:'S. Khan',   a:4.2, r:1.30, in:false}, {n:'P. Nair',  a:5.4, r:1.70, in:false},
+    {n:'M. Das',    a:1.8, r:1.20, in:false}, {n:'K. Iyer',  a:3.5, r:1.55, in:false}
+  ];
+  var crewT = 0;
+
+  function drawGeofence(){
+    var cx = w/2, cy = h/2 + 6, u = Math.min(w, h*1.6) * 0.20;
+    /* site boundary */
+    ctx.setLineDash([5,4]); ctx.strokeStyle = C.faint; ctx.globalAlpha = 0.7; ctx.lineWidth = 1;
+    ctx.strokeRect(cx - u*1.75, cy - u*1.15, u*3.5, u*2.3);
+    ctx.setLineDash([]);
+    /* geofence radius */
+    var R = u * 1.05 * plot;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2);
+    ctx.strokeStyle = C.line; ctx.globalAlpha = 0.85; ctx.lineWidth = 1; ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.globalAlpha = 0.07; ctx.fillStyle = C.line; ctx.fill(); ctx.globalAlpha = 1;
+    /* radius dimension */
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R, cy);
+    ctx.strokeStyle = C.line; ctx.globalAlpha = 0.5; ctx.stroke(); ctx.globalAlpha = 1;
+    label('r = 120 m', cx + R*0.28, cy - 5, C.line, 0.75);
+    /* the gate */
+    label('SITE A · GATE', cx - u*1.7, cy - u*1.2, C.ink, 0.7);
+
+    var inside = 0;
+    CREW.forEach(function(c, i){
+      var rad = c.r - Math.min(crewT * 0.16 + i*0.02, c.r - 0.55);
+      var x = cx + Math.cos(c.a) * rad * u, y = cy + Math.sin(c.a) * rad * u * 0.72;
+      var isIn = rad * u < R;
+      if(isIn) inside++;
+      var col = isIn ? C.line : C.ember;
+      /* trail */
+      ctx.beginPath(); ctx.moveTo(cx + Math.cos(c.a)*c.r*u, cy + Math.sin(c.a)*c.r*u*0.72); ctx.lineTo(x, y);
+      ctx.strokeStyle = col; ctx.globalAlpha = 0.22; ctx.setLineDash([2,4]); ctx.stroke(); ctx.setLineDash([]);
+      /* marker */
+      ctx.beginPath(); ctx.arc(x, y, 3.4, 0, Math.PI*2);
+      ctx.fillStyle = col; ctx.globalAlpha = 1; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 6.6, 0, Math.PI*2);
+      ctx.strokeStyle = col; ctx.globalAlpha = 0.35; ctx.stroke(); ctx.globalAlpha = 1;
+      label(c.n + (isIn ? ' · IN' : ' · OUT'), x + 9, y - 4, col, 0.8);
+    });
+    return inside;
+  }
+
+  /* ---- drawing 03: the funnel, as a drop-off diagram ---- */
+  var STAGES = [
+    ['Enquiry captured', 100], ['Sequence started', 74], ['Replied', 52], ['Call booked', 31], ['Paid', 19]
+  ];
+  function drawFunnel(){
+    var left = 108, right = w - 62, top = 34, gap = (h - 72) / STAGES.length;
+    STAGES.forEach(function(st, i){
+      var y = top + gap*i + gap*0.3;
+      var full = (right - left) * (st[1]/100);
+      var wid = full * Math.min(Math.max((plot - i*0.11) * 1.9, 0), 1);
+      ctx.fillStyle = C.line; ctx.globalAlpha = 0.16; ctx.fillRect(left, y, wid, gap*0.44);
+      ctx.strokeStyle = C.line; ctx.globalAlpha = 0.85; ctx.lineWidth = 1;
+      ctx.strokeRect(left + 0.5, y + 0.5, Math.max(wid - 1, 0), gap*0.44);
+      ctx.globalAlpha = 1;
+      label(st[0], 8, y + gap*0.32, C.ink, 0.85);
+      if(wid > 26) label(st[1] + '%', left + wid - 26, y + gap*0.32, C.line, 0.95);
+      if(i){
+        var drop = STAGES[i-1][1] - st[1];
+        label('-' + drop + '%', right + 4 - (right-left)*0.02, y - gap*0.16, C.ember, 0.8 * plot);
+      }
+    });
+    ctx.beginPath(); ctx.moveTo(left, top - 8); ctx.lineTo(left, h - 24);
+    ctx.strokeStyle = C.faint; ctx.globalAlpha = 0.6; ctx.stroke(); ctx.globalAlpha = 1;
+    label('LIVE SQL AGGREGATE · LAST 30 DAYS', 8, h - 8, C.ink, 0.6);
+  }
+  var mouse = {x:-999, y:-999, over:false};
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    w = r.width; h = r.height;
+    canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function project(x,y,z){
+    var ca=Math.cos(az), sa=Math.sin(az);
+    var X=x*ca - z*sa, Z=x*sa + z*ca;
+    var ce=Math.cos(el), se=Math.sin(el);
+    var Y=y*ce - Z*se, Z2=y*se + Z*ce;
+    var d=4.6, f=d/(d+Z2);
+    var s=Math.min(w, h*1.55)*0.265;
+    return {sx:w/2 + X*s*f, sy:h/2 - Y*s*f, depth:Z2};
+  }
+  function label(text, x, y, col, alpha){
+    ctx.font='10px "IBM Plex Mono", ui-monospace, monospace';
+    ctx.textBaseline='bottom';
+    ctx.globalAlpha=alpha; ctx.fillStyle=col;
+    ctx.fillText(text, x, y);
+    ctx.globalAlpha=1;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    if(mode === 1){
+      var inside = drawGeofence();
+      roAz.textContent = 'PLAN · SITE A';
+      roEl.textContent = 'R 120 M';
+      roSync.innerHTML = inside === CREW.length
+        ? 'CREW <b>' + inside + '</b>/' + CREW.length + ' ON SITE'
+        : 'CREW <b>' + inside + '</b>/' + CREW.length + ' ON SITE · <span class="warn">' + (CREW.length - inside) + ' EN ROUTE</span>';
+      return;
+    }
+    if(mode === 2){
+      drawFunnel();
+      roAz.textContent = 'FUNNEL · 5 STEPS';
+      roEl.textContent = 'DROP-OFF';
+      roSync.innerHTML = 'CONVERSION <b>19%</b> · <span class="warn">7 NEED A HUMAN</span>';
+      return;
+    }
+
+    var g=[[-W,LVL[0]-0.02,-D],[W,LVL[0]-0.02,-D],[W,LVL[0]-0.02,D],[-W,LVL[0]-0.02,D]].map(function(p){return project(p[0],p[1],p[2]);});
+    ctx.beginPath(); ctx.moveTo(g[0].sx,g[0].sy);
+    for(var i=1;i<4;i++) ctx.lineTo(g[i].sx,g[i].sy);
+    ctx.closePath(); ctx.fillStyle=C.faint; ctx.globalAlpha=0.09*plot; ctx.fill(); ctx.globalAlpha=1;
+
+    /* the sheet plots itself on first view, segment by segment */
+    var drawn = plot * segs.length;
+    for(var s=0;s<segs.length;s++){
+      if(s >= drawn) break;
+      var q=segs[s], a=project(q[0],q[1],q[2]), b=project(q[3],q[4],q[5]);
+      var part = Math.min(drawn - s, 1);
+      var ex = a.sx + (b.sx - a.sx) * part, ey = a.sy + (b.sy - a.sy) * part;
+      var near=1-Math.min(Math.max(((a.depth+b.depth)/2 + 1.6)/3.2, 0), 1);
+      ctx.beginPath(); ctx.moveTo(a.sx,a.sy); ctx.lineTo(ex,ey);
+      ctx.strokeStyle = q[6] ? C.faint : C.line;
+      ctx.globalAlpha = (q[6] ? 0.24 : 0.40) + near*(q[6] ? 0.22 : 0.45);
+      ctx.lineWidth = q[6] ? 0.8 : 1;
+      ctx.stroke();
+      /* the pen tip, riding the line being drawn */
+      if(part < 1){
+        ctx.beginPath(); ctx.arc(ex, ey, 2.2, 0, Math.PI*2);
+        ctx.fillStyle = C.line; ctx.globalAlpha = 0.9; ctx.fill();
+      }
+    }
+    ctx.globalAlpha=1;
+    if(plot < 1) return;
+
+    var order = PINS.map(function(p){ return {p:p, base:project(p.x,p.y,p.z), head:project(p.x,p.y+0.19,p.z)}; })
+                    .sort(function(m,n){ return n.base.depth - m.base.depth; });
+
+    order.forEach(function(o){
+      var p=o.p, col = p.synced ? C.line : C.ember;
+      ctx.beginPath(); ctx.moveTo(o.base.sx,o.base.sy); ctx.lineTo(o.head.sx,o.head.sy);
+      ctx.strokeStyle=col; ctx.globalAlpha=0.55; ctx.lineWidth=1; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(o.base.sx-3,o.base.sy); ctx.lineTo(o.base.sx+3,o.base.sy);
+      ctx.globalAlpha=0.5; ctx.stroke();
+      if(p.t>0){
+        ctx.beginPath(); ctx.arc(o.head.sx,o.head.sy, 3+p.t*14, 0, Math.PI*2);
+        ctx.strokeStyle=C.line; ctx.globalAlpha=0.5*(1-p.t); ctx.stroke();
+      }
+      ctx.beginPath(); ctx.arc(o.head.sx,o.head.sy, p.synced?2.6:3.1, 0, Math.PI*2);
+      ctx.fillStyle=col; ctx.globalAlpha=1; ctx.fill();
+      if(!p.synced){
+        ctx.beginPath(); ctx.arc(o.head.sx,o.head.sy,5.4,0,Math.PI*2);
+        ctx.strokeStyle=col; ctx.globalAlpha=0.35; ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+    });
+
+    /* pointer reveal: uncover the tags nearest the cursor */
+    if(mouse.over){
+      ctx.beginPath(); ctx.arc(mouse.x, mouse.y, 74, 0, Math.PI*2);
+      ctx.strokeStyle=C.faint; ctx.globalAlpha=0.22; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1;
+      order.forEach(function(o){
+        var dx=o.head.sx-mouse.x, dy=o.head.sy-mouse.y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d>74) return;
+        var a=1-d/74, col = o.p.synced ? C.line : C.ember;
+        ctx.beginPath(); ctx.moveTo(o.head.sx+5, o.head.sy-4);
+        ctx.lineTo(o.head.sx+18, o.head.sy-15); ctx.lineTo(o.head.sx+50, o.head.sy-15);
+        ctx.strokeStyle=col; ctx.globalAlpha=0.55*a; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1;
+        label(o.p.id + (o.p.synced ? ' · SYNCED' : ' · QUEUED'), o.head.sx+20, o.head.sy-18, col, 0.95*a);
+      });
+    } else {
+      var lead = order.filter(function(o){ return !o.p.synced; }).pop();
+      if(lead){
+        ctx.beginPath(); ctx.moveTo(lead.head.sx+5, lead.head.sy-4);
+        ctx.lineTo(lead.head.sx+18, lead.head.sy-15); ctx.lineTo(lead.head.sx+52, lead.head.sy-15);
+        ctx.strokeStyle=C.ember; ctx.globalAlpha=0.6; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1;
+        label(lead.p.id + ' · QUEUED', lead.head.sx+20, lead.head.sy-18, C.ember, 0.9);
+      }
+    }
+  }
+
+  var roAz=document.getElementById('ro-az'), roEl=document.getElementById('ro-el'), roSync=document.getElementById('ro-sync');
+  function pad(n,l){ n=String(Math.round(n)); while(n.length<l) n='0'+n; return n; }
+  function updateReadout(){
+    roAz.textContent='AZ '+pad(((-az*180/Math.PI)%360+360)%360,3)+'°';
+    roEl.textContent='EL '+pad(el*180/Math.PI,2)+'°';
+    var done=PINS.filter(function(p){return p.synced;}).length;
+    roSync.innerHTML = done===PINS.length
+      ? 'QUEUE <b>'+done+'</b>/'+PINS.length+' SYNCED'
+      : 'QUEUE <b>'+done+'</b>/'+PINS.length+' SYNCED · <span class="warn">'+(PINS.length-done)+' PENDING</span>';
+  }
+
+  var next=0, lastSync=0;
+  function stepSync(now){
+    if(next>=PINS.length){
+      if(now-lastSync>2800){ PINS.forEach(function(p){p.synced=false;p.t=0;}); next=0; lastSync=now; updateReadout(); }
+    } else if(now-lastSync>640){
+      PINS[next].synced=true; PINS[next].t=0.001; next++; lastSync=now; updateReadout();
+    }
+    PINS.forEach(function(p){ if(p.t>0){ p.t+=0.035; if(p.t>=1) p.t=0; } });
+  }
+
+  var dragging=false,lastX=0,lastY=0,idle=0;
+  canvas.addEventListener('pointerdown', function(e){ canvas.setPointerCapture(e.pointerId); dragging=true; lastX=e.clientX; lastY=e.clientY; idle=0; });
+  canvas.addEventListener('pointermove', function(e){
+    var r=canvas.getBoundingClientRect();
+    mouse.x=e.clientX-r.left; mouse.y=e.clientY-r.top; mouse.over=true;
+    if(dragging){
+      e.preventDefault();
+      az += (e.clientX-lastX)*0.008;
+      el = Math.max(-0.12, Math.min(0.92, el + (e.clientY-lastY)*0.005));
+      lastX=e.clientX; lastY=e.clientY; idle=0; updateReadout();
+    }
+  });
+  canvas.addEventListener('pointerleave', function(){ mouse.over=false; });
+  window.addEventListener('pointerup', function(){ dragging=false; });
+  window.addEventListener('pointercancel', function(){ dragging=false; });
+
+  var visible=true;
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(en){ visible=en[0].isIntersecting; },{threshold:0}).observe(canvas);
+  }
+  function frame(now){
+    if(visible){
+      if(plot < 1){
+        if(plotStart === null) plotStart = now;
+        plot = Math.min((now - plotStart) / PLOT_MS, 1);
+        if(plot === 1) lastSync = now + 260;
+      }
+      if(!reduce && mode === 1) crewT += 0.016;
+      if(!reduce && plot >= 1 && mode === 0){
+        if(!dragging){ idle++; if(idle>50) az += 0.0021; }
+        stepSync(now);
+        if(!dragging && idle>50 && idle%14===0) updateReadout();
+      }
+      draw();
+    }
+    requestAnimationFrame(frame);
+  }
+  /* switch drawings; each one plots itself in */
+  var caps = {
+    0: ['FireArrest', '4 storeys · 14 fire-safety assets'],
+    1: ['ClockedIn', 'geofenced site · 6 operatives'],
+    2: ['Funnel CRM', 'enquiry to paid · per-step drop-off']
+  };
+  var capEl = document.getElementById('vp-cap');
+  document.querySelectorAll('.vt').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.vt').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      mode = parseInt(btn.dataset.mode, 10);
+      if(capEl) capEl.innerHTML = caps[mode][0] + ' <span>' + caps[mode][1] + '</span>';
+      if(!reduce){ plot = 0; plotStart = null; crewT = 0; }
+      draw();
+    });
+  });
+
+  window.addEventListener('resize', function(){ resize(); draw(); });
+  resize();
+  if(reduce) PINS.forEach(function(p){ p.synced=true; });
+  updateReadout(); draw();
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<style>
+/* "All interfaces" lives in the flow at the end of the page — a fixed chip
+   floated over the text on phones, which is the bug this replaces. */
+.rg-back{display:inline-flex;align-items:center;gap:8px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  color:inherit;text-decoration:none;padding:12px 18px;border:1px solid currentColor;border-radius:3px;
+  opacity:.65;transition:opacity .3s ease,transform .3s cubic-bezier(.2,.8,.3,1)}
+.rg-back:hover,.rg-back:focus-visible{opacity:1;transform:translateY(-2px)}
+.rg-foot{display:flex;justify-content:center;padding:10px 20px calc(40px + env(safe-area-inset-bottom))}
+/* the same link, small, in the header nav */
+.rg-top{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;color:inherit;opacity:.62;white-space:nowrap}
+.rg-top:hover{opacity:1}
+@media print{.rg-back,.rg-foot,.rg-top{display:none}}
+</style>
+<div class="rg-foot"><a class="rg-back" href="../" aria-label="Back to all five interfaces">&larr; All interfaces</a></div>
+</body>
+</html>

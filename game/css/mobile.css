@@ -1,0 +1,99 @@
+/* ---------------------------------------------------------------------------
+   mobile.css — layout for phones, added for the web build.
+   The panels (pause, defeat, victory) and the front-end shell were built for a
+   desktop viewport: on a landscape phone the card ran 594px tall inside a 375px
+   screen and the Resume button sat off-screen. These rules only apply on short
+   or narrow viewports, so the desktop layout is untouched.
+--------------------------------------------------------------------------- */
+@media (max-height: 620px), (max-width: 760px) {
+  /* let a panel scroll instead of centring content off both edges */
+  .panel {
+    place-items: start center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .card {
+    width: min(660px, 94vw);
+    padding: 16px 18px;
+    margin: auto;
+  }
+  .card.wide { width: min(940px, 96vw); }
+
+  h1 { font-size: clamp(26px, 6.4vw, 44px); line-height: .92; margin: 8px 0 0; }
+  .eyebrow { font-size: 9px; letter-spacing: .3em; }
+  .rule { margin: 12px 0; }
+  .lede { font-size: 11.5px; line-height: 1.65; }
+
+  /* two-column splits stack — the inline grid-template on the markup needs this */
+  .split { grid-template-columns: 1fr !important; gap: 14px !important; }
+
+  .tiles { gap: 8px; }
+  .tiles b { font-size: 18px; }
+  .keys { gap: 6px 12px; margin: 14px 0 16px; font-size: 9.5px; }
+  .keys kbd { padding: 1px 5px; margin-right: 5px; }
+
+  .row { gap: 8px; }
+  button { padding: 11px 18px; font-size: 11px; letter-spacing: .16em; }
+  .opt { margin-top: 14px; gap: 8px; }
+  input[type=range] { width: 96px; }
+
+  /* the run-over card scrolled internally, hiding "Run it again" below its own
+     fold. Let the card grow and the panel do the scrolling instead. */
+  .endCard { max-height: none; overflow: visible; }
+
+  /* the front-end menu: rail across the top, shell grows with its content */
+  .shell {
+    grid-template-columns: 1fr;
+    height: auto;
+    max-height: none;
+    width: min(1180px, 96vw);
+  }
+  .rail { flex-direction: row; align-items: center; gap: 12px; overflow-x: auto; padding: 12px 14px; }
+  #nav { flex-direction: row; }
+  .railFoot { display: none; }
+}
+
+/* very short landscape: trim further so the action row always lands on screen */
+@media (max-height: 430px) {
+  h1 { font-size: clamp(22px, 5.4vw, 34px); }
+  .card { padding: 12px 14px; }
+  .lede { display: none; }              /* flavour text, not instructions */
+  .keys { margin: 10px 0 12px; }
+  button { padding: 9px 14px; font-size: 10px; }
+}
+
+/* On a short screen the action row (Resume / Run it again) must never be the thing
+   you have to scroll to find — pin it to the bottom of the scrolling panel. */
+@media (max-height: 620px) {
+  .panel .card .row {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-top: 14px;
+    padding: 10px 0 4px;
+    background: linear-gradient(180deg, rgba(6,9,17,0) 0%, rgba(6,9,17,.92) 22%, rgba(6,9,17,.97) 100%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  /* more nav fits across the top rail before it needs a sideways scroll */
+  .rail #nav button { padding: 9px 12px; font-size: 10px; letter-spacing: .12em; }
+  .rail .brand .bt em { display: none; }
+}
+
+/* Short landscape: the menu's Deploy row sat below the fold. Fixed positioning cannot
+   help (the panel's backdrop-filter becomes the containing block), so trim the bulk
+   above it instead until the primary action fits on screen. */
+@media (max-height: 470px) {
+  #menu h1 { font-size: clamp(20px, 4.4vw, 30px); margin: 4px 0 0; }
+  #menu .lede { display: none; }
+  #menu .eyebrow { font-size: 8.5px; }
+  #menu .homeGrid { grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  #menu .rule { margin: 8px 0; }
+  #menu .tick { display: none; }
+  .rail { padding: 8px 12px; }
+  .rail .brand .mark { width: 26px; height: 26px; font-size: 10px; }
+  #menu .stage { padding: 12px 16px; }
+}

@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon-neon.svg">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Neon Runner</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+<a class="skip" href="#nav">Skip to menu</a>
+
+<div id="perf" aria-hidden="true"></div>
+<!-- Scope overlays live OUTSIDE #hud, between the canvas and the HUD, so the
+     lens blur (backdrop-filter) only affects the rendered world — the HUD stays sharp. -->
+<svg id="dotSight" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+<div id="scopeTube" aria-hidden="true">
+  <!-- reticle contents are drawn per-optic by paintReticle() in js/06-player.js -->
+  <svg id="scopeReticle" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet"></svg>
+  <div id="scopeMag">4x</div>
+</div>
+
+<div id="hud" role="status" aria-live="off">
+  <!-- TOP CENTRE — contract strip: the only always-on text -->
+  <div id="strip">
+    <!-- Match clock. Lives inside the strip rather than floating over it: in PvP the wave
+         and day-clock units are hidden, so this drops into the space they leave. -->
+    <span class="unit" id="mpTimerUnit"><b id="mpTimer">3:00</b><em>time</em></span>
+    <i class="sep" id="mpTimerSep"></i>
+    <span class="unit" id="unitWave"><b id="waveNum">01</b><em>wave</em></span>
+    <i class="sep" id="sepWave"></i>
+    <span class="unit" id="unitHostiles"><b id="remainVal">00</b><em>hostiles</em></span>
+    <i class="sep" id="sepHostiles"></i>
+    <span class="unit sm" id="unitClock"><b id="clockTime">00:00</b><em id="clockPhase">night</em></span>
+    <i class="sep" id="sepClock"></i>
+    <span class="unit sm" id="unitMap"><b id="clockMap">Rain District</b><em id="topbarName">operator</em></span>
+  </div>
+  <div id="objective">Clear five waves, then extract — or push to ten</div>
+
+  <div id="bossBar">
+    <div id="bossHead"><span id="bossName">WARDEN-01</span><span id="bossCores"></span></div>
+    <div id="bossTrack"><div id="bossFill"></div></div>
+  </div>
+
+  <!-- TOP RIGHT — situational cluster -->
+  <div id="radarCluster">
+    <div id="minimapWrap">
+      <canvas id="minimap" width="316" height="316" aria-hidden="true"></canvas>
+      <div id="miniLabel">TACTICAL</div>
+    </div>
+    <div id="radarFoot">
+      <span><b id="scoreVal">0</b><em>score</em></span>
+      <span><b id="killVal">00</b><em>kills</em></span>
+    </div>
+    <div id="miniLegend">
+      <span><b style="background:#ff2f7a"></b>Hostile</span>
+      <span><b style="background:#a46bff"></b>Gunner</span>
+      <span><b style="background:#ffb347"></b>Heavy</span>
+      <span><b style="background:#35ffc4;border-radius:50%"></b>Supply</span>
+      <span><b style="background:#ff7a18"></b>Drum</span>
+    </div>
+    <div id="proxLabel"></div>
+  </div>
+
+  <!-- BOTTOM LEFT — vitals -->
+  <div id="vitals">
+    <div id="chips"><div id="modRow"></div>
+      <div class="buff" id="bOver"><span>Overdrive</span><i id="bOverBar"></i></div>
+      <div class="buff" id="bFoc"><span>Time fracture</span><i id="bFocBar"></i></div>
+      <div id="shieldChip">Barrier <b id="shieldVal">0</b></div>
+    </div>
+    <div class="vHead"><b id="hpVal">100</b><em>integrity</em></div>
+    <div id="hpBar"><div id="hpFill"></div><div id="shFill"></div><div class="ticks"></div></div>
+    <div id="dashWrap"><div id="dashFill"></div><em>dash</em></div>
+    <div id="abilityBox">
+      <div id="abilIcon"><svg viewBox="0 0 40 40"><circle id="abilRing" cx="20" cy="20" r="16"/></svg><b id="abilKey">F</b></div>
+      <div class="abilText"><b id="abilName">Breach</b><span id="abilState">Ready</span></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM RIGHT — weapon -->
+  <div id="weapon">
+    <div id="wpnName">Pulse Rifle</div>
+    <div id="ammoRow"><b id="ammoVal">30</b><em id="wpnSub">7.6mm · full auto</em></div>
+    <div id="pips"></div>
+    <div id="slots"></div>
+    <div id="reloadRing"></div>
+    <div id="nadeRow"><b id="nadeVal">2</b><em>grenades · G</em></div>
+    <div id="adsLabel">AIM</div>
+    <div id="stanceChip">CROUCHED</div>
+    <div id="scopeChip">Iron Sights</div>
+  </div>
+
+  <!-- weapon pickup offer: shown when standing on a crate you have not asked for yet -->
+  <div id="takePrompt"></div>
+  <!-- active environmental event: name, what it means, and time remaining -->
+  <div id="eventBox">
+    <div class="evHead"><span id="evTag">HAZARD</span><b id="evName">GRID FAILURE</b></div>
+    <div id="evHint"></div>
+    <div class="evTrack"><i id="evFill"></i></div>
+  </div>
+  <div id="contractHud"></div>
+  <div id="waypoint">
+    <div id="wpArrow">&#9650;</div>
+    <div class="wpBody"><b>EXTRACTION</b><span id="wpDist">0m</span></div>
+  </div>
+
+  <div id="scoreboard">
+    <div id="sbTitle">Deathmatch</div>
+    <div id="sbRows"></div>
+  </div>
+  <div id="respawnBox">
+    <b>DOWN</b>
+    <span>Respawning in <i id="respawnCount">3.0</i>s</span>
+  </div>
+
+  <!-- Match results: shown when a PvP match ends (frag limit or time), then auto-returns
+       to the Multiplayer lobby. K = kills, D = deaths, A = assists. -->
+  <div id="mpResult">
+    <div class="mrCard">
+      <div class="mrTitle" id="mpResultTitle">MATCH OVER</div>
+      <div class="mrSub" id="mpResultSub"></div>
+      <div class="mrTable" id="mpResultRows"></div>
+      <button id="mpResultBtn" class="bigGo">Back to lobby <em>(<i id="mpResultCount">12</i>)</em></button>
+    </div>
+  </div>
+
+  <!-- weapon wheel: hold Q, steer with the mouse, release to commit.
+       Real pie slices (SVG) with HTML labels on top so the display font stays crisp. -->
+  <div id="wheel" aria-hidden="true">
+    <svg id="wheelSvg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="wheelRing"></div>
+    <div id="wheelHub">
+      <b id="wheelName">Select</b>
+      <span id="wheelSub"></span>
+      <em>release Q</em>
+    </div>
+    <div id="wheelPtr"></div>
+  </div>
+
+  <!-- CENTRE -->
+  <div id="cross"><i></i><i></i><i></i><i></i><i></i></div>
+  <div id="hitmark"></div>
+  <div id="dmgDir"></div>
+  <div id="fx"></div>
+  <div id="toast"></div>
+  <div id="combo"></div>
+</div>
+
+<div class="panel show" id="menu">
+  <div class="shell">
+
+    <aside class="rail">
+      <div class="brand">
+        <span class="mark">NR</span>
+        <span class="bt">Neon&nbsp;Runner<em>build 2026.4</em></span>
+      </div>
+      <nav id="nav" aria-label="Main menu">
+        <button class="on" data-view="home"><i></i>Home</button>
+        <button data-view="deploy"><i></i>Deploy</button>
+        <hr class="navSep" aria-hidden="true">
+        <button data-view="settings"><i></i>Settings</button>
+        <button data-view="manual"><i></i>Field manual</button>
+        <!-- Multiplayer needs server.js running on a LAN host; hidden on the hosted build. -->
+        <hr class="navSep" aria-hidden="true">
+        <button data-view="roster"><i></i>Operators</button>
+        <button data-view="armoury"><i></i>Armoury</button>
+        <button data-view="records"><i></i>Records</button>
+        <button id="resumeNav" style="display:none;color:var(--mint)"><i></i>Resume run</button>
+      </nav>
+      <div class="railFoot">
+        <span id="railCred">0 cr · lv 1</span>
+        <span id="statusLine">Standing by</span>
+      </div>
+    </aside>
+
+    <section class="stage">
+      <!-- HOME -->
+      <div class="view on" id="v-home">
+        <div class="eyebrow">Contract 04 · night shift</div>
+        <h1>Neon<br>Runner<span>.</span></h1>
+        <p class="lede">Hold the block. Five waves, then the pad lights up.
+          Every fifth wave brings a Warden.</p>
+        <div class="homeGrid">
+          <label class="field">
+            <span>Callsign</span>
+            <input id="homeNameInput" type="text" maxlength="18" placeholder="OPERATOR" autocomplete="off" spellcheck="false">
+          </label>
+          <label class="field">
+            <span>Drop zone</span>
+            <select id="homeMapSel"></select>
+          </label>
+          <label class="field">
+            <span>Difficulty</span>
+            <select id="homeDiffSel"></select>
+          </label>
+        </div>
+        <div class="row">
+          <button id="play">Deploy</button>
+          <button class="ghost" data-goto="deploy">Loadout</button>
+          <button class="ghost" data-goto="manual">How to play</button>
+        </div>
+        <div class="tick">
+          <span><b id="homeChar">Vanguard</b>operator</span>
+          <span><b id="homeMap">Rain District</b>drop zone</span>
+          <span><b id="homeName">OPERATOR</b>callsign</span>
+          <span><b id="homePerk">Scavenger</b>loadout</span>
+          <span><b id="homeDiff">Normal</b>difficulty</span>
+          <span><b id="homeBest">—</b>best wave</span>
+        </div>
+      </div>
+
+      <!-- DEPLOY -->
+      <!-- Deploy runs as an explicit three-step flow (zone -> loadout -> confirm) rather
+           than one dense two-column form. Element ids are unchanged so the existing
+           builders in 09-loop.js / 10-ui.js / 11-multiplayer.js keep working. -->
+      <div class="view" id="v-deploy">
+        <div class="vhead"><h2>Deploy</h2><p>Three steps: choose where you drop, what you carry, then commit.</p></div>
+
+        <section class="step" aria-labelledby="stepZoneH">
+          <div class="stepHead"><span class="stepNo">1</span>
+            <div><h3 id="stepZoneH">Drop zone</h3><p>Where the contract puts you down.</p></div>
+          </div>
+          <div id="mapList" class="cardGrid"></div>
+          <p id="mapBlurb" class="stepNote"></p>
+        </section>
+
+        <section class="step" aria-labelledby="stepKitH">
+          <div class="stepHead"><span class="stepNo">2</span>
+            <div><h3 id="stepKitH">Loadout</h3><p>Three weapon slots, then a perk.</p></div>
+          </div>
+          <div class="subLbl">Carried weapons <em>choose a slot, then a weapon</em></div>
+          <div id="slotPick"></div>
+          <div id="armoryPool" class="cardGrid compact"></div>
+          <div class="subLbl">Loadout perk</div>
+          <div id="perkList" class="cardGrid"></div>
+        </section>
+
+        <section class="step" aria-labelledby="stepGoH">
+          <div class="stepHead"><span class="stepNo">3</span>
+            <div><h3 id="stepGoH">Confirm</h3><p>Callsign, difficulty, and drop.</p></div>
+          </div>
+          <div class="confirmRow">
+            <div class="nameField">
+              <label class="subLbl" for="playerName">Callsign</label>
+              <input id="playerName" type="text" maxlength="18" value="OPERATOR"
+                placeholder="Enter callsign" autocomplete="off" spellcheck="false">
+            </div>
+            <div>
+              <div class="subLbl">Difficulty</div>
+              <div id="diffList" class="cardGrid"></div>
+            </div>
+          </div>
+          <button id="deployBtn" class="bigGo">Begin drop</button>
+        </section>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="view" id="v-settings">
+        <div class="vhead"><h2>Settings</h2><p>Applies immediately. Nothing is stored between sessions.</p></div>
+        <div class="two">
+          <div>
+            <div class="lbl">Controls</div>
+            <div class="set"><label for="sens">Sensitivity</label><input id="sens" type="range" min="4" max="60" value="24"><span id="sensVal">24</span></div>
+            <div class="set"><label for="fovR">Field of view</label><input id="fovR" type="range" min="65" max="105" value="76"><span id="fovVal">76</span></div>
+            <div class="set"><label>Invert vertical</label><button class="sw" id="invertY"><i></i></button></div>
+            <div class="set"><label for="adsR">Aim sensitivity</label><input id="adsR" type="range" min="20" max="100" value="62"><span id="adsVal">62%</span></div>
+
+            <div class="lbl" style="margin-top:22px">Audio</div>
+            <div class="set"><label for="volR">Master volume</label><input id="volR" type="range" min="0" max="100" value="50"><span id="volVal">50</span></div>
+            <div class="set"><label>Ambience</label><button class="sw on" id="ambT"><i></i></button></div>
+
+            <div class="lbl" style="margin-top:22px">Soundtrack</div>
+            <div class="set"><label for="musicVol">Music volume</label><input id="musicVol" type="range" min="0" max="100" value="55"><span id="musicVolVal">55</span></div>
+            <div class="musicBtns">
+              <button class="ghost sm" id="musicPrev">Prev</button>
+              <button class="ghost sm" id="musicNext">Next</button>
+              <button class="ghost sm" id="musicRescan">Rescan folders</button>
+            </div>
+            <div id="musicStatus" class="musicStatus">Scanning…</div>
+            <p class="musicNote">Your music lives in <b>folders</b>, not in this screen. Drop audio files into:<br>
+              <code>music/menu/</code> — plays in the menus<br>
+              <code>music/combat/</code> — plays during a run<br><br>
+              Name them <b>01, 02, 03…</b> (<code>.mp3 .ogg .m4a .opus .wav .webm</code>). Both lists are
+              <b>shuffled at the start of every match</b>. Leave a folder empty and the other covers both;
+              leave both empty and the built-in adaptive score plays. <b>N</b> skips to the next track, reshuffling when the list wraps. There is no source setting — if there are files, they play.</p>
+          </div>
+          <div>
+            <div class="lbl">Display</div>
+            <div class="set"><label>Wet reflections</label><button class="sw on" id="qual"><i></i></button></div>
+            <div class="set"><label>Adaptive resolution</label><button class="sw on" id="adaptT"><i></i></button></div>
+            <div class="set"><label for="bloomR">Bloom</label><input id="bloomR" type="range" min="0" max="140" value="78"><span id="bloomVal">78</span></div>
+            <div class="set"><label for="vibR">Colour</label><input id="vibR" type="range" min="0" max="200" value="100"><span id="vibVal">100</span></div>
+            <div class="set"><label>Day/night cycle</label><button class="sw on" id="dayCycleT"><i></i></button></div>
+
+            <div class="lbl" style="margin-top:22px">Interface</div>
+            <div class="set"><label>Tactical radar</label><button class="sw on" id="radarT"><i></i></button></div>
+            <div class="set"><label>Damage numbers</label><button class="sw on" id="dmgT"><i></i></button></div>
+            <div class="set"><label>Screen shake</label><button class="sw on" id="shakeT"><i></i></button></div>
+            <div class="set"><label>Performance readout</label><button class="sw" id="perfT"><i></i></button></div>
+            <div class="set"><label>Contextual HUD fade</label><button class="sw on" id="dynT"><i></i></button></div>
+            <div class="set"><label for="hudScale">HUD scale</label><input id="hudScale" type="range" min="70" max="140" value="100"><span id="hudScaleVal">100</span></div>
+            <div class="set"><label for="hudOpacity">HUD opacity</label><input id="hudOpacity" type="range" min="40" max="100" value="100"><span id="hudOpacityVal">100</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIELD MANUAL -->
+      <div class="view" id="v-manual">
+        <div class="vhead"><h2>Field manual</h2><p>Everything the briefing left out.</p></div>
+        <div class="two">
+          <div>
+            <div class="lbl">Controls</div>
+            <div class="keys">
+              <div><kbd>WASD</kbd>Move</div><div><kbd>Space</kbd>Jump</div>
+              <div><kbd>LMB</kbd>Fire</div><div><kbd>RMB</kbd>Aim</div>
+              <div><kbd>Shift</kbd>Sprint</div><div><kbd>E</kbd>Dash</div>
+              <div><kbd>Ctrl</kbd>Crouch (hold)</div><div><kbd>C</kbd>Crouch (toggle)</div>
+              <div><kbd>R</kbd>Reload</div><div><kbd>1–3</kbd>Weapons</div>
+              <div><kbd>Q</kbd>Swap</div>
+      <div><kbd>V</kbd>Optic</div>
+      <div><kbd>G</kbd>Grenade</div><div><kbd>T</kbd>Take weapon</div>
+      <div><kbd>F</kbd>Ability</div><div><kbd>Tab</kbd>Scoreboard</div>
+      <div><kbd>Esc</kbd>Pause</div>
+            </div>
+            <div class="lbl" style="margin-top:22px">Threats &amp; systems</div>
+            <ul class="notes">
+              <li><b>Extraction opens at wave 5</b> and never closes. Leaving pays out immediately — but clearing <b>wave 10</b> and then extracting adds a <b>+1,500 cr deep-run bonus</b> and a chunk of XP. Go down before you reach the pad and you lose both.</li>
+              <li><b>Bosses hold every fifth wave.</b> A <b>Warden</b> at wave 5, then a <b>Sovereign</b> at wave 10 — and they alternate from there. Cores sit behind armour on both: the hull takes nothing until every core is gone.</li>
+              <li><b>The Sovereign</b> is the harder fight. Five cores instead of three, a much heavier hull, and a second phase — below half health it overdrives into faster volleys, a five-wide fan, and starts calling escorts. It is the reason to stay past the pad.</li>
+              <li><b>Wave 6 is a breather</b> by design. The pressure eases straight after the Warden so you can spend what dropped, then climbs again to the wave-10 fight.</li>
+              <li><b>Drums</b> chain-detonate. Kite a pack past one and put a round through it.</li>
+              <li><b>District events</b> hit every third wave, drawn at random and never the same one twice running. <b>Grid failure</b> kills the power outright — every window and neon sign goes out, and hostile shells running hot are all you get. <b>Smog bank</b> collapses visibility but extends the radar. <b>Power surge</b> makes everything faster and pays more. <b>Grav flux</b>, <b>supply cache</b> and <b>ion wind</b> are gifts, not hazards — the banner tells you which you got.</li>
+              <li><b>Mods</b> are global. Salvage one and every weapon you own inherits it.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="lbl">Bestiary</div>
+            <div id="bestiary"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTIPLAYER -->
+      <div class="view" id="v-multiplayer">
+        <div class="vhead"><h2>Multiplayer</h2><p>Same wifi. One machine hosts, everyone else joins its address.</p></div>
+        <div class="two">
+          <div>
+            <div class="lbl">This session</div>
+            <div class="mpCard">
+              <b id="mpRole">Checking…</b>
+              <span id="mpRoleSub"></span>
+              <div id="mpAddr"></div>
+            </div>
+            <div class="mpLine">
+              <span class="mpDot" id="mpDot"></span>
+              <span id="mpStatus" class="mpStatus">Not connected</span>
+              <button class="ghost sm" id="mpConnect" style="margin-left:auto">Reconnect</button>
+            </div>
+            <div class="lbl" style="margin-top:20px">Match mode</div>
+            <div id="mpModes"></div>
+
+            <!-- Bots count as combatants, so these controls alone are enough to start a
+                 match with no server and nobody else connected. -->
+            <div class="lbl" style="margin-top:20px">Arena <em class="hintInline" id="mpArenaHint">every map is playable in multiplayer</em></div>
+            <div id="mpMaps" class="pillRow"></div>
+
+            <div class="lbl" style="margin-top:20px">Bots <em class="hintInline">play offline, no server needed</em></div>
+            <div class="botRow"><span>How many</span><div id="mpBotCount" class="pillRow"></div></div>
+            <div class="botRow"><span>Skill</span><div id="mpBotSkill" class="pillRow"></div></div>
+
+            <div class="mpLine" style="margin-top:16px">
+              <label for="mpLimit" style="font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase">Frag limit</label>
+              <select id="mpLimit" class="miniSel">
+                <option>5</option><option selected>10</option><option>15</option><option>25</option>
+              </select>
+            </div>
+
+            <!-- Time limit stops a match that never reaches the frag limit. Whichever cap is
+                 hit first ends it; on timeout the K/D/A card shows and we return to this screen. -->
+            <div class="mpLine" style="margin-top:10px">
+              <label for="mpTime" style="font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase">Time limit</label>
+              <select id="mpTime" class="miniSel">
+                <option value="0">None</option><option value="120">2 min</option>
+                <option value="180" selected>3 min</option><option value="300">5 min</option>
+                <option value="600">10 min</option>
+              </select>
+            </div>
+            <button id="mpStart" style="width:100%;margin-top:12px">Start match</button>
+
+            <div class="hint" style="margin-top:16px">
+              <b>Playing bots on your own?</b> You do not need the server at all — pick a mode,
+              choose how many bots, and press Start match.<br><br>
+              To play with other people: run <code>node server.js</code> next to the game file on one machine, then
+              open the address it prints. Everyone else on the same wifi opens that same address
+              in their browser — no install needed on their end.<br><br>
+              <b>The host sets the match.</b> Arena, bots, frag limit and time limit all travel with the
+              match, so everyone drops into the same map on the same layout. A match ends on whichever
+              cap comes first, then the scoreboard shows kills, deaths and assists before returning here.
+              If the host abandons, the match ends for everyone.<br><br>
+              <b>Team deathmatch</b> splits by join order and spawns each side together at opposite ends.
+              Your team shows on the radar as arrows pointing the way each player is facing.
+            </div>
+          </div>
+          <div>
+            <div class="lbl">Connected <em id="mpCount" class="hintInline">1 player</em></div>
+            <div id="mpRoster"></div>
+            <div class="hint" style="margin-top:18px">
+              Multiplayer is <b>PvP only</b>: Duel, Deathmatch and Team Deathmatch. Positions,
+              hits, kills, scores and respawns all sync between machines.<br><br>
+              Inside a match the Armoury is switched off — permanent upgrades are ignored and
+              every weapon is issued to everyone, so matches are decided by aim rather than by
+              who has ground more credits.<br><br>
+              For solo PvE waves, use <b>Deploy</b> from the main menu.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROSTER -->
+      <div class="view" id="v-roster">
+        <div class="vhead"><h2>Operators</h2><p>One active power each. Playstyles, not power tiers.</p></div>
+        <div class="wallet" style="grid-template-columns:auto 1fr">
+          <div><span>Balance</span><b id="rosterCred">0</b><em>credits</em></div>
+          <div><span>Selected</span><b id="rosterSel" style="color:var(--ink)">Vanguard</b><em id="rosterRole">Assault</em></div>
+        </div>
+        <div id="rosterList"></div>
+      </div>
+
+      <!-- ARMOURY -->
+      <div class="view" id="v-armoury">
+        <div class="vhead">
+          <h2>Armoury</h2>
+          <p>Credits are earned on every run and never expire.</p>
+        </div>
+        <div class="wallet">
+          <div><span>Balance</span><b id="credBal">0</b><em>credits</em></div>
+          <div><span>Clearance</span><b id="lvlBal">1</b><em>level</em></div>
+          <div class="xpBox">
+            <span id="xpText">0 / 400 XP</span>
+            <div class="xpTrack"><div id="xpFill"></div></div>
+          </div>
+        </div>
+        <!-- Tabs replace the old two-column dump: one section at a time, as cards.
+             buildShop() in 11-multiplayer.js owns which pane is visible. -->
+        <div class="tabs" id="shopTabs" role="tablist"></div>
+        <div id="shopList" class="cardGrid"></div>
+        <div id="upgradeList" class="cardGrid"></div>
+        <div id="contractList" class="cardGrid"></div>
+      </div>
+
+      <!-- RECORDS -->
+      <div class="view" id="v-records">
+        <div class="vhead"><h2>Records</h2><p>This session only — nothing is written to disk.</p></div>
+        <div class="tiles">
+          <div><span>Best wave</span><b id="rWave">—</b></div>
+          <div><span>Best score</span><b id="rScore">—</b></div>
+          <div><span>Total kills</span><b id="rKills">0</b></div>
+          <div><span>Wardens down</span><b id="rBoss">0</b></div>
+          <div><span>Runs</span><b id="rRuns">0</b></div>
+          <div><span>Extractions</span><b id="rExt">0</b></div>
+        </div>
+        <div class="lbl" style="margin-top:26px">By drop zone</div>
+        <div id="mapRecords" class="tiles small"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="panel" id="pause">
+  <div class="card wide">
+    <div class="split" style="grid-template-columns:1.1fr 1fr">
+      <div>
+        <div class="eyebrow">Contract suspended</div>
+        <h1>Paused</h1>
+        <div class="rule"></div>
+        <p class="lede" id="pauseSub">The rain keeps falling without you.</p>
+        <div class="tiles" style="grid-template-columns:repeat(3,1fr);margin-top:22px">
+          <div><span>Wave</span><b id="pWave">1</b></div>
+          <div><span>Kills</span><b id="pKills">0</b></div>
+          <div><span>Score</span><b id="pScore">0</b></div>
+        </div>
+        <div class="lbl" style="margin-top:22px">Credits pending</div>
+        <div class="pendRow"><b id="pCred">0</b><span>banked when the run ends</span></div>
+        <div class="row" style="margin-top:26px">
+          <button id="resume">Resume</button>
+          <button class="ghost" id="pauseSettings">Settings</button>
+          <button class="ghost" id="quit">Abandon contract</button>
+        </div>
+      </div>
+      <div>
+        <div class="lbl">Contract progress</div>
+        <div id="pauseContracts"></div>
+        <div class="lbl" style="margin-top:20px">Quick adjust</div>
+        <div class="set"><label for="pSens">Sensitivity</label><input id="pSens" type="range" min="4" max="60" value="24"><span id="pSensVal">24</span></div>
+        <div class="set"><label for="pVol">Master volume</label><input id="pVol" type="range" min="0" max="100" value="50"><span id="pVolVal">50</span></div>
+        <div class="set"><label>Tactical radar</label><button class="sw on" id="pRadar"><i></i></button></div>
+        <div class="set"><label>Screen shake</label><button class="sw on" id="pShake"><i></i></button></div>
+        <div class="hint" style="margin-top:18px">Drop zone and loadout are locked until this run ends.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="end">
+  <!-- Extraction summary. Structured as: outcome -> what you did -> what it paid ->
+       where you are now, so the eye lands on the headline and then works down. -->
+  <div class="card endCard">
+    <div class="endHead">
+      <div>
+        <div class="eyebrow" id="endEyebrow">Contract closed</div>
+        <h1 id="endTitle">Extracted</h1>
+        <p class="lede" id="endSub"></p>
+      </div>
+      <div class="endStamp" id="endStamp">
+        <b id="endStampMap">Rain District</b>
+        <span id="endStampDiff">Normal</span>
+      </div>
+    </div>
+
+    <div class="endGrid">
+      <div class="endStat"><span>Kills</span><b id="sKills">0</b></div>
+      <div class="endStat"><span>Waves</span><b id="sWave">0</b></div>
+      <div class="endStat"><span>Score</span><b id="sScore">0</b></div>
+      <div class="endStat"><span>Accuracy</span><b id="sAcc">—</b></div>
+    </div>
+
+    <div class="endPay">
+      <div class="endPayHead">
+        <span>Payout</span>
+        <em id="sMult"></em>
+      </div>
+      <div id="payBreak" class="payBreak"></div>
+      <div class="endTotals">
+        <div class="endTotal"><span>Credits</span><b id="sCred">+0</b></div>
+        <div class="endTotal"><span>XP</span><b id="sXp">+0</b></div>
+      </div>
+    </div>
+
+    <div class="endLevel">
+      <div class="endLevelHead">
+        <span>Level <b id="endLvl">1</b></span>
+        <em id="endXpText">0 / 0 XP</em>
+      </div>
+      <div class="endXpTrack"><i id="endXpFill"></i></div>
+      <div id="levelUp">LEVEL UP</div>
+    </div>
+
+    <div class="row">
+      <button id="again">Run it again</button>
+      <button class="ghost" id="toMenu">Back to title</button>
+    </div>
+  </div>
+</div>
+
+<!-- three.js r128, with CDN fallbacks -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if(!window.THREE)document.write('<scr'+'ipt src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/scr'+'ipt>');</script>
+<script>if(!window.THREE)document.write('<scr'+'ipt src="https://unpkg.com/three@0.128.0/build/three.min.js"><\/scr'+'ipt>');</script>
+
+<!-- If three.js could not be reached, show a message and skip loading the game. -->
+<script>
+if (!window.THREE) {
+  document.getElementById('menu').innerHTML =
+    '<div class="card"><div class="eyebrow">No connection</div><h1>Offline</h1><div class="rule"></div>' +
+    '<p class="lede">The 3D engine (three.js) loads from a CDN and could not be reached. ' +
+    'Reconnect and reload, or download three.min.js into this folder and point the script tag at it.</p></div>';
+}
+</script>
+
+<!-- Game source, split by system. ORDER MATTERS: these are classic scripts that
+     share one global lexical scope, and later files reference earlier ones. -->
+<script src="js/01-core.js"></script>
+<script src="js/02-render.js"></script>
+<script src="js/03-world.js"></script>
+<script src="js/03b-nav.js"></script>
+<script src="js/04-fx-audio.js"></script>
+<script src="js/05-weapons.js"></script>
+<script src="js/06-player.js"></script>
+<script src="js/07-enemies.js"></script>
+<script src="js/08-hud.js"></script>
+<script src="js/09-loop.js"></script>
+<script src="js/10-ui.js"></script>
+<script src="js/11-multiplayer.js"></script>
+<script src="js/12-touch.js"></script>
+</body>
+</html>

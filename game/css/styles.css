@@ -1,0 +1,1094 @@
+:root{
+  --violet:#a46bff;
+  --void:#04050b; --plate:#080b14; --ink:#dfe8ff;
+  --ice:#7fe4ff; --mag:#ff2f7a; --amber:#ffb347; --mint:#35ffc4;
+  --dim:#5c6b8c;
+  --display:"Haettenschweiler","Arial Narrow Bold","Arial Black",Impact,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--void);color:var(--ink);
+  font-family:var(--mono);-webkit-font-smoothing:antialiased;cursor:default}
+#view{position:fixed;inset:0;display:block}
+b{font-weight:400}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:2;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  --hs:1;--ho:1}
+#hud b{font-weight:400}
+
+/* ===== TOP CENTRE: contract strip ===== */
+#strip{position:absolute;top:22px;left:50%;transform:translateX(-50%) scale(var(--hs));
+  display:flex;align-items:center;gap:18px;padding:9px 20px;opacity:var(--ho);
+  border:1px solid rgba(127,228,255,.14);background:rgba(4,7,14,.55);backdrop-filter:blur(6px)}
+#strip .unit{display:flex;flex-direction:column;align-items:center;line-height:1}
+#strip .unit b{font-family:var(--display);font-size:21px;letter-spacing:.04em;color:#fff}
+#strip .unit em{font-style:normal;font-size:7px;letter-spacing:.3em;color:var(--dim);margin-top:5px}
+#strip .unit.sm b{font-size:12px;font-family:var(--mono);letter-spacing:.14em;color:var(--ink)}
+#strip .sep{width:1px;height:22px;background:rgba(127,228,255,.16)}
+#unitHostiles b{color:var(--amber)}
+#objective{position:absolute;top:82px;left:0;right:0;text-align:center;color:#fff;
+  font-size:12px;font-weight:600;letter-spacing:.2em;opacity:0;transition:opacity .5s;
+  text-shadow:0 0 12px rgba(0,0,0,.9),0 2px 4px rgba(0,0,0,.9)}
+#objective.show{opacity:1}
+
+/* ===== BOSS ===== */
+#bossBar{position:absolute;left:50%;top:108px;transform:translateX(-50%) scale(var(--hs));
+  width:min(440px,54vw);display:none}
+#bossHead{display:flex;justify-content:space-between;align-items:baseline;font-size:9px;
+  letter-spacing:.3em;margin-bottom:5px}
+#bossName{color:var(--mag)}
+#bossCores{display:flex;gap:5px}
+#bossCores i{width:16px;height:3px;background:rgba(255,255,255,.16)}
+#bossCores i.live{background:var(--amber);box-shadow:0 0 7px var(--amber)}
+#bossTrack{height:5px;background:rgba(255,47,122,.16);border:1px solid rgba(255,47,122,.3)}
+#bossFill{height:100%;background:linear-gradient(90deg,#ff2f7a,#ff7a4a);transform-origin:left;transition:transform .12s}
+
+/* ===== TOP RIGHT: radar cluster ===== */
+#radarCluster{position:absolute;right:30px;top:96px;width:158px;opacity:var(--ho);
+  transform:scale(var(--hs));transform-origin:top right;transition:opacity .45s}
+#radarCluster.idle{opacity:calc(var(--ho) * .45)}
+#minimapWrap{position:relative;width:158px;height:158px}
+#minimap{width:158px;height:158px;display:block;filter:drop-shadow(0 6px 18px rgba(0,0,0,.5))}
+#miniLabel{position:absolute;left:0;right:0;bottom:-14px;text-align:center;font-size:9px;font-weight:600;
+  letter-spacing:.28em;color:#fff;opacity:.55}
+#radarFoot{display:flex;justify-content:space-between;margin-top:22px;padding-top:9px;
+  border-top:1px solid rgba(127,228,255,.12)}
+#radarFoot span{display:flex;flex-direction:column;line-height:1}
+#radarFoot span:last-child{align-items:flex-end}
+#radarFoot b{font-family:var(--display);font-size:17px;letter-spacing:.03em;color:var(--ink)}
+#radarFoot em{font-style:normal;font-size:9px;letter-spacing:.2em;color:#fff;opacity:.6;margin-top:4px}
+#miniLegend{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:10px;
+  font-size:9px;letter-spacing:.1em;color:#fff;opacity:.75;font-weight:500}
+#miniLegend span{display:flex;align-items:center;gap:4px}
+#miniLegend b{width:7px;height:7px;display:inline-block;box-shadow:0 0 4px currentColor}
+#proxLabel{margin-top:8px;font-size:10px;font-weight:700;letter-spacing:.16em;color:#fff;
+  text-shadow:0 0 8px var(--mag);text-align:right;min-height:12px}
+
+/* ===== BOTTOM LEFT: vitals ===== */
+#vitals{position:absolute;left:32px;bottom:34px;width:230px;opacity:var(--ho);
+  transform:scale(var(--hs));transform-origin:bottom left;transition:opacity .45s}
+#vitals.idle{opacity:calc(var(--ho) * .3)}
+#vitals.hit{animation:vhit .35s ease-out}
+@keyframes vhit{0%{transform:scale(calc(var(--hs)*1.05))}100%{transform:scale(var(--hs))}}
+.vHead{display:flex;align-items:baseline;gap:9px}
+.vHead b{font-family:var(--display);font-size:40px;line-height:.85;letter-spacing:.02em;color:#fff}
+.vHead em{font-style:normal;font-size:7px;letter-spacing:.3em;color:var(--dim)}
+#hpBar{position:relative;height:9px;margin-top:8px;background:rgba(127,228,255,.10);
+  border:1px solid rgba(127,228,255,.18);overflow:hidden}
+#hpFill{position:absolute;inset:0;background:var(--ice);transform-origin:left;
+  transition:transform .16s,background .3s}
+#shFill{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 5px);
+  opacity:.75;transform-origin:left;transform:scaleX(0);transition:transform .16s}
+#hpBar .ticks{position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent 0 19px,rgba(4,7,14,.85) 19px 21px)}
+#dashWrap{display:flex;align-items:center;gap:8px;margin-top:9px}
+#dashWrap em{font-style:normal;font-size:7px;letter-spacing:.26em;color:var(--dim)}
+#dashFill{width:104px;height:3px;background:var(--ice);transform-origin:left}
+#chips{display:flex;flex-direction:column;gap:4px;align-items:flex-start;margin-bottom:11px}
+#modRow{display:flex;flex-direction:column;gap:4px}
+#modRow span,#shieldChip{font-size:8px;letter-spacing:.18em;padding:3px 7px;
+  border:1px solid rgba(127,228,255,.3);background:rgba(4,8,16,.5);color:var(--ice)}
+#shieldChip{display:none}
+.buff{display:none;width:132px}
+.buff span{font-size:8px;letter-spacing:.22em;color:var(--amber)}
+.buff i{display:block;height:2px;margin-top:3px;background:var(--amber);transform-origin:left}
+#bFoc span{color:var(--violet)}#bFoc i{background:var(--violet)}
+
+/* ===== BOTTOM RIGHT: weapon ===== */
+#weapon{position:absolute;right:32px;bottom:34px;text-align:right;opacity:var(--ho);
+  transform:scale(var(--hs));transform-origin:bottom right;transition:opacity .45s}
+#weapon.idle{opacity:calc(var(--ho) * .32)}
+#wpnName{font-size:10px;letter-spacing:.28em;color:var(--ice);margin-bottom:7px}
+#ammoRow{display:flex;align-items:baseline;justify-content:flex-end;gap:10px}
+#ammoRow b{font-family:var(--display);font-size:50px;line-height:.8;letter-spacing:.02em;color:#fff}
+#ammoRow em{font-style:normal;font-size:8px;letter-spacing:.2em;color:var(--dim)}
+#weapon.low #ammoRow b{color:var(--amber)}
+#weapon.empty #ammoRow b{color:var(--mag);animation:crit 1s ease-in-out infinite}
+#pips{display:flex;gap:2px;justify-content:flex-end;margin-top:9px;height:11px}
+#pips i{width:3px;height:11px;background:rgba(127,228,255,.16)}
+#pips i.on{background:var(--ice);box-shadow:0 0 5px rgba(127,228,255,.6)}
+#slots{display:flex;gap:12px;justify-content:flex-end;margin-top:11px;font-size:8px;
+  letter-spacing:.18em;color:#2f3a52}
+#slots span.own{color:var(--dim)}
+#slots span.on{color:var(--amber)}
+#slots b{font-weight:400;margin-right:4px;opacity:.6}
+#reloadRing{position:absolute;right:-4px;bottom:66px;width:24px;height:24px;
+  border:2px solid transparent;border-top-color:var(--amber);border-radius:50%;opacity:0;transition:opacity .15s}
+#adsLabel{margin-top:8px;font-size:8px;letter-spacing:.3em;color:var(--mint);opacity:0;transition:opacity .2s}
+#adsLabel.on{opacity:.9}
+/* stance readout: sits with AIM so both handling states read from the same corner */
+#stanceChip{margin-top:4px;font-size:8px;letter-spacing:.3em;color:var(--amber);opacity:0;transition:opacity .15s}
+#stanceChip.on{opacity:.9}
+
+/* ===== contracts + waypoint ===== */
+/* top: is a fallback for the instant before positionContractHud() (11-multiplayer.js)
+   measures the radar cluster's real height and overrides it inline. */
+#contractHud{position:absolute;right:30px;top:400px;width:170px;opacity:var(--ho);
+  transform:scale(var(--hs));transform-origin:top right;display:flex;flex-direction:column;gap:5px}
+#contractHud div{padding:6px 8px;border-left:2px solid var(--mint);background:rgba(4,8,16,.55)}
+#contractHud b{display:block;font-size:8px;letter-spacing:.14em;color:var(--ink);font-weight:400;
+  line-height:1.4;text-transform:none}
+#contractHud span{font-size:8px;letter-spacing:.2em;color:var(--mint)}
+#contractHud i{display:block;height:2px;margin-top:4px;background:var(--mint);opacity:.5;transform-origin:left}
+#waypoint{position:absolute;display:none;transform:translate(-50%,-50%);text-align:center;
+  color:var(--mint);pointer-events:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.9))}
+#wpArrow{font-size:15px;line-height:1;opacity:0}
+#waypoint.edge #wpArrow{opacity:1}
+.wpBody b{display:block;font-size:9px;letter-spacing:.24em}
+.wpBody span{font-size:13px;font-family:var(--display);letter-spacing:.06em;color:#fff}
+#waypoint::after{content:"";position:absolute;left:50%;top:50%;width:26px;height:26px;
+  margin:-13px 0 0 -13px;border:1px solid var(--mint);border-radius:50%;opacity:.5}
+#waypoint.edge::after{display:none}
+
+/* ===== scope ===== */
+/* a strip of owned optics, active one lit — lets you see what's cyclable, not just what's active */
+#scopeChip{margin-top:6px;display:none;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+#scopeChip i{font-style:normal;font-size:7px;letter-spacing:.16em;padding:3px 7px;
+  border:1px solid rgba(127,228,255,.22);color:var(--dim);white-space:nowrap;transition:all .12s}
+#scopeChip i.on{border-color:var(--sc,var(--ice));color:var(--sc,var(--ice));background:rgba(127,228,255,.08)}
+/* Scope diameter: a real porthole, not a near-fullscreen mask — leaves a visible black bezel
+   like an actual sniper optic, rather than swallowing the whole viewport. */
+#scopeTube{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .12s;--sc:#ffb347;--scD:min(58vh,58vw)}
+body.tube #scopeTube{opacity:1}
+/* Outside the lens the world stays VISIBLE but blurred and dimmed — you keep peripheral
+   awareness the way you would looking through a real optic with both eyes open, instead
+   of the screen becoming a black circle. `backdrop-filter` blurs the WebGL canvas behind
+   this layer, and the radial mask punches the lens out so the glass itself stays sharp.
+   --scBlur / --scDim are set per optic from SCOPES (01-core.js): more magnification
+   occludes more of your view. */
+#scopeTube::before{content:"";position:absolute;inset:0;
+  backdrop-filter:blur(var(--scBlur,5px));
+  -webkit-backdrop-filter:blur(var(--scBlur,5px));
+  background:rgba(3,5,10,var(--scDim,.5));
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 calc(var(--scD) / 2 - 1px),#000 calc(var(--scD) / 2));
+  mask:radial-gradient(circle at 50% 50%,transparent 0 calc(var(--scD) / 2 - 1px),#000 calc(var(--scD) / 2))}
+/* The housing: a thick dark ring reading as the scope body, with a lit inner lip
+   (the coated lens edge) and a soft shadow where the glass meets the tube wall. */
+#scopeTube::after{content:"";position:absolute;left:50%;top:50%;
+  width:var(--scD);height:var(--scD);transform:translate(-50%,-50%);
+  border-radius:50%;border:2px solid rgba(12,15,22,.96);
+  box-shadow:inset 0 0 30px 10px rgba(0,0,0,.55),
+             inset 0 0 3px 1px var(--sc),
+             0 0 0 14px rgba(11,14,21,.94),
+             0 0 0 15px rgba(255,255,255,.06),
+             0 0 0 17px rgba(6,8,13,.85),
+             0 8px 34px 12px rgba(0,0,0,.5)}
+#scopeReticle{position:absolute;left:50%;top:50%;width:var(--scD);height:var(--scD);
+  transform:translate(-50%,-50%);color:var(--sc);opacity:.9;
+  filter:drop-shadow(0 0 3px rgba(0,0,0,.85))}
+#scopeMag{position:absolute;left:50%;top:calc(50% + var(--scD) / 2 + 18px);transform:translateX(-50%);
+  font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--sc)}
+body.tube #cross{opacity:0}
+/* Full-occlusion optics hide the HUD; pip optics keep it, since you can still see past
+   the scope and the HUD is part of that peripheral awareness. */
+body.tube:not(.pipscope) #contractHud,
+body.tube:not(.pipscope) #radarCluster{opacity:0}
+/* red dot / holographic optics: no tube, no mask — just the illuminated reticle,
+   shown only while actually aiming so it doesn't clutter the hip-fire view. */
+#dotSight{position:absolute;left:50%;top:50%;width:min(30vh,30vw);height:min(30vh,30vw);
+  transform:translate(-50%,-50%);pointer-events:none;opacity:0;transition:opacity .1s;
+  filter:drop-shadow(0 0 4px currentColor)}
+/* .dotoptic is set only for optics that draw their own reticle (2x reflex). Iron sights
+   keep the standard crosshair while aiming, so it can never be hidden with nothing behind it. */
+body.ads.dotoptic:not(.tube) #dotSight{opacity:.95}
+body.ads.dotoptic:not(.tube) #cross{opacity:0}
+
+/* ===== CENTRE ===== */
+#cross{position:absolute;left:50%;top:50%;width:34px;height:34px;transform:translate(-50%,-50%)}
+#cross i{position:absolute;background:var(--ice);box-shadow:0 0 6px rgba(127,228,255,.5);opacity:.9}
+/* --gap is written every frame from the live aim cone (08-hud.js): the arms sit on the
+   edge of the circle the next round can land inside. Offsets go through top/left rather
+   than transform so they compose with the fire-kick animation below instead of fighting
+   it. */
+#cross{--gap:0px}
+#cross i:nth-child(1){left:16px;top:calc(0px - var(--gap));width:2px;height:9px}
+#cross i:nth-child(2){left:16px;bottom:calc(0px - var(--gap));width:2px;height:9px}
+#cross i:nth-child(3){top:16px;left:calc(0px - var(--gap));height:2px;width:9px}
+#cross i:nth-child(4){top:16px;right:calc(0px - var(--gap));height:2px;width:9px}
+#cross i:nth-child(5){left:16px;top:16px;width:2px;height:2px;background:#fff}
+#cross.kick i{animation:kickA .11s ease-out}
+#cross.kick2 i{animation:kickB .11s ease-out}
+@keyframes kickA{0%{transform:scale(1.9)}100%{transform:scale(1)}}
+@keyframes kickB{0%{transform:scale(1.9)}100%{transform:scale(1)}}
+#hitmark{position:absolute;left:50%;top:50%;width:26px;height:26px;
+  transform:translate(-50%,-50%) rotate(45deg);opacity:0}
+#hitmark::before,#hitmark::after{content:"";position:absolute;background:#fff}
+#hitmark::before{left:12px;top:0;width:2px;height:26px}
+#hitmark::after{top:12px;left:0;height:2px;width:26px}
+#hitmark.show{opacity:1;animation:mark .14s ease-out}
+#hitmark.crit::before,#hitmark.crit::after{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+@keyframes mark{0%{transform:translate(-50%,-50%) rotate(45deg) scale(.5)}
+  100%{transform:translate(-50%,-50%) rotate(45deg) scale(1)}}
+/* Directional damage indicator: a chevron pointing back toward whatever hit you, on a
+   ring around the crosshair. Each .dd is rotated by damageDirection() (08-hud.js) so the
+   arrow sits at the bearing of the attacker relative to where you are facing. */
+#dmgDir{position:absolute;left:50%;top:50%;width:0;height:0;transform:scale(var(--hs))}
+/* NOTE: damageDirection() sets an inline `transform: rotate(...)` on .dd to point the
+   arrow. So .dd itself must only ever animate OPACITY — animating its transform here
+   would overwrite that rotation and every arrow would point the same way. The pop
+   motion lives on the pseudo-elements instead. */
+.dd{position:absolute;left:-46px;top:-152px;width:92px;height:52px;
+  transform-origin:46px 152px;animation:dd 1.05s ease-out forwards;pointer-events:none}
+@keyframes dd{0%{opacity:0}12%{opacity:1}70%{opacity:.9}100%{opacity:0}}
+/* the arrowhead */
+.dd::before{content:"";position:absolute;left:50%;top:0;width:26px;height:26px;margin-left:-13px;
+  border-left:5px solid var(--mag);border-top:5px solid var(--mag);
+  filter:drop-shadow(0 0 7px var(--mag));animation:ddPop 1.05s ease-out forwards}
+@keyframes ddPop{0%{transform:rotate(45deg) translate(6px,6px) scale(.86)}
+  14%{transform:rotate(45deg) translate(0,0) scale(1)}
+  100%{transform:rotate(45deg) translate(-4px,-4px) scale(1.04)}}
+/* a soft arc under it, so the direction reads even in a busy frame */
+.dd::after{content:"";position:absolute;left:50%;top:20px;width:88px;height:88px;margin-left:-44px;
+  border-radius:50%;border-top:3px solid var(--mag);opacity:.42;
+  filter:blur(1px) drop-shadow(0 0 6px var(--mag))}
+#fx{position:absolute;inset:0}
+.dmg{position:absolute;opacity:0;transform:translate(-50%,-50%);font-family:var(--display);
+  font-size:20px;letter-spacing:.04em;color:#fff;text-shadow:0 2px 6px #000;will-change:transform,opacity}
+.dmg.crit{color:var(--amber);font-size:29px}
+.dmg.a{animation:dmgA .8s ease-out forwards}
+.dmg.b{animation:dmgB .8s ease-out forwards}
+@keyframes dmgA{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}
+  18%{opacity:1;transform:translate(calc(-50% + var(--dx)*.3),-70%) scale(1.1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-190%) scale(.95)}}
+@keyframes dmgB{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}
+  18%{opacity:1;transform:translate(calc(-50% + var(--dx)*.3),-70%) scale(1.1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),-190%) scale(.95)}}
+#toast{position:absolute;left:50%;top:calc(50% - 120px);transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:5px}
+#toast div{opacity:1;transition:opacity .5s,transform .5s;font-size:11px;letter-spacing:.22em;
+  text-shadow:0 2px 8px #000;animation:tin .25s ease-out}
+#toast div.out{opacity:0;transform:translateY(-8px)}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}}
+#combo{position:absolute;left:50%;top:calc(50% + 46px);transform:translateX(-50%);
+  font-family:var(--display);font-size:24px;color:var(--amber);opacity:0;transition:opacity .2s}
+
+/* low integrity + blackout */
+body.critical #hpFill{background:var(--mag)}
+body.critical #vitals{opacity:var(--ho) !important}
+/* These two overlays pulse for as long as the state lasts (a blackout runs 24s), so they
+   animate OPACITY, never box-shadow. Animating a 200px+ fullscreen inset blur repaints the
+   whole viewport every frame on top of the WebGL canvas and visibly costs frames; opacity
+   stays on the compositor and costs nothing. The shadow itself is painted once, at its
+   brightest, and the animation just fades that single layer in and out. */
+body.critical::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
+  box-shadow:inset 0 0 240px rgba(255,47,122,.55);will-change:opacity;
+  animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.64}50%{opacity:1}}
+@keyframes crit{50%{opacity:.45}}
+body.blackout::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
+  box-shadow:inset 0 0 320px rgba(255,47,122,.36);will-change:opacity;
+  animation:surge 2.4s ease-in-out infinite}
+@keyframes surge{0%,100%{opacity:.61}50%{opacity:1}}
+body.bright #strip,body.bright #radarFoot b,body.bright .vHead b,body.bright #ammoRow b{
+  text-shadow:0 1px 4px rgba(0,0,0,.9)}
+#perf{position:fixed;left:18px;top:22px;z-index:3;display:none;font-family:var(--mono);
+  font-size:10px;letter-spacing:.12em;color:var(--mint);pointer-events:none}
+@media(max-width:700px){
+  #radarCluster{transform:scale(calc(var(--hs)*.72));right:14px;top:80px}
+  #vitals{left:16px;bottom:20px}#weapon{right:16px;bottom:20px}
+  #ammoRow b{font-size:38px}.vHead b{font-size:30px}
+}
+
+/* ---------- panels ---------- */
+.panel{position:fixed;inset:0;z-index:4;display:none;place-items:center;
+  background:radial-gradient(120% 90% at 50% 30%,rgba(10,14,26,.86),rgba(3,4,9,.97))}
+.panel.show{display:grid}
+.panel::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(0deg,rgba(127,228,255,.05) 0 1px,transparent 1px 3px)}
+.card{position:relative;width:min(660px,88vw);padding:44px 46px;
+  border:1px solid rgba(127,228,255,.18);background:rgba(6,9,17,.72);backdrop-filter:blur(9px)}
+.card::before,.card::after{content:"";position:absolute;width:14px;height:14px;border:1px solid var(--ice)}
+.card::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.card::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+.eyebrow{font-size:10px;letter-spacing:.42em;color:var(--dim);text-transform:uppercase}
+h1{font-family:var(--display);font-size:clamp(52px,10vw,104px);line-height:.86;margin:14px 0 0;
+  letter-spacing:.02em;text-transform:uppercase}
+h1 span{color:var(--mag)}
+.rule{height:1px;margin:22px 0;background:linear-gradient(90deg,var(--ice),transparent)}
+.lede{color:#9fb0d0;font-size:13px;line-height:1.85;letter-spacing:.05em;max-width:46ch}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:10px 18px;margin:26px 0 30px;
+  font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.keys kbd{font-family:var(--mono);color:var(--ink);background:rgba(127,228,255,.09);
+  border:1px solid rgba(127,228,255,.22);padding:2px 7px;margin-right:8px;font-size:10px}
+.row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+button{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--void);background:var(--ice);border:0;padding:15px 30px;cursor:pointer;
+  transition:transform .12s,box-shadow .12s,background .12s}
+button:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(127,228,255,.28)}
+button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+button.ghost{background:transparent;color:var(--ice);border:1px solid rgba(127,228,255,.32)}
+button.ghost:hover{background:rgba(127,228,255,.08);box-shadow:none}
+.opt{display:flex;align-items:center;gap:12px;font-size:10px;letter-spacing:.2em;color:var(--dim);
+  text-transform:uppercase;margin-top:26px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:130px;height:2px;background:rgba(127,228,255,.25)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--ice);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border:0;background:var(--ice);cursor:pointer}
+/* ============ front end shell ============ */
+#menu{background:radial-gradient(140% 100% at 78% 20%,rgba(10,15,28,.72),rgba(2,4,9,.95))}
+.shell{width:min(1180px,93vw);height:min(680px,86vh);display:grid;grid-template-columns:236px 1fr;
+  border:1px solid rgba(127,228,255,.13);background:rgba(5,8,15,.66);backdrop-filter:blur(14px);
+  box-shadow:0 40px 120px rgba(0,0,0,.6)}
+@media(max-width:820px){.shell{grid-template-columns:1fr;height:min(720px,90vh)}
+  .rail{flex-direction:row;align-items:center;gap:14px;overflow-x:auto}
+  .rail .brand{margin:0}#nav{flex-direction:row}.railFoot{display:none}}
+
+.rail{display:flex;flex-direction:column;padding:26px 20px;border-right:1px solid rgba(127,228,255,.10);
+  background:linear-gradient(180deg,rgba(127,228,255,.035),transparent)}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+.mark{width:34px;height:34px;display:grid;place-items:center;font-family:var(--display);font-size:15px;
+  letter-spacing:.06em;color:var(--void);background:var(--ice);flex:none}
+.bt{display:flex;flex-direction:column;font-size:12px;letter-spacing:.12em;color:var(--ink);line-height:1.3}
+.bt em{font-style:normal;font-size:8px;letter-spacing:.22em;color:var(--dim);margin-top:3px}
+#nav{display:flex;flex-direction:column;gap:2px;flex:1}
+#nav button{all:unset;display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer;
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
+  transition:color .15s,background .15s}
+#nav button i{width:4px;height:4px;background:currentColor;opacity:.4;flex:none;transition:all .15s}
+#nav button:hover{color:var(--ink);background:rgba(127,228,255,.05)}
+#nav button.on{color:var(--ice);background:rgba(127,228,255,.09)}
+#nav button.on i{opacity:1;width:12px;box-shadow:0 0 8px var(--ice)}
+#nav button:focus-visible{outline:1px solid var(--mint);outline-offset:-1px}
+.railFoot{font-size:8px;letter-spacing:.2em;color:#33405a;text-transform:uppercase;padding-top:16px;
+  border-top:1px solid rgba(127,228,255,.08)}
+
+.stage{position:relative;padding:38px 42px;overflow-y:auto;overflow-x:hidden}
+.stage::-webkit-scrollbar{width:5px}.stage::-webkit-scrollbar-thumb{background:rgba(127,228,255,.2)}
+.view{display:none}
+.view.on{display:block;animation:vin .3s cubic-bezier(.2,.7,.3,1)}
+@keyframes vin{from{opacity:0;transform:translateY(9px)}}
+.vhead{margin-bottom:26px}
+.vhead h2{margin:0;font-family:var(--display);font-size:34px;letter-spacing:.05em;text-transform:uppercase;font-weight:400}
+.vhead p{margin:7px 0 0;font-size:10px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:start}
+@media(max-width:820px){.two{grid-template-columns:1fr;gap:26px}}
+.lbl{font-size:8px;letter-spacing:.34em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+#v-home h1{margin-top:16px}
+#v-home .lede{margin:22px 0 30px}
+.tick{display:flex;gap:34px;margin-top:34px;padding-top:20px;border-top:1px solid rgba(127,228,255,.09)}
+.tick span{display:flex;flex-direction:column;font-size:8px;letter-spacing:.26em;color:var(--dim);text-transform:uppercase}
+.tick b{font-family:var(--display);font-size:19px;letter-spacing:.03em;color:var(--ink);font-weight:400;margin-bottom:5px}
+
+/* settings rows */
+.set{display:grid;grid-template-columns:1fr auto 42px;align-items:center;gap:14px;padding:10px 0;
+  border-bottom:1px solid rgba(127,228,255,.06);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:#8fa0c0}
+.set span{text-align:right;color:var(--ice);font-variant-numeric:tabular-nums}
+.sw{all:unset;grid-column:2/4;justify-self:end;width:42px;height:20px;border:1px solid rgba(127,228,255,.28);
+  cursor:pointer;position:relative;transition:background .16s,border-color .16s}
+.sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--dim);transition:all .16s}
+.sw.on{background:rgba(127,228,255,.16);border-color:var(--ice)}
+.sw.on i{left:24px;background:var(--ice);box-shadow:0 0 9px var(--ice)}
+.sw:focus-visible{outline:1px solid var(--mint);outline-offset:2px}
+
+/* perks */
+#perkList{display:flex;flex-direction:column;gap:8px}
+.perk{all:unset;display:block;padding:12px 14px;cursor:pointer;border:1px solid rgba(127,228,255,.13);
+  background:rgba(8,12,21,.5);transition:border-color .15s,background .15s,transform .15s}
+.perk:hover{border-color:rgba(127,228,255,.36);transform:translateX(3px)}
+.perk.sel{border-color:var(--ice);background:rgba(127,228,255,.09)}
+.perk b{display:block;font-family:var(--display);font-size:18px;letter-spacing:.05em;
+  text-transform:uppercase;font-weight:400;margin-bottom:4px}
+.perk span{font-size:9px;letter-spacing:.1em;color:var(--dim);line-height:1.7}
+.perk:focus-visible{outline:1px solid var(--mint);outline-offset:2px}
+.diffGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.diffBtn{all:unset;display:block;padding:10px 12px;cursor:pointer;border:1px solid rgba(127,228,255,.13);
+  background:rgba(4,8,16,.55);transition:border-color .15s,transform .15s,background .15s}
+.diffBtn:hover{border-color:rgba(127,228,255,.36);transform:translateX(2px)}
+.diffBtn.sel{border-color:var(--ice);background:rgba(127,228,255,.09)}
+.diffBtn b{display:block;font-family:var(--display);font-size:16px;letter-spacing:.06em;text-transform:uppercase;font-weight:400}
+.diffBtn span{font-size:8px;letter-spacing:.1em;color:var(--dim);line-height:1.5;margin-top:2px;display:block}
+.nameField{margin-bottom:14px}
+.nameField input{width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid rgba(127,228,255,.22);
+  background:rgba(4,8,16,.72);color:var(--ink);font-family:var(--display);font-size:18px;letter-spacing:.08em;
+  text-transform:uppercase;outline:none;transition:border-color .15s,box-shadow .15s}
+.nameField input::placeholder{color:var(--dim);font-family:var(--ui);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.nameField input:focus{border-color:var(--ice);box-shadow:0 0 0 1px rgba(127,228,255,.18)}
+
+/* bestiary + notes */
+#bestiary{display:flex;flex-direction:column;gap:10px}
+.beast{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:center;
+  padding:10px 12px;border:1px solid rgba(127,228,255,.1);background:rgba(8,12,21,.45)}
+.beast canvas{width:56px;height:56px;display:block}
+.beast b{display:block;font-family:var(--display);font-size:17px;letter-spacing:.05em;
+  text-transform:uppercase;font-weight:400}
+.beast span{font-size:9px;letter-spacing:.1em;color:var(--dim);line-height:1.65}
+.notes{margin:0;padding:0;list-style:none}
+.notes li{position:relative;padding-left:16px;margin-bottom:11px;font-size:10px;line-height:1.85;
+  letter-spacing:.05em;color:#8fa0c0}
+.notes li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:1px;background:var(--ice)}
+.notes b{color:var(--ink)}
+
+/* records */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tiles.small{grid-template-columns:repeat(3,1fr)}
+.tiles div{padding:16px;border:1px solid rgba(127,228,255,.1);background:rgba(8,12,21,.45)}
+.tiles span{display:block;font-size:8px;letter-spacing:.28em;color:var(--dim);text-transform:uppercase}
+.tiles b{display:block;font-family:var(--display);font-size:30px;letter-spacing:.03em;font-weight:400;margin-top:8px}
+@media(max-width:820px){.tiles{grid-template-columns:repeat(2,1fr)}}
+
+.pendRow{display:flex;align-items:baseline;gap:12px}
+.pendRow b{font-family:var(--display);font-size:34px;letter-spacing:.03em;color:var(--mint);font-weight:400}
+.pendRow span{font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+#pauseContracts .contract{margin-bottom:6px;padding:9px 11px}
+#pauseContracts .contract b{font-size:14px}
+
+/* ---- PvP scoreboard + respawn ---- */
+/* The scoreboard used to sit dead centre at all times, right where you are aiming.
+   It now lives top-left as a compact strip and only expands to the full board while
+   TAB is held (body.sbFull), which is where players expect to find it anyway. */
+#scoreboard{position:absolute;left:32px;top:96px;transform:scale(var(--hs));transform-origin:top left;
+  display:none;min-width:190px;max-width:230px;padding:8px 11px;opacity:calc(var(--ho) * .82);
+  border:1px solid rgba(127,228,255,.16);background:rgba(4,7,14,.55);backdrop-filter:blur(5px);
+  transition:opacity .15s}
+#sbTitle{font-size:8px;letter-spacing:.24em;color:var(--dim);margin-bottom:6px;
+  padding-bottom:5px;border-bottom:1px solid rgba(127,228,255,.12)}
+.sbRow{display:flex;align-items:center;gap:8px;padding:2px 1px}
+.sbRow b{flex:1;font-size:10px;font-weight:400;letter-spacing:.05em;color:var(--ink);
+  text-transform:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sbRow span{font-family:var(--display);font-size:14px;color:#fff;letter-spacing:.03em}
+/* only the leader and yourself while compact — the rest appear on TAB */
+#scoreboard:not(.full) .sbRow.rest{display:none}
+#scoreboard:not(.full) .sbMore{display:block;font-size:7px;letter-spacing:.2em;color:var(--dim);
+  margin-top:5px;padding-top:5px;border-top:1px solid rgba(127,228,255,.1)}
+#scoreboard.full .sbMore{display:none}
+#scoreboard.full{left:50%;top:120px;transform:translateX(-50%) scale(var(--hs));transform-origin:top center;
+  min-width:300px;max-width:none;padding:12px 16px;opacity:var(--ho);
+  border-color:rgba(127,228,255,.3);background:rgba(4,7,14,.85)}
+#scoreboard.full #sbTitle{text-align:center;font-size:9px;letter-spacing:.28em}
+#scoreboard.full .sbRow{padding:5px 2px;gap:9px}
+#scoreboard.full .sbRow b{font-size:12px}
+#scoreboard.full .sbRow span{font-size:19px}
+.sbRow.me b{color:var(--ice)}
+.sbRow.me span{color:var(--ice)}
+.sbTeam{font-style:normal;font-size:9px;width:15px;height:15px;display:grid;place-items:center;
+  border-radius:2px;color:#04070e;font-weight:700}
+.sbTeam.a{background:var(--ice)}
+.sbTeam.b{background:var(--amber)}
+#respawnBox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;
+  text-align:center;pointer-events:none}
+#respawnBox b{display:block;font-family:var(--display);font-size:60px;letter-spacing:.06em;
+  color:var(--mag);text-shadow:0 4px 24px rgba(0,0,0,.9)}
+#respawnBox span{display:block;margin-top:8px;font-size:12px;letter-spacing:.24em;color:#fff}
+#respawnBox i{font-style:normal;color:var(--amber)}
+
+/* ---- match modes ---- */
+#mpModes{display:flex;flex-direction:column;gap:7px}
+.mpMode{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 12px;width:100%;
+  border:1px solid rgba(127,228,255,.13);background:rgba(8,12,21,.5);transition:border-color .15s,background .15s}
+.mpMode:hover{border-color:rgba(127,228,255,.36)}
+.mpMode.sel{border-color:var(--ice);background:rgba(127,228,255,.09)}
+.mpMode b{display:block;font-size:12px;letter-spacing:.1em;color:var(--ink);font-weight:400}
+.mpMode span{display:block;font-size:9px;letter-spacing:.08em;color:var(--dim);margin-top:3px}
+#mpStart:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.mpMode{position:relative}
+.mpMode.unavail{opacity:.45}
+.mpTag{position:absolute;right:10px;top:10px;font-size:8px;letter-spacing:.18em;color:var(--amber);
+  border:1px solid rgba(255,179,71,.35);padding:1px 5px}
+.mpMode.sel .mpTag{color:var(--ice);border-color:rgba(127,228,255,.45)}
+.mpReq{display:block;margin-top:5px;font-size:8px;letter-spacing:.16em;color:var(--mag)}
+.mpReq.ok{color:var(--mint)}
+
+/* ---- multiplayer ---- */
+.mpCard{padding:16px 18px;border:1px solid rgba(127,228,255,.16);background:rgba(8,12,21,.5);margin-bottom:14px}
+.mpCard b{display:block;font-family:var(--display);font-size:18px;letter-spacing:.03em;font-weight:400;color:var(--ink)}
+.mpCard span{display:block;font-size:9px;letter-spacing:.14em;color:var(--dim);margin-top:5px}
+#mpAddr{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.mpAddrRow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(127,228,255,.14);background:rgba(4,8,16,.5)}
+.mpAddrRow code{flex:1;font-family:var(--mono);font-size:12px;color:var(--ice);letter-spacing:.03em;overflow-wrap:anywhere}
+.mpLine{display:flex;align-items:center;gap:9px}
+.mpDot{width:8px;height:8px;border-radius:50%;background:#3a4560;flex:none}
+.mpDot.on{background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.mpDot.trying{background:var(--amber);animation:crit 1s ease-in-out infinite}
+.mpDot.off{background:var(--mag)}
+.mpStatus{font-size:10px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+.mpStatus.on{color:var(--mint)}
+.mpStatus.trying{color:var(--amber)}
+.mpStatus.off{color:var(--mag)}
+#mpRoster{display:flex;flex-direction:column;gap:6px}
+.mpRow{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;
+  border:1px solid rgba(127,228,255,.1);background:rgba(8,12,21,.45)}
+.mpRow b{font-size:11px;letter-spacing:.06em;color:var(--ink);font-weight:400}
+.mpRow span{font-size:8px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+.mpRow.me{border-color:rgba(127,228,255,.3)}
+.mpRow.me span{color:var(--ice)}
+.hint code{font-family:var(--mono);color:var(--ice);background:rgba(127,228,255,.08);padding:1px 5px}
+
+/* ---- ability module ---- */
+#abilityBox{display:flex;align-items:center;gap:10px;margin-top:12px}
+#abilIcon{position:relative;width:40px;height:40px;flex:none}
+#abilIcon svg{width:40px;height:40px;transform:rotate(-90deg)}
+#abilRing{fill:rgba(4,8,16,.6);stroke:var(--ice);stroke-width:2.5;
+  stroke-dasharray:100.5;stroke-dashoffset:0;transition:stroke-dashoffset .15s linear}
+#abilKey{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);
+  font-size:15px;color:var(--ink)}
+.abilText b{display:block;font-size:10px;letter-spacing:.2em;color:var(--ink)}
+.abilText span{font-size:8px;letter-spacing:.22em;color:var(--dim)}
+#abilityBox.ready #abilRing{stroke:var(--mint)}
+#abilityBox.ready .abilText span{color:var(--mint)}
+#abilityBox.active #abilRing{stroke:var(--amber);animation:crit .7s ease-in-out infinite}
+#abilityBox.active .abilText span{color:var(--amber)}
+body.ability::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
+  box-shadow:inset 0 0 150px var(--abil,#7fe4ff);opacity:.28;animation:pulse 1.4s ease-in-out infinite}
+
+/* ---- roster ---- */
+#rosterList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:820px){#rosterList{grid-template-columns:1fr}}
+.opCard{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:56px 1fr;
+  gap:14px;padding:12px 14px;border:1px solid rgba(127,228,255,.13);background:rgba(8,12,21,.5);
+  transition:border-color .15s,background .15s,transform .15s}
+.opCard:hover:not(.locked){border-color:rgba(127,228,255,.4);transform:translateY(-2px)}
+.opCard.sel{border-color:var(--ice);background:rgba(127,228,255,.09)}
+.opCard.locked{opacity:.55}
+.opCard canvas{width:56px;height:56px;display:block;background:#05070d;border:1px solid rgba(127,228,255,.1)}
+.opCard h4{margin:0 0 3px;font-family:var(--display);font-size:19px;letter-spacing:.04em;
+  text-transform:uppercase;font-weight:400}
+.opCard .role{font-size:7px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
+.opCard .abil{font-size:9px;letter-spacing:.08em;color:#8fa0c0;line-height:1.6;margin-top:6px}
+.opCard .abil b{color:var(--ink);font-weight:400}
+.opCard .pas{font-size:8px;letter-spacing:.14em;color:var(--mint);margin-top:5px}
+.opCard .tag{float:right;font-size:9px;letter-spacing:.18em;color:var(--amber)}
+.opCard.sel .tag{color:var(--ice)}
+
+/* ---- loadout picker ---- */
+.hintInline{font-style:normal;color:var(--dim);letter-spacing:.2em;margin-left:8px}
+#slotPick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+#slotPick button{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 8px;text-align:center;
+  border:1px solid rgba(127,228,255,.16);background:rgba(8,12,21,.5);transition:border-color .15s}
+#slotPick button.on{border-color:var(--ice);background:rgba(127,228,255,.1)}
+#slotPick i{display:block;font-style:normal;font-size:7px;letter-spacing:.3em;color:var(--dim);margin-bottom:5px}
+#slotPick b{display:block;font-family:var(--display);font-size:14px;letter-spacing:.04em;font-weight:400;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#slotPick em{display:block;font-style:normal;font-size:7px;letter-spacing:.2em;color:var(--dim);margin-top:4px}
+#armoryPool{display:flex;flex-wrap:wrap;gap:5px;max-height:150px;overflow-y:auto}
+#armoryPool button{all:unset;cursor:pointer;font-size:8px;letter-spacing:.12em;padding:6px 9px;
+  border:1px solid rgba(127,228,255,.14);background:rgba(8,12,21,.45);color:var(--dim);
+  text-transform:uppercase;transition:all .14s}
+#armoryPool button:hover:not(.locked){border-color:var(--ice);color:var(--ink)}
+#armoryPool button.equipped{border-color:var(--mint);color:var(--mint)}
+#armoryPool button.locked{opacity:.35;cursor:not-allowed}
+#armoryPool button em{font-style:normal;color:var(--amber);margin-left:6px}
+
+/* ---- soundtrack ---- */
+.miniSel{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink);
+  background:rgba(8,12,21,.7);border:1px solid rgba(127,228,255,.22);padding:5px 8px;outline:none;cursor:pointer}
+.miniSel option{background:#080b14}
+.musicBtns{display:flex;gap:8px;align-items:center;margin:12px 0 8px;flex-wrap:wrap}
+button.sm,.fileBtn{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  padding:8px 14px;cursor:pointer}
+.fileBtn{position:relative;overflow:hidden;color:var(--void);background:var(--ice);display:inline-block}
+.fileBtn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.urlRow{display:flex;gap:8px;margin-bottom:10px}
+.urlRow input{flex:1;font-family:var(--mono);font-size:10px;color:var(--ink);background:rgba(8,12,21,.7);
+  border:1px solid rgba(127,228,255,.2);padding:8px 10px;outline:none;min-width:0}
+.urlRow input:focus{border-color:var(--ice)}
+.plist{max-height:118px;overflow-y:auto;margin-bottom:6px}
+.plist div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 10px;
+  margin-bottom:4px;border:1px solid rgba(127,228,255,.1);background:rgba(8,12,21,.45);
+  font-size:9px;letter-spacing:.1em;color:var(--dim)}
+.plist div.now{border-color:var(--ice);color:var(--ink)}
+.plist b{font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plist button{all:unset;cursor:pointer;color:var(--mag);font-size:11px;padding:0 4px;flex:none}
+.slotHead{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 8px;
+  font-size:8px;letter-spacing:.3em;color:var(--ice);text-transform:uppercase;
+  padding-bottom:5px;border-bottom:1px solid rgba(127,228,255,.12)}
+.slotHead em{font-style:normal;color:var(--dim);letter-spacing:.2em}
+.musicNote b{color:var(--ink);font-weight:400}
+.musicNote{font-size:8px;letter-spacing:.1em;line-height:1.8;color:#48566f;margin:8px 0 0}
+
+/* ---- home controls ---- */
+.homeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:26px 0 24px;max-width:620px}
+@media(max-width:820px){.homeGrid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:7px}
+.field span{font-size:8px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
+.field input,.field select{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--ink);
+  background:rgba(8,12,21,.7);border:1px solid rgba(127,228,255,.2);padding:10px 11px;outline:none;
+  text-transform:uppercase;appearance:none;cursor:pointer;width:100%}
+.field input{text-transform:none;cursor:text}
+.field input:focus,.field select:focus{border-color:var(--ice);background:rgba(127,228,255,.07)}
+.field select option{background:#080b14;color:#dfe8ff;text-transform:none}
+
+/* ---- wallet + shop ---- */
+.wallet{display:grid;grid-template-columns:auto auto 1fr;gap:26px;align-items:end;padding:16px 18px;
+  margin-bottom:24px;border:1px solid rgba(127,228,255,.13);background:rgba(8,12,21,.5)}
+.wallet span{display:block;font-size:8px;letter-spacing:.28em;color:var(--dim);text-transform:uppercase}
+.wallet b{display:block;font-family:var(--display);font-size:30px;letter-spacing:.03em;font-weight:400;
+  color:var(--mint);margin-top:5px;line-height:1}
+.wallet em{font-style:normal;font-size:8px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase}
+.xpBox{min-width:150px}
+.xpTrack{height:4px;background:rgba(127,228,255,.14);margin-top:8px}
+#xpFill{height:100%;background:var(--ice);transform-origin:left;transform:scaleX(0);transition:transform .3s}
+@media(max-width:820px){.wallet{grid-template-columns:1fr 1fr;gap:16px}}
+
+.shopRow,.contract{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;
+  padding:12px 14px;margin-bottom:8px;border:1px solid rgba(127,228,255,.12);background:rgba(8,12,21,.5);
+  text-align:left;font-family:var(--mono);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+button.shopRow{all:unset;display:flex;justify-content:space-between;align-items:center;gap:14px;
+  box-sizing:border-box;width:100%;padding:12px 14px;margin-bottom:8px;cursor:pointer;
+  border:1px solid rgba(127,228,255,.12);background:rgba(8,12,21,.5);
+  transition:border-color .15s,background .15s,transform .15s}
+button.shopRow:hover:not(:disabled){border-color:rgba(127,228,255,.42);transform:translateX(3px)}
+.shopRow b,.contract b{display:block;font-family:var(--display);font-size:17px;letter-spacing:.04em;
+  text-transform:uppercase;font-weight:400;margin-bottom:3px}
+.shopRow span,.contract span{font-size:9px;letter-spacing:.1em;color:var(--dim);line-height:1.6}
+.shopRow em,.contract em{font-style:normal;font-size:10px;letter-spacing:.16em;color:var(--mint);
+  white-space:nowrap;flex:none}
+.shopRow.have{opacity:.5}.shopRow.have em{color:var(--dim)}
+.shopRow.locked{opacity:.42}.shopRow.locked em{color:var(--amber)}
+.shopRow.poor em{color:var(--mag)}
+.pips{display:inline-flex;gap:3px;margin-left:8px;vertical-align:middle}
+.pips i{width:9px;height:3px;background:rgba(255,255,255,.16)}
+.pips i.on{background:var(--mint)}
+.contract{cursor:default}
+.contract.done{opacity:.5}.contract.done em{color:var(--mint)}
+
+/* locked cards */
+.mapCard.locked,.perk.locked{opacity:.4;cursor:not-allowed}
+.mapCard.locked:hover,.perk.locked:hover{transform:none;border-color:rgba(127,228,255,.14)}
+.lockTag{position:absolute;right:14px;bottom:12px;font-size:9px;letter-spacing:.2em;color:var(--amber)}
+.perk b em,.diffBtn b em{float:right;font-style:normal;font-size:9px;letter-spacing:.16em;color:var(--amber)}
+.diffBtn.locked{opacity:.42;cursor:not-allowed}
+
+/* payout on the end card */
+.score .pay b{color:var(--mint)}
+.card{overflow:hidden}
+#levelUp{display:none;font-family:var(--display);font-size:20px;letter-spacing:.14em;color:var(--amber);
+  margin:-14px 0 12px}
+.payLine{font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin:0 0 22px}
+
+/* deployment picker */
+.wide{width:min(1020px,94vw)}
+.split{display:grid;grid-template-columns:1.05fr 1fr;gap:44px;align-items:start}
+@media(max-width:900px){.split{grid-template-columns:1fr;gap:26px}}
+#mapList{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.mapCard{position:relative;display:grid;grid-template-columns:74px 1fr;gap:16px;align-items:center;
+  padding:12px 14px;border:1px solid rgba(127,228,255,.14);background:rgba(8,12,21,.55);
+  cursor:pointer;text-align:left;transition:border-color .16s,background .16s,transform .16s}
+.mapCard:hover{border-color:rgba(127,228,255,.4);transform:translateX(3px)}
+.mapCard.sel{border-color:var(--ice);background:rgba(127,228,255,.09)}
+.mapCard.sel::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:2px;background:var(--ice)}
+.mapCard canvas{width:74px;height:56px;display:block;background:#05070d;border:1px solid rgba(127,228,255,.12)}
+.mapCard h3{margin:0;font-family:var(--display);font-size:23px;letter-spacing:.04em;text-transform:uppercase;font-weight:400}
+.mapCard .code{font-size:8px;letter-spacing:.3em;color:var(--dim);margin-bottom:3px}
+.mapCard .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.mapCard .tags span{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  border:1px solid rgba(127,228,255,.16);padding:2px 6px}
+.threat{position:absolute;right:14px;top:12px;display:flex;gap:3px}
+.threat i{width:11px;height:3px;background:rgba(255,255,255,.15)}
+.threat i.on{background:var(--mag)}
+#mapBlurb{font-size:11px;line-height:1.85;color:#9fb0d0;margin:14px 0 0;min-height:52px}
+.hint{font-size:9px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-top:18px}
+.hint b{color:var(--mint);font-weight:400}
+#endTitle.lose{color:var(--mag)}
+#endTitle.won{color:var(--mint)}
+@media (max-width:560px){.card{padding:30px 26px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+
+
+/* ---- accessibility: focus, motion, contrast ---- */
+.mapCard:focus-visible,
+.opCard:focus-visible,
+.shopRow:focus-visible,
+.mpMode:focus-visible,
+#slotPick button:focus-visible,
+#armoryPool button:focus-visible,
+.diffBtn:focus-visible,
+.plist button:focus-visible,
+.fileBtn:focus-within,
+select:focus-visible,
+input[type=text]:focus-visible,
+input[type=range]:focus-visible{
+  outline:2px solid var(--mint);
+  outline-offset:2px;
+  position:relative;
+  z-index:1;
+}
+/* the whole menu is keyboard-navigable, so make the ring unmistakable */
+#nav button:focus-visible{outline:2px solid var(--mint);outline-offset:-2px}
+
+/* Respect reduced-motion for the ambient HUD animations too, not just transitions. */
+@media (prefers-reduced-motion:reduce){
+  body.critical::after,
+  body.blackout::before,
+  body.ability::after,
+  #abilityBox.active #abilRing,
+  #weapon.empty #ammoRow b{animation:none !important}
+  .view.on{animation:none}
+  /* The damage arrow is information, not decoration — the blanket animation-duration
+     override above would blink it out of existence. Hold it static and legible instead;
+     damageDirection() still removes the node after ~1.1s. */
+  .dd{animation:none !important;opacity:.95 !important}
+  .dd::before{animation:none !important;transform:rotate(45deg) !important}
+}
+
+/* Windows high-contrast / forced-colors: keep the UI usable when colours are overridden. */
+@media (forced-colors:active){
+  .mapCard,.opCard,.shopRow,.mpMode,.perk,.card,#strip,#scoreboard{border:1px solid CanvasText}
+  .sw.on{background:Highlight}
+}
+
+/* skip link: only visible when focused by keyboard */
+.skip{position:fixed;left:-999px;top:0;z-index:99;padding:10px 16px;background:var(--ice);
+  color:var(--void);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-decoration:none}
+.skip:focus{left:0}
+
+/* nav grouping + overflow safety on short screens */
+#nav{overflow-y:auto;min-height:0}
+#nav::-webkit-scrollbar{width:3px}
+#nav::-webkit-scrollbar-thumb{background:rgba(127,228,255,.2)}
+.navSep{border:0;border-top:1px solid rgba(127,228,255,.10);margin:8px 12px}
+@media(max-width:820px){.navSep{display:none}}
+
+/* ============================================================
+   CARD SYSTEM — shared visual language for Deploy and Armoury.
+   One set of primitives (.step / .cardGrid / .itemCard / .tabs) so both
+   screens read the same way instead of each inventing its own layout.
+   Targets are deliberately large: every card is a full click/touch target.
+   ============================================================ */
+
+/* ---- stepped flow (Deploy) ---- */
+.step{margin-bottom:34px;padding-bottom:30px;border-bottom:1px solid rgba(127,228,255,.08)}
+.step:last-of-type{border-bottom:0;padding-bottom:0}
+.stepHead{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.stepNo{flex:none;width:32px;height:32px;display:grid;place-items:center;
+  border:1px solid rgba(127,228,255,.35);color:var(--ice);
+  font-family:var(--display);font-size:17px;letter-spacing:.02em}
+.stepHead h3{margin:0;font-family:var(--display);font-size:25px;letter-spacing:.05em;
+  text-transform:uppercase;font-weight:400;line-height:1}
+.stepHead p{margin:5px 0 0;font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+.stepNote{margin:12px 0 0;font-size:10px;letter-spacing:.1em;line-height:1.8;color:var(--dim)}
+.subLbl{display:block;font-size:8px;letter-spacing:.32em;color:var(--dim);
+  text-transform:uppercase;margin:22px 0 10px}
+.subLbl:first-child{margin-top:0}
+.subLbl em{font-style:normal;letter-spacing:.18em;opacity:.7;margin-left:8px}
+
+/* ---- responsive card grid ---- */
+.cardGrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(232px,1fr))}
+.cardGrid.compact{grid-template-columns:repeat(auto-fill,minmax(166px,1fr))}
+.cardGrid.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+
+/* ---- the card itself ---- */
+.itemCard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;
+  gap:6px;padding:14px 15px;min-height:92px;position:relative;
+  border:1px solid rgba(127,228,255,.14);background:rgba(8,12,21,.55);
+  transition:border-color .15s,background .15s,transform .15s}
+.itemCard:hover:not(:disabled):not(.locked){border-color:rgba(127,228,255,.46);
+  background:rgba(127,228,255,.05);transform:translateY(-2px)}
+.itemCard:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+.itemCard.sel{border-color:var(--ice);background:rgba(127,228,255,.10)}
+.itemCard.sel::before{content:"";position:absolute;left:-1px;top:-1px;bottom:-1px;width:2px;background:var(--ice)}
+.itemCard.locked{opacity:.45;cursor:not-allowed}
+.itemCard.have{opacity:.62}
+.itemCard.poor{opacity:.8}
+.itemCard h4{margin:0;font-family:var(--display);font-size:19px;letter-spacing:.045em;
+  text-transform:uppercase;font-weight:400;line-height:1.1}
+.itemCard .kicker{font-size:7px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
+.itemCard .desc{font-size:9px;letter-spacing:.08em;line-height:1.65;color:#8fa0c0;flex:1}
+.itemCard .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin-top:2px;font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+.itemCard .price{color:var(--mint);white-space:nowrap}
+.itemCard.have .price{color:var(--dim)}
+.itemCard.locked .price{color:var(--amber)}
+.itemCard.poor .price{color:var(--mag)}
+.itemCard .badge{font-size:7px;letter-spacing:.22em;padding:2px 6px;
+  border:1px solid rgba(127,228,255,.3);color:var(--ice)}
+.itemCard.compactCard{min-height:68px;padding:11px 12px;gap:4px}
+.itemCard.compactCard h4{font-size:15px}
+
+/* ---- tab bar (Armoury sections) ---- */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;
+  border-bottom:1px solid rgba(127,228,255,.1);padding-bottom:12px}
+.tabs button{all:unset;cursor:pointer;padding:9px 16px;font-size:9px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--dim);border:1px solid transparent;
+  transition:color .14s,border-color .14s,background .14s}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--void);background:var(--ice);border-color:var(--ice)}
+.tabs button:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+
+/* ---- confirm row + primary action ---- */
+.confirmRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:26px;align-items:start}
+@media(max-width:820px){.confirmRow{grid-template-columns:1fr;gap:18px}}
+.bigGo{width:100%;margin-top:22px;padding:17px;font-size:14px;letter-spacing:.3em;
+  background:var(--ice);color:var(--void);border:1px solid var(--ice);cursor:pointer}
+.bigGo:hover{background:#a5eeff;border-color:#a5eeff}
+.bigGo:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+
+/* map cards inside the grid keep their thumbnail but stretch to the cell */
+.cardGrid .mapCard{width:100%;min-height:92px}
+
+/* Deploy's map picker now lives in a .cardGrid, so drop the old single-column flex
+   and give each zone a taller, easier target with the thumbnail stacked above the text. */
+#mapList.cardGrid{display:grid;margin-top:0}
+.cardGrid .mapCard{grid-template-columns:1fr;align-items:start;gap:11px;
+  padding:14px 15px;min-height:150px}
+.cardGrid .mapCard:hover{transform:translateY(-2px)}
+.cardGrid .mapCard canvas{width:100%;height:74px}
+.cardGrid .mapCard h3{font-size:21px;line-height:1.05}
+.cardGrid .mapCard .threat{top:auto;bottom:14px;right:15px}
+.cardGrid .mapCard .lockTag{position:absolute;right:15px;top:14px;font-size:8px;
+  letter-spacing:.18em;color:var(--amber)}
+
+/* Slot picker: three big targets, the active one clearly the one being filled. */
+#slotPick{grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
+#slotPick button{padding:15px 10px;min-height:74px;border-width:1px}
+#slotPick button.on{border-color:var(--ice);background:rgba(127,228,255,.10);
+  box-shadow:inset 2px 0 0 var(--ice)}
+#slotPick button:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+#slotPick i{font-size:8px;letter-spacing:.32em;margin-bottom:7px}
+#slotPick b{font-size:16px}
+#slotPick em{font-size:8px;letter-spacing:.22em;margin-top:6px}
+@media(max-width:600px){#slotPick{grid-template-columns:1fr}}
+
+/* diffBtn/perk are now cards; neutralise the old row-style hover shift */
+.diffBtn.itemCard:hover:not(:disabled),
+.perk.itemCard:hover:not(:disabled){transform:translateY(-2px)}
+.perk.itemCard b,.diffBtn.itemCard b{display:none}
+/* #perkList/#armoryPool carry legacy flex rules; the grid class must win when applied. */
+#perkList.cardGrid,#armoryPool.cardGrid{display:grid}
+#armoryPool.cardGrid{max-height:none;overflow:visible}
+
+/* Armoury cards: pips sit between the title and the description. */
+.itemCard .pips{display:flex;gap:4px;margin:1px 0 2px}
+.itemCard .pips i{width:16px;height:3px;background:rgba(255,255,255,.16)}
+.itemCard .pips i.on{background:var(--mint);box-shadow:0 0 5px rgba(53,255,196,.5)}
+.itemCard.contract{cursor:default}
+.itemCard.contract:hover{transform:none;border-color:rgba(127,228,255,.14);background:rgba(8,12,21,.55)}
+#upgradeList,#contractList{display:none}
+
+/* ---- bot controls (Multiplayer) ---- */
+.botRow{display:flex;align-items:center;gap:14px;margin-bottom:9px}
+.botRow>span{flex:none;width:74px;font-size:8px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
+.pillRow{display:flex;gap:6px;flex-wrap:wrap}
+.pillRow button{all:unset;cursor:pointer;padding:8px 14px;min-width:38px;text-align:center;
+  font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  border:1px solid rgba(127,228,255,.16);background:rgba(8,12,21,.5);transition:all .14s}
+.pillRow button:hover:not(:disabled){border-color:rgba(127,228,255,.45);color:var(--ink)}
+.pillRow button.on{border-color:var(--ice);color:var(--ice);background:rgba(127,228,255,.10)}
+.pillRow button:disabled{opacity:.32;cursor:not-allowed}
+.pillRow button:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+.sbBot{font-style:normal;font-size:7px;letter-spacing:.18em;color:var(--dim);
+  border:1px solid rgba(127,228,255,.22);padding:1px 4px;margin-left:6px;vertical-align:middle}
+
+/* Scope overlays sit between the WebGL canvas (z 0) and the HUD (z 2) so the lens blur
+   only softens the rendered world — HUD text must stay sharp while scoped. */
+#scopeTube,#dotSight{position:fixed;z-index:1}
+
+/* ---- weapon pickup offer ---- */
+#takePrompt{position:absolute;left:50%;top:calc(50% + 78px);transform:translateX(-50%) scale(var(--hs));
+  display:none;flex-direction:column;align-items:center;gap:3px;padding:9px 16px;
+  border:1px solid rgba(53,255,196,.4);background:rgba(4,8,16,.72);
+  font-size:11px;letter-spacing:.2em;color:var(--ink);white-space:nowrap}
+#takePrompt b{display:inline-block;min-width:18px;padding:1px 5px;margin-right:8px;
+  border:1px solid var(--mint);color:var(--mint);font-weight:400}
+#takePrompt em{font-style:normal;font-size:8px;letter-spacing:.16em;color:var(--dim)}
+/* ---- grenade readout ---- */
+#nadeRow{display:flex;align-items:baseline;justify-content:flex-end;gap:8px;margin-top:9px}
+#nadeRow b{font-family:var(--display);font-size:19px;letter-spacing:.03em;color:var(--mint)}
+#nadeRow em{font-style:normal;font-size:7px;letter-spacing:.24em;color:var(--dim)}
+#weapon.noNades #nadeRow b{color:var(--dim)}
+
+/* ---- PvP: hide PvE-only HUD ----
+   Wave/hostile counters, the extraction objective and waypoint, daily contracts, the
+   drone legend and the boss bar all describe the survival mode. In a deathmatch they
+   are noise at best and misleading at worst. */
+body.pvpHud #objective,
+body.pvpHud #contractHud,
+body.pvpHud #waypoint,
+body.pvpHud #miniLegend,
+body.pvpHud #bossBar,
+body.pvpHud #proxLabel{display:none !important}
+/* the strip keeps the clock and map, but wave/hostiles are PvE-only */
+/* PvE-only readouts. Targeted by id, not nth-child: positional selectors silently
+   retarget the moment a unit is added to the strip. */
+body.pvpHud #unitWave,
+body.pvpHud #unitHostiles,
+body.pvpHud #sepWave,
+body.pvpHud #sepHostiles{display:none}
+/* score is a PvE metric; kills is the PvP one, so widen it */
+body.pvpHud #radarFoot span:first-child{display:none}
+body.pvpHud #radarFoot span:last-child{align-items:flex-start}
+
+/* ---- weapon wheel (hold Q) ----
+   Real annular pie slices, not floating buttons: the whole angular sector is the target,
+   which is the point of a radial menu. The hollow centre is the dead zone and the cancel
+   target. Sits inside #hud so it scales with --hs. */
+#wheel{position:absolute;left:50%;top:50%;width:420px;height:420px;
+  margin:-210px 0 0 -210px;opacity:0;pointer-events:none;
+  transform:scale(calc(var(--hs) * .92));transform-origin:center;
+  transition:opacity .13s cubic-bezier(.2,.9,.3,1)}
+#wheel.on{opacity:1}
+#wheelSvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+
+/* the slices */
+.wWedge{fill:rgba(9,13,22,.82);stroke:rgba(127,228,255,.16);stroke-width:1.2;
+  transition:fill .12s,stroke .12s,opacity .12s;--wc:#7fe4ff}
+.wWedge.sel{fill:color-mix(in srgb,var(--wc) 20%,rgba(9,13,22,.9));
+  stroke:var(--wc);stroke-width:2.2;filter:drop-shadow(0 0 10px var(--wc))}
+/* browsers without color-mix still get a clear selected state */
+@supports not (color-mix(in srgb,red 50%,blue)){
+  .wWedge.sel{fill:rgba(127,228,255,.16)}
+}
+
+/* labels ride on top of their slice */
+.wLabel{position:absolute;transform:translate(-50%,-50%);width:118px;text-align:center;
+  pointer-events:none;transition:transform .12s,opacity .12s;opacity:.72;--wc:var(--ice)}
+.wLabel.sel{opacity:1;transform:translate(-50%,-50%) scale(1.09)}
+.wLabel i{display:block;font-style:normal;font-size:6.5px;letter-spacing:.3em;
+  color:var(--dim);margin-bottom:3px}
+.wLabel b{display:block;font-family:var(--display);font-size:16px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--ink);line-height:1.05}
+.wLabel.sel b{color:var(--wc);text-shadow:0 0 10px var(--wc)}
+.wLabel em{display:block;font-style:normal;font-size:7px;letter-spacing:.2em;
+  color:var(--dim);margin-top:3px;text-transform:uppercase}
+.wLabel u{display:block;text-decoration:none;font-family:var(--mono);font-size:8px;
+  letter-spacing:.14em;color:#8fa0c0;margin-top:4px}
+.wLabel.sel u{color:var(--wc)}
+
+/* hub: current choice + the cancel affordance */
+#wheelHub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:150px;text-align:center;pointer-events:none;--wc:var(--ice)}
+#wheelHub b{display:block;font-family:var(--display);font-size:17px;letter-spacing:.04em;
+  text-transform:uppercase;color:#fff;line-height:1.1}
+#wheelHub span{display:block;font-size:7px;letter-spacing:.14em;color:var(--dim);
+  margin-top:5px;line-height:1.5;text-transform:uppercase}
+#wheelHub em{display:block;font-style:normal;font-size:7px;letter-spacing:.24em;
+  color:var(--wc);opacity:.7;margin-top:8px;padding-top:7px;
+  border-top:1px solid rgba(127,228,255,.14)}
+
+/* pointer: dim inside the dead zone, lit once it commits to a direction */
+#wheelPtr{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;
+  border-radius:50%;background:var(--dim);transition:background .1s,box-shadow .1s}
+#wheelPtr.live{background:var(--ice);box-shadow:0 0 12px var(--ice)}
+
+/* dim the world so the wheel reads, without hiding the fight */
+body.wheelOpen #hud::after{content:"";position:fixed;inset:0;background:rgba(2,4,9,.5);
+  pointer-events:none;z-index:-1}
+@media (prefers-reduced-motion:reduce){
+  .wWedge,.wLabel,#wheel,#wheelPtr{transition:none}
+}
+
+/* soundtrack status: the folders are the playlist, so this replaces the old track lists */
+.musicStatus{font-size:9px;letter-spacing:.14em;color:var(--amber);margin:10px 0 4px;
+  padding:8px 10px;border:1px solid rgba(255,179,71,.25);background:rgba(8,12,21,.5)}
+.musicStatus.ok{color:var(--mint);border-color:rgba(53,255,196,.28)}
+.musicNote code{font-family:var(--mono);font-size:9px;color:var(--ice);
+  background:rgba(127,228,255,.08);padding:1px 5px}
+
+/* ---- procedural weapon icons ----
+   Drawn per gun from its own build parameters (drawWeaponIcon, 05-weapons.js), so the
+   menus carry imagery without shipping or fetching any image files. */
+.wIcon{display:block;width:100%;height:44px;margin-bottom:8px;
+  background:rgba(4,8,16,.45);border:1px solid rgba(127,228,255,.10)}
+.itemCard.compactCard .wIcon{height:34px;margin-bottom:6px}
+.itemCard.locked .wIcon{opacity:.5}
+.wheelIcon{height:26px;margin-bottom:5px;background:transparent;border:0}
+
+/* ---- extraction summary ----
+   The old title used a fixed display size and simply overflowed its card — "EXTRACTED"
+   rendered as "EXTRACTE". Everything here is fluid so the headline always fits. */
+.endCard{width:min(720px,92vw);max-height:92vh;overflow-y:auto}
+.endHead{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+#endTitle{font-size:clamp(30px,7.2vw,62px);line-height:.94;letter-spacing:.01em;
+  margin:6px 0 0;overflow-wrap:anywhere}
+#endTitle.lose{color:var(--mag)}
+#endTitle.won{color:var(--mint)}
+.endStamp{flex:none;text-align:right;padding:8px 12px;border:1px solid rgba(127,228,255,.16);
+  background:rgba(4,8,16,.5)}
+.endStamp b{display:block;font-family:var(--display);font-size:15px;letter-spacing:.04em;color:var(--ink)}
+.endStamp span{display:block;font-size:7px;letter-spacing:.26em;color:var(--dim);
+  text-transform:uppercase;margin-top:4px}
+
+.endGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px 0 20px;
+  padding:16px 0;border-top:1px solid rgba(127,228,255,.1);border-bottom:1px solid rgba(127,228,255,.1)}
+.endStat{min-width:0}
+.endStat span{display:block;font-size:8px;letter-spacing:.26em;color:var(--dim);text-transform:uppercase}
+.endStat b{display:block;font-family:var(--display);font-size:clamp(22px,3.4vw,32px);
+  letter-spacing:.02em;color:#fff;font-weight:400;margin-top:5px}
+@media(max-width:560px){.endGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.endPay{margin-bottom:18px}
+.endPayHead{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:8px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+.endPayHead em{font-style:normal;color:var(--amber);letter-spacing:.16em}
+.payBreak{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 20px;margin-bottom:14px}
+.payRow{display:flex;justify-content:space-between;gap:10px;padding:5px 0;
+  font-size:9px;letter-spacing:.12em;color:#8fa0c0;border-bottom:1px solid rgba(127,228,255,.06)}
+.payRow em{font-style:normal;color:var(--ink);font-variant-numeric:tabular-nums}
+@media(max-width:560px){.payBreak{grid-template-columns:1fr}}
+.endTotals{display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  padding-top:14px;border-top:1px solid rgba(53,255,196,.22)}
+.endTotal span{display:block;font-size:8px;letter-spacing:.26em;color:var(--dim);text-transform:uppercase}
+.endTotal b{display:block;font-family:var(--display);font-size:clamp(24px,3.8vw,34px);
+  letter-spacing:.02em;color:var(--mint);font-weight:400;margin-top:4px}
+
+.endLevel{margin-bottom:22px}
+.endLevelHead{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:8px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase;margin-bottom:7px}
+.endLevelHead b{font-family:var(--display);font-size:14px;color:var(--ink);
+  letter-spacing:.04em;font-weight:400;margin-left:4px}
+.endLevelHead em{font-style:normal;color:var(--ice);letter-spacing:.14em}
+.endXpTrack{height:5px;background:rgba(127,228,255,.13);overflow:hidden}
+#endXpFill{display:block;height:100%;background:var(--ice);transform-origin:left;
+  transform:scaleX(0);transition:transform .6s cubic-bezier(.2,.9,.3,1)}
+#levelUp{display:none;font-family:var(--display);font-size:18px;letter-spacing:.14em;
+  color:var(--amber);margin-top:12px}
+
+/* ---- environmental event banner ----
+   Top-centre under the contract strip: what is happening, what it means for you, and how
+   long it lasts. Colour comes from the event (--ec), set by showEventBanner. */
+#eventBox{position:absolute;left:50%;top:106px;transform:translateX(-50%) scale(var(--hs));
+  transform-origin:top center;width:min(340px,74vw);padding:9px 14px;opacity:0;
+  pointer-events:none;transition:opacity .25s;--ec:var(--mag);
+  border:1px solid var(--ec);border-left-width:3px;background:rgba(4,7,14,.72);
+  backdrop-filter:blur(6px)}
+#eventBox.on{opacity:var(--ho)}
+.evHead{display:flex;align-items:baseline;gap:9px}
+#evTag{font-size:7px;letter-spacing:.28em;color:var(--ec);border:1px solid var(--ec);
+  padding:1px 5px;flex:none}
+#evName{font-family:var(--display);font-size:17px;letter-spacing:.06em;color:#fff;font-weight:400}
+#evHint{font-size:8px;letter-spacing:.14em;color:#8fa0c0;margin-top:5px;line-height:1.5;
+  text-transform:none}
+.evTrack{height:2px;background:rgba(255,255,255,.14);margin-top:8px;overflow:hidden}
+#evFill{display:block;height:100%;background:var(--ec);transform-origin:left;transform:scaleX(1)}
+body.pvpHud #eventBox{display:none}
+
+/* ---- multiplayer match timer + results (added for timed matches) ---- */
+/* Match clock: a strip unit like the others, so it lines up with the HUD instead of
+   sitting on top of it. Hidden unless a timed match is running (toggled from JS). */
+#mpTimerUnit,#mpTimerSep{display:none}
+#strip #mpTimerUnit b{min-width:62px;color:#fff}
+/* Must out-specify `#strip #mpTimerUnit b` above, or the white wins and the last ten
+   seconds never turn red. */
+#strip #mpTimerUnit b.low{color:var(--mag);animation:mpTimerPulse .9s ease-in-out infinite}
+@keyframes mpTimerPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+#mpResult{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;
+  background:radial-gradient(120% 120% at 50% 20%,rgba(8,12,22,.72),rgba(2,3,7,.92));backdrop-filter:blur(7px)}
+.mrCard{width:min(560px,92vw);max-height:88vh;overflow:auto;padding:28px 30px 24px;
+  border:1px solid rgba(127,228,255,.24);background:rgba(6,9,17,.9);
+  box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.mrTitle{font-family:var(--display);font-size:40px;letter-spacing:.05em;color:#fff;line-height:1.05}
+.mrSub{margin-top:6px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.mrTable{margin-top:20px;border-top:1px solid rgba(127,228,255,.12)}
+.mrRow{display:flex;align-items:center;gap:10px;padding:8px 4px;
+  border-bottom:1px solid rgba(127,228,255,.07)}
+.mrRow .mrName{flex:1;font-size:13px;letter-spacing:.04em;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrRow i{font-style:normal;width:40px;text-align:right;font-family:var(--display);font-size:19px;color:#fff}
+.mrRow i.mrKd{width:52px;font-size:14px;color:var(--dim);font-family:var(--mono)}
+.mrHead{border-bottom:1px solid rgba(127,228,255,.2)}
+.mrHead .mrName{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+.mrHead i{font-size:10px;letter-spacing:.1em;color:var(--dim);font-family:var(--mono)}
+.mrRow.me{background:rgba(127,228,255,.06)}
+.mrRow.me .mrName{color:var(--ice)}
+.mrRow.lead i:not(.mrKd){color:var(--mint)}
+.mrBot{font-style:normal;font-size:8px;letter-spacing:.16em;color:var(--dim);border:1px solid rgba(92,107,140,.4);
+  padding:1px 4px;margin-left:5px;vertical-align:middle}
+.mrTeam{font-style:normal;font-size:10px;width:16px;height:16px;display:inline-grid;place-items:center;
+  border-radius:2px;color:#04070e;font-weight:700}
+.mrTeam.a{background:var(--ice)}
+.mrTeam.b{background:var(--amber)}
+#mpResultBtn{width:100%;margin-top:22px}
+#mpResultBtn em{font-style:normal;color:var(--dim)}
+#mpResultBtn i{font-style:normal}

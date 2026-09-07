@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>fieldops — rahul</title>
+<meta name="description" content="fieldops — Rahul Gupta&#x27;s portfolio as a terminal you can type into. Or just scroll.">
+<meta name="author" content="Rahul Gupta">
+<meta name="theme-color" content="#111013">
+<meta property="og:type" content="website">
+<meta property="og:title" content="fieldops — rahul">
+<meta property="og:description" content="fieldops — Rahul Gupta&#x27;s portfolio as a terminal you can type into. Or just scroll.">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon-fieldops.svg">
+<style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<script>document.documentElement.className += " js";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=VT323&display=swap">
+<style>
+/* deliberately single-theme: this is a phosphor terminal, it does not have a light mode */
+:root{
+  --bg:#0A0C0A; --panel:#0F1310; --panel-2:#141A15; --line:#222B22;
+  --fg:#CBD4C2; --dim:#7C8878; --faint:#4E574B;
+  --amber:#FFB000; --amber-soft:#8A6200; --green:#7FD37F; --red:#FF6B4A;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --crt:"VT323","JetBrains Mono",monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--mono);font-size:14.5px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* scanlines + vignette, purely decorative */
+body::before{
+  content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);
+  mix-blend-mode:multiply;
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:59;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.55) 100%);
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+a{color:inherit}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.01em;line-height:1.1}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+::selection{background:var(--amber);color:#0A0C0A}
+
+.amber{color:var(--amber)}
+.dim{color:var(--dim)}
+.ok{color:var(--green)}
+.warn{color:var(--red)}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:40;padding-top:env(safe-area-inset-top);background:rgba(10,12,10,.9);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:42px;gap:14px;font-size:12px}
+.bar .dots{display:flex;gap:6px;align-items:center}
+.bar .dots i{width:8px;height:8px;border-radius:50%;background:var(--faint);display:block}
+.bar .dots i.live{background:var(--amber);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
+.bar nav{display:flex;gap:18px}
+.bar nav a{color:var(--dim);text-decoration:none}
+.bar nav a::before{content:"[";color:var(--faint)}
+.bar nav a::after{content:"]";color:var(--faint)}
+.bar nav a:hover{color:var(--amber)}
+@media (max-width:660px){.bar nav a:nth-child(-n+2){display:none}}
+
+/* prompt lines */
+.cmd{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin:0}
+.cmd .ps1{color:var(--green);white-space:nowrap}
+.cmd .txt{color:var(--fg)}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--amber);vertical-align:-2px;animation:blink 1.05s steps(1) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.caret{animation:none}.bar .dots i.live{animation:none}}
+
+/* the shortcuts: nobody should have to learn a shell to read a CV */
+.tagline{margin-top:14px;font-size:15px;color:var(--fg);max-width:56ch}
+.quicknav{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.quicknav a{font-size:12px;letter-spacing:.06em;text-decoration:none;color:var(--fg);border:1px solid var(--line);
+  padding:9px 14px;background:var(--panel);transition:border-color .25s ease,color .25s ease,transform .25s cubic-bezier(.2,.8,.3,1)}
+.quicknav a:hover{border-color:var(--amber);color:var(--amber);transform:translateY(-2px)}
+.quicknav a.cv{border-color:var(--amber-soft);color:var(--amber)}
+.quicknav a::before{content:"[ ";color:var(--faint)}
+.quicknav a::after{content:" ]";color:var(--faint)}
+
+/* hero */
+.hero{padding:40px 0 8px}
+.name{font-family:var(--crt);font-size:clamp(60px,13vw,150px);line-height:.82;letter-spacing:.01em;color:var(--fg);margin:22px 0 0;text-transform:uppercase}
+.name span{color:var(--amber)}
+.role{margin-top:16px;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.hero-body{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:26px;margin-top:30px;align-items:start}
+@media (max-width:880px){.hero-body{grid-template-columns:1fr}}
+.hero-body p{color:var(--dim);max-width:60ch}
+.hero-body p b{color:var(--fg);font-weight:500}
+
+/* boot curtain */
+#boot{position:fixed;inset:0;z-index:100;background:var(--bg);padding:min(9vh,80px) 26px;font-size:13px;
+  animation:lift .7s cubic-bezier(.76,0,.24,1) 2.25s forwards}
+#boot div{opacity:0;animation:bootline .01s linear forwards}
+#boot div:nth-child(1){animation-delay:.15s}#boot div:nth-child(2){animation-delay:.45s}
+#boot div:nth-child(3){animation-delay:.8s}#boot div:nth-child(4){animation-delay:1.15s}
+#boot div:nth-child(5){animation-delay:1.5s}#boot div:nth-child(6){animation-delay:1.85s}
+@keyframes bootline{to{opacity:1}}
+@keyframes lift{to{transform:translateY(-101%)}}
+html:not(.js) #boot{display:none}
+@media (prefers-reduced-motion:reduce){#boot{display:none}}
+
+/* interactive shell */
+.term .out{height:248px;overflow-y:auto;padding:11px 12px;font-size:12.4px;line-height:1.66;scrollbar-width:thin}
+.term .out::-webkit-scrollbar{width:6px}
+.term .out::-webkit-scrollbar-thumb{background:var(--line)}
+.term .out div{animation:logline .3s ease}
+.term .out .said{color:var(--fg)}
+.term .out .said b{color:var(--green);font-weight:400}
+.term .out .k{color:var(--amber)}
+.term .out table{border-collapse:collapse;margin:2px 0}
+.term .out td{padding:1px 14px 1px 0;vertical-align:top}
+.term .out td:first-child{color:var(--amber);white-space:nowrap}
+.inp{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding:9px 12px}
+.inp .ps1{color:var(--green);font-size:12.6px}
+.inp input{flex:1;background:none;border:0;color:var(--fg);font:inherit;font-size:12.6px;outline:none;caret-color:var(--amber)}
+.inp input::placeholder{color:var(--faint)}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--line);padding:9px 12px}
+.sugg button{background:none;border:1px solid var(--line);color:var(--dim);font:inherit;font-size:11px;padding:3px 9px;cursor:pointer;border-radius:2px}
+.sugg button:hover{border-color:var(--amber-soft);color:var(--amber)}
+.term{scroll-margin-top:60px}
+
+/* the pointer is a block caret that leaves phosphor behind it */
+@media (hover:hover) and (pointer:fine){
+  html.cur-on,html.cur-on *{cursor:none!important}
+}
+#tcur,.tp{position:fixed;top:0;left:0;pointer-events:none;opacity:0;transition:opacity .3s ease,width .25s ease,height .25s ease,margin .25s ease,background .25s ease}
+html.cur-live #tcur{opacity:1}
+#tcur{width:9px;height:19px;background:var(--amber);margin:-10px 0 0 -4px;z-index:95;mix-blend-mode:screen;
+  box-shadow:0 0 12px rgba(255,176,0,.6);animation:blink 1.05s steps(1) infinite}
+#tcur.wide{width:64px;height:26px;margin:-13px 0 0 -32px;background:var(--amber);animation:none;
+  display:grid;place-items:center}
+#tcur .lb{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#0A0C0A;opacity:0;transition:opacity .2s ease}
+#tcur.wide .lb{opacity:1}
+.tp{width:7px;height:15px;background:var(--green);z-index:94;mix-blend-mode:screen;margin:-8px 0 0 -3px}
+html.cur-live .tp{opacity:.3}
+html.cur-live .tp.p2{opacity:.2}
+html.cur-live .tp.p3{opacity:.12}
+@media (prefers-reduced-motion:reduce){
+  #tcur,.tp{display:none!important}
+  html.cur-on,html.cur-on *{cursor:auto!important}
+}
+
+/* log window */
+.win{border:1px solid var(--line);background:var(--panel)}
+.win-top{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:7px 11px;font-size:11.5px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase}
+.log{height:236px;overflow:hidden;padding:10px 12px;font-size:12.2px;line-height:1.62;display:flex;flex-direction:column;justify-content:flex-end}
+.log div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:logline .35s ease}
+@keyframes logline{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.log div{animation:none}}
+.meter{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding:7px 11px;font-size:11.5px;color:var(--dim)}
+.meter .track{flex:1;height:6px;background:var(--panel-2);border:1px solid var(--line);position:relative;overflow:hidden}
+.meter .fill{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(90deg,var(--amber) 0 3px,transparent 3px 6px)}
+
+/* section heads */
+.sec{margin-top:70px}
+.sec-head{border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:24px}
+.sec-head h2{font-size:15px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-top:8px}
+
+/* practice cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.card{border:1px solid var(--line);background:var(--panel);padding:18px}
+.card:hover{border-color:var(--amber-soft)}
+.card h3{font-size:15.5px;color:var(--fg);margin-bottom:9px}
+.card h3::before{content:"# ";color:var(--amber)}
+.card p{color:var(--dim);font-size:13.4px}
+.card ul{list-style:none;margin:13px 0 0;padding:0;font-size:12.4px;color:var(--faint)}
+.card li::before{content:"› ";color:var(--amber-soft)}
+
+/* work list */
+.rec{border:1px solid var(--line);background:var(--panel);margin-bottom:12px}
+.rec-btn{list-style:none;background:none;border:0;color:inherit;font:inherit;text-align:left;padding:15px 16px;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:14px;align-items:center}
+.rec-btn::-webkit-details-marker{display:none}
+.rec-btn::marker{content:""}
+.rec-btn:hover{background:var(--panel-2)}
+.rec-btn .idx{color:var(--faint);font-size:12px}
+.rec-btn .nm{font-size:18px;font-weight:700}
+.rec-btn .nm em{font-style:normal;color:var(--faint);font-weight:400;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:4px}
+.rec-btn .st{font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);padding:3px 7px;color:var(--dim);white-space:nowrap}
+.rec[open] .rec-btn .st,.rec-btn:hover .st{color:var(--amber);border-color:var(--amber-soft)}
+.rec-btn .tog{color:var(--amber);font-size:13px;width:12px;transition:transform .25s ease}
+.rec[open] .rec-btn .tog{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.rec-btn .tog{transition:none}}
+.rec-body{padding:0 16px 18px 16px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px}
+@media (max-width:820px){.rec-btn{grid-template-columns:auto 1fr auto}.rec-btn .st{display:none}.rec-body{grid-template-columns:1fr;gap:14px}}
+.rec-body p{color:var(--dim);font-size:13.6px;max-width:64ch}
+.kv{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:12.4px}
+.kv dt{color:var(--faint);white-space:nowrap}
+.kv dt::after{content:" ...."}
+.kv dd{margin:0;color:var(--fg)}
+.pkgs{margin-top:14px;font-size:12px;color:var(--faint);word-spacing:.4em}
+.pkgs b{color:var(--dim);font-weight:400}
+
+/* stack meters */
+.stack-row{display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,2.2fr);gap:16px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.stack-row:last-child{border-bottom:0}
+.stack-row .lab{color:var(--fg)}
+.stack-row .bars{color:var(--amber);letter-spacing:.12em;font-size:12px;overflow:hidden;white-space:nowrap}
+.stack-row .bars span{color:var(--faint)}
+.stack-row em{font-style:normal;color:var(--faint);font-size:12px}
+
+/* contact */
+.out{border:1px solid var(--line);background:var(--panel);padding:20px}
+.out .kv{font-size:13.4px;gap:8px 16px}
+.out a{color:var(--amber);text-decoration:none}
+.out a:hover{text-decoration:underline}
+.sign{font-family:var(--crt);font-size:26px;color:var(--fg);margin-top:26px}
+footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
+</style>
+
+<div id="boot">
+  <div><span class="dim">[ 0.00 ]</span> fieldops kernel — booting portfolio</div>
+  <div><span class="dim">[ 0.31 ]</span> mounting local store <span class="ok">ok</span></div>
+  <div><span class="dim">[ 0.62 ]</span> flutter runtime · 4 years uptime <span class="ok">ok</span></div>
+  <div><span class="dim">[ 0.94 ]</span> loading 6 shipped products <span class="ok">ok</span></div>
+  <div><span class="dim">[ 1.26 ]</span> gemini bridge <span class="ok">ok</span></div>
+  <div><span class="amber">ready.</span> starting shell<span class="caret"></span></div>
+</div>
+
+<div id="tcur" aria-hidden="true"><span class="lb"></span></div>
+<div class="tp p3" aria-hidden="true"></div>
+<div class="tp p2" aria-hidden="true"></div>
+<div class="tp p1" aria-hidden="true"></div>
+
+<div class="bar">
+  <div class="wrap">
+    <span class="dots"><i class="live"></i><span class="dim">fieldops@rahul — 80×24</span></span>
+    <nav>
+      <a class="rg-top" href="../">&larr; All interfaces</a>
+      <a href="#practice">practice</a>
+      <a href="#work">work</a>
+      <a href="#stack">stack</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="cmd"><span class="ps1">rahul@sublimity:~$</span><span class="txt" data-type="./whoami --verbose"></span><span class="caret"></span></p>
+
+    <h1 class="name" data-scramble>Rahul <span>Gupta</span></h1>
+    <p class="role" data-scramble-late>Mobile Lead · Flutter &amp; cross-platform · AI integration · Jaipur, India</p>
+    <p class="tagline">I build mobile systems that keep working when the network doesn't.</p>
+    <nav class="quicknav" aria-label="Sections">
+      <a href="#practice">About</a>
+      <a href="#work">Work</a>
+      <a href="#stack">Stack</a>
+      <a href="#contact">Contact</a>
+      <a href="../assets/Rahul-Gupta-CV.pdf" download class="cv">Résumé ↓</a>
+    </nav>
+
+    <div class="hero-body">
+      <div>
+        <p data-type-block>Four years building apps for people who work inside buildings, not browsers. Offline-first inspection and attendance systems where the local database is the source of truth and the network is a bonus. I own products end to end — architecture, native integrations, release — and mentor the Flutter team at a firm shipping to <b>50+ clients</b> across healthcare, logistics, hospitality and fintech.</p>
+        <p style="margin-top:14px" class="dim">Lately: putting the <b>Gemini API</b> to work on internal tooling that engineers keep using instead of abandoning.</p>
+      </div>
+
+      <div class="win term" id="term">
+        <div class="win-top"><span>shell — rahul@sublimity</span><span id="clock">--:--:--</span></div>
+        <div class="out" id="out" aria-live="polite"></div>
+        <form class="inp" id="form" autocomplete="off">
+          <span class="ps1">$</span>
+          <label for="cmd" class="sr" style="position:absolute;left:-9999px">Terminal command</label>
+          <input id="cmd" name="cmd" type="text" spellcheck="false" placeholder="type help, or work">
+        </form>
+        <div class="sugg" id="sugg"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="practice">
+    <div class="sec-head">
+      <p class="cmd"><span class="ps1">rahul@sublimity:~$</span><span class="txt">cat practice.md</span></p>
+      <h2 data-scramble-in>How I build</h2>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <h3>Offline is the default</h3>
+        <p>The network is treated as a bonus. Local database as the source of truth, background sync that survives the app being killed, conflicts resolved without losing an operative's afternoon of work.</p>
+        <ul><li>Drift · sqflite · ObjectBox</li><li>WorkManager &amp; foreground services</li><li>Conflict-aware sync queues</li><li>Unsynced counts on the dashboard</li></ul>
+      </article>
+      <article class="card">
+        <h3>Evidence, not vibes</h3>
+        <p>Compliance work needs a record of who said what, where and when. Pin-level photo evidence on drawings, on-image markup, captured signatures, dynamic forms driven by a rule engine.</p>
+        <ul><li>Pin placement on scanned drawings</li><li>Signatures &amp; re-signing intervals</li><li>Geofencing · biometrics · QR</li><li>MFA / OTP, multi-tenant access</li></ul>
+      </article>
+      <article class="card">
+        <h3>AI where it pays rent</h3>
+        <p>Gemini put on real internal problems: an assistant inside an API-monitoring tool that answers questions and drafts test cases and documentation, plus a dozen focused tools on the same API.</p>
+        <ul><li>Google Gemini API integration</li><li>Prompt engineering for repeatable output</li><li>Document Q&amp;A, image analysis</li><li>Chrome MV3 automation</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="work">
+    <div class="sec-head">
+      <p class="cmd"><span class="ps1">rahul@sublimity:~$</span><span class="txt">ls -la ~/work/</span></p>
+      <h2 data-scramble-in>Selected work</h2>
+    </div>
+
+    <details class="rec" open>
+      <summary class="rec-btn"><span class="idx">01</span><span class="nm">FireArrest<em>Flutter · offline-first fire-safety compliance</em></span><span class="st">v10.0.0 · in service</span><span class="tog">▾</span></summary>
+      <div class="rec-body">
+        <div>
+          <p>One of the team's largest mobile codebases, and the one I led. Inspectors work with no reception: pins dropped on drawing images, photo evidence with on-image markup, dynamic forms driven by a rule engine, asset QR codes, method statements signed on screen. I built the background sync engine on WorkManager and foreground services so all of it uploads reliably — with conflict handling — the moment a signal returns.</p>
+          <p class="pkgs"><b>flutter_bloc</b> <b>drift</b> <b>sqflite</b> <b>workmanager</b> <b>background_fetch</b> <b>dio</b> <b>firebase_messaging</b> <b>crashlytics</b> <b>pro_image_editor</b> <b>signature</b></p>
+        </div>
+        <dl class="kv">
+          <dt>role</dt><dd>Lead developer</dd>
+          <dt>build</dt><dd>10.0.0+62</dd>
+          <dt>target</dt><dd>iOS · Android</dd>
+          <dt>store</dt><dd>Drift + sqlite3</dd>
+          <dt>auth</dt><dd>Company ID + MFA</dd>
+          <dt>envs</dt><dd>dev · test · uat · live</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="rec">
+      <summary class="rec-btn"><span class="idx">02</span><span class="nm">Sentinel<em>Internal tooling · Gemini assistant</em></span><span class="st">internal</span><span class="tog">▾</span></summary>
+      <div class="rec-body">
+        <div>
+          <p>An API-monitoring tool for the team with a Gemini assistant wired into it. Ask what an endpoint does and it answers from context; ask for coverage and it drafts test cases and documentation from a prompt. The real work was prompt engineering it into output consistent enough that engineers kept using it instead of writing the cases by hand.</p>
+          <p class="pkgs"><b>gemini api</b> <b>prompt engineering</b> <b>python</b></p>
+        </div>
+        <dl class="kv">
+          <dt>role</dt><dd>Built end to end</dd>
+          <dt>users</dt><dd>Internal engineering</dd>
+          <dt>does</dt><dd>Q&amp;A · tests · docs</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="rec">
+      <summary class="rec-btn"><span class="idx">03</span><span class="nm">ClockedIn Mobile<em>Flutter · attendance &amp; time tracking</em></span><span class="st">shipped</span><span class="tog">▾</span></summary>
+      <div class="rec-body">
+        <div>
+          <p>Clock-in and clock-out built for sites, not desks: PIN codes, geofencing so a shift can only start where it should, biometric login. Behind it, granular permissions, custom schedules, a real-time attendance dashboard, push notifications, in-app update checks — and offline sync, because warehouses eat signal.</p>
+          <p class="pkgs"><b>getx</b> <b>geolocator</b> <b>local_auth</b> <b>firebase</b></p>
+        </div>
+        <dl class="kv">
+          <dt>role</dt><dd>Core dev, team of 6+</dd>
+          <dt>gates</dt><dd>PIN · geofence · biometric</dd>
+          <dt>live</dt><dd>Real-time dashboard</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="rec">
+      <summary class="rec-btn"><span class="idx">04</span><span class="nm">HRM OTM<em>Flutter · multi-tenant HR &amp; leave</em></span><span class="st">shipped</span><span class="tog">▾</span></summary>
+      <div class="rec-body">
+        <div>
+          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase. I contributed leave and balance tracking, clock-in/out and reporting, with OAuth2 auth and MinIO/S3 document storage — ObjectBox keeping it responsive on the device rather than round-tripping every list.</p>
+          <p class="pkgs"><b>getx</b> <b>objectbox</b> <b>oauth2</b> <b>minio/s3</b></p>
+        </div>
+        <dl class="kv">
+          <dt>role</dt><dd>Feature developer</dd>
+          <dt>tenancy</dt><dd>Two clients, one codebase</dd>
+          <dt>store</dt><dd>ObjectBox · MinIO/S3</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="rec">
+      <summary class="rec-btn"><span class="idx">05</span><span class="nm">WhatsApp-Led Funnel CRM<em>Next.js 16 · React 19 · Postgres</em></span><span class="st">phase 1</span><span class="tog">▾</span></summary>
+      <div class="rec-body">
+        <div>
+          <p>The web side. A CRM for a business that sells over WhatsApp, where attribution locks on first touch and never quietly rewrites itself. The funnel is a live SQL aggregate with per-step drop-off, filtering happens in Postgres rather than the browser, and worklists surface the cases needing a human. Every write lands in an audit trail recording who or what said so.</p>
+          <p class="pkgs"><b>next 16</b> <b>react 19</b> <b>typescript</b> <b>drizzle-orm</b> <b>postgres</b> <b>tailwind 4</b></p>
+        </div>
+        <dl class="kv">
+          <dt>queries</dt><dd>Filtered in Postgres</dd>
+          <dt>sessions</dt><dd>DB-backed, httpOnly</dd>
+          <dt>audit</dt><dd>Every write attributed</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details class="rec">
+      <summary class="rec-btn"><span class="idx">06</span><span class="nm">Rankplus &amp; earlier<em>Flutter · exam prep, reception, delivery</em></span><span class="st">earlier</span><span class="tog">▾</span></summary>
+      <div class="rec-body">
+        <div>
+          <p>Consumer work: Rankplus, a Class 8–12 / JEE / NEET app with live lectures, mock tests and Razorpay payments, built for cheap Android handsets on patchy home connections. Plus reception-management and food-delivery apps, a Manifest V3 Chrome extension that extracts and filters B2B leads, and around a dozen small Gemini tools.</p>
+          <p class="pkgs"><b>flutter</b> <b>firebase</b> <b>razorpay</b> <b>chrome mv3</b> <b>gemini api</b></p>
+        </div>
+        <dl class="kv">
+          <dt>audience</dt><dd>Class 8–12 · JEE · NEET</dd>
+          <dt>payments</dt><dd>Razorpay</dd>
+          <dt>extras</dt><dd>MV3 extension · ~12 AI tools</dd>
+        </dl>
+      </div>
+    </details>
+  </section>
+
+  <section class="sec" id="stack">
+    <div class="sec-head">
+      <p class="cmd"><span class="ps1">rahul@sublimity:~$</span><span class="txt">./stack --list</span></p>
+      <h2 data-scramble-in>Tools in service</h2>
+    </div>
+    <div>
+      <div class="stack-row"><span class="lab">Flutter · Dart</span><span class="bars" data-bars="10">iOS and Android from one codebase · 4+ years in production</span></div>
+      <div class="stack-row"><span class="lab">BLoC · GetX · get_it</span><span class="bars" data-bars="9">Predictable state, injectable services</span></div>
+      <div class="stack-row"><span class="lab">Drift · sqflite · ObjectBox</span><span class="bars" data-bars="9">Local source of truth on device</span></div>
+      <div class="stack-row"><span class="lab">WorkManager · background</span><span class="bars" data-bars="9">Sync that outlives the app process</span></div>
+      <div class="stack-row"><span class="lab">Firebase</span><span class="bars" data-bars="8">Auth, Realtime DB, Messaging, Crashlytics</span></div>
+      <div class="stack-row"><span class="lab">Gemini API</span><span class="bars" data-bars="8">Assistants, doc Q&amp;A, image analysis</span></div>
+      <div class="stack-row"><span class="lab">Native integrations</span><span class="bars" data-bars="8">Geolocation, biometrics, camera, QR, Razorpay</span></div>
+      <div class="stack-row"><span class="lab">Next.js · Postgres</span><span class="bars" data-bars="6">TypeScript, Drizzle, SQL aggregates</span></div>
+      <div class="stack-row"><span class="lab">Python · C · C++ · Java</span><span class="bars" data-bars="5">B.Tech Computer Science, GIT Jaipur</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="contact">
+    <div class="sec-head">
+      <p class="cmd"><span class="ps1">rahul@sublimity:~$</span><span class="txt">contact --open</span></p>
+      <h2 data-scramble-in>Say hello</h2>
+    </div>
+    <div class="out">
+      <p class="dim" style="margin-bottom:16px">Building something for the field — inspections, attendance, compliance, logistics? Tell me what your team is doing when they open the app. <span class="amber">I reply to every message within 24 hours.</span></p>
+      <dl class="kv">
+        <dt>email</dt><dd><a href="mailto:rahul3099gupta@gmail.com">rahul3099gupta@gmail.com</a></dd>
+        <dt>phone</dt><dd><a href="tel:+917891848737">+91 78918 48737</a></dd>
+        <dt>linkedin</dt><dd><a href="https://linkedin.com/in/rahul-gupta-894602188" target="_blank" rel="noopener noreferrer">rahul-gupta-894602188</a></dd>
+        <dt>github</dt><dd><a href="https://github.com/Rahulg1999" target="_blank" rel="noopener noreferrer">github.com/Rahulg1999</a></dd>
+        <dt>résumé</dt><dd><a href="../assets/Rahul-Gupta-CV.pdf" download class="k">Rahul-Gupta-CV.pdf</a></dd>
+        <dt>based</dt><dd>Jaipur, India</dd>
+      </dl>
+    </div>
+    <p class="sign">— end of transmission <span class="caret"></span></p>
+  </section>
+</main>
+
+<footer class="wrap">rahul gupta · mobile lead · sublimity softwares · dec 2021 → present</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=/\\\\<>[]{}';
+
+  /* ---- typewriter ---- */
+  function typeInto(el, text, speed){
+    if(reduce){ el.textContent = text; return; }
+    var t0 = performance.now(), dur = text.length * speed;
+    (function step(){
+      var k = Math.min((performance.now() - t0) / dur, 1);
+      el.textContent = text.slice(0, Math.round(k * text.length));
+      if(k < 1) setTimeout(step, speed);
+    })();
+  }
+  var cmd = document.querySelector('[data-type]');
+  if(cmd) setTimeout(function(){ typeInto(cmd, cmd.dataset.type, 44); }, reduce ? 0 : 2350);
+
+  /* ---- scramble reveal: time-based, so a throttled timer still lands ---- */
+  function scrambleText(setText, target, dur){
+    if(reduce){ setText(target); return; }
+    var t0 = performance.now();
+    (function tick(){
+      var k = Math.min((performance.now() - t0) / dur, 1);
+      if(k >= 1){ setText(target); return; }
+      var reveal = k * target.length * 1.15;
+      var s = '';
+      for(var i = 0; i < target.length; i++){
+        if(i < reveal) s += target[i];
+        else if(target[i] === ' ') s += ' ';
+        else s += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+      }
+      setText(s);
+      setTimeout(tick, 34);
+    })();
+  }
+  function scramble(el, dur){
+    var target = el.dataset.text || el.textContent;
+    el.dataset.text = target;
+    scrambleText(function(t){ el.textContent = t; }, target, dur || 700);
+  }
+
+  /* the name keeps its two-tone markup, so each half scrambles in place */
+  var nameEl = document.querySelector('[data-scramble]');
+  if(nameEl){
+    var firstNode = nameEl.firstChild, spanNode = nameEl.querySelector('span');
+    var startAt = reduce ? 0 : 2450;
+    setTimeout(function(){
+      scrambleText(function(t){ firstNode.nodeValue = t; }, 'Rahul ', 620);
+      scrambleText(function(t){ spanNode.textContent = t; }, 'Gupta', 780);
+    }, startAt);
+  }
+  var late = document.querySelector('[data-scramble-late]');
+  if(late){
+    late.dataset.text = late.textContent;
+    if(!reduce) late.textContent = '';
+    setTimeout(function(){ scramble(late, 900); }, reduce ? 0 : 3050);
+  }
+
+  /* section titles scramble as they arrive */
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(en){
+      en.forEach(function(e){
+        if(!e.isIntersecting) return;
+        scramble(e.target, 640);
+        io.unobserve(e.target);
+      });
+    }, {threshold:0.6});
+    document.querySelectorAll('[data-scramble-in]').forEach(function(el){ io.observe(el); });
+
+    /* stack meters fill on arrival */
+    var io2 = new IntersectionObserver(function(en){
+      en.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var el = e.target, n = parseInt(el.dataset.bars, 10), note = el.textContent;
+        io2.unobserve(el);
+        if(reduce){ el.innerHTML = '█'.repeat(n) + '░'.repeat(10-n) + ' <span>' + note + '</span>'; return; }
+        var t0 = performance.now(), dur = n * 80;
+        (function grow(){
+          var k = Math.min((performance.now() - t0) / dur, 1);
+          var f = Math.round(k * n);
+          el.innerHTML = '█'.repeat(f) + '░'.repeat(10 - f) + ' <span>' + note + '</span>';
+          if(k < 1) setTimeout(grow, 60);
+        })();
+      });
+    }, {threshold:0.5});
+    document.querySelectorAll('[data-bars]').forEach(function(el){ io2.observe(el); });
+  }
+
+  /* ---- the shell: a real prompt you can type into ---- */
+  var out = document.getElementById('out'), form = document.getElementById('form'),
+      input = document.getElementById('cmd'), sugg = document.getElementById('sugg'),
+      clock = document.getElementById('clock');
+
+  function stamp(){
+    var d = new Date();
+    return [d.getHours(), d.getMinutes(), d.getSeconds()].map(function(n){ return String(n).padStart(2,'0'); }).join(':');
+  }
+  if(clock){ clock.textContent = stamp(); setInterval(function(){ clock.textContent = stamp(); }, 1000); }
+
+  /* output streams the way a shell does: a line at a time, characters for plain text */
+  var queue = [], writing = false, busyCaret = null;
+
+  function atBottom(){ return out.scrollHeight - out.scrollTop - out.clientHeight < 40; }
+  function follow(stick){ if(stick) out.scrollTop = out.scrollHeight; }
+
+  function showCaret(){
+    if(busyCaret || !out) return;
+    busyCaret = document.createElement('div');
+    busyCaret.innerHTML = '<span class="caret"></span>';
+    out.appendChild(busyCaret);
+  }
+  function hideCaret(){ if(busyCaret){ busyCaret.remove(); busyCaret = null; } }
+
+  function typeRow(row, text, stick, done){
+    var t0 = performance.now(), dur = Math.min(text.length * 11, 420);
+    (function step(){
+      var k = Math.min((performance.now() - t0) / dur, 1);
+      row.textContent = text.slice(0, Math.round(k * text.length));
+      follow(stick);
+      if(k < 1) setTimeout(step, 16); else done();
+    })();
+  }
+
+  function pump(){
+    if(writing || !queue.length) return;
+    writing = true;
+    var item = queue.shift();
+    var stick = atBottom();
+    hideCaret();
+    var row = document.createElement('div');
+    if(item.cls) row.className = item.cls;
+    out.appendChild(row);
+    function next(){
+      writing = false;
+      follow(stick);
+      if(queue.length){ showCaret(); setTimeout(pump, item.gap || 55); }
+    }
+    if(reduce){ row.innerHTML = item.html; next(); return; }
+    /* plain prose types out; anything with markup lands as a whole line */
+    if(item.html.indexOf('<') === -1 && item.html.length > 2){
+      typeRow(row, item.html, stick, next);
+    } else {
+      row.innerHTML = item.html;
+      follow(stick);
+      setTimeout(next, 10);
+    }
+  }
+
+  function flush(){
+    /* a new command cuts the previous output short, like hitting a key mid-scroll */
+    hideCaret();
+    while(queue.length){
+      var item = queue.shift();
+      var row = document.createElement('div');
+      if(item.cls) row.className = item.cls;
+      row.innerHTML = item.html;
+      out.appendChild(row);
+    }
+    writing = false;
+    out.scrollTop = out.scrollHeight;
+  }
+
+  function print(html, cls, gap){
+    if(!out) return;
+    queue.push({html:html, cls:cls, gap:gap});
+    if(!writing) setTimeout(pump, 0);
+  }
+  function table(pairs){
+    return '<table>' + pairs.map(function(p){
+      return '<tr><td>' + p[0] + '</td><td>' + p[1] + '</td></tr>';
+    }).join('') + '</table>';
+  }
+
+  var PROJECTS = {
+    firearrest: {
+      title: 'FireArrest — Flutter, offline-first fire-safety compliance',
+      rows: [['role','Lead developer'],['build','10.0.0+62, in service'],['store','Drift + sqlite3'],['sync','WorkManager / BackgroundFetch'],['auth','Company ID + MFA/OTP']],
+      note: 'Inspectors work with no reception: pins on drawing images, photo evidence with markup, dynamic forms driven by a rule engine, signed method statements. I built the background sync engine that uploads it all, conflict-aware, when a signal returns.'
+    },
+    sentinel: {
+      title: 'Sentinel — internal API monitoring with a Gemini assistant',
+      rows: [['role','Built end to end'],['users','Internal engineering'],['does','Q&A, test cases, documentation'],['model','Google Gemini']],
+      note: 'Ask what an endpoint does and it answers from context. Ask for coverage and it drafts the cases. The work was prompt engineering it into output consistent enough that engineers kept using it.'
+    },
+    clockedin: {
+      title: 'ClockedIn Mobile — attendance and time tracking',
+      rows: [['role','Core developer, team of 6+'],['gates','PIN, geofence, biometric'],['live','Real-time attendance dashboard'],['state','GetX']],
+      note: 'Clock-in built for sites, not desks. Granular permissions, custom schedules, push notifications, in-app update checks, and offline sync because warehouses eat signal.'
+    },
+    hrm: {
+      title: 'HRM OTM — multi-tenant HR and leave management',
+      rows: [['role','Feature developer'],['tenancy','Two clients, one codebase'],['store','ObjectBox, MinIO/S3'],['auth','OAuth2']],
+      note: 'Leave and balance tracking, clock-in/out and reporting across a two-client multi-flavor build.'
+    },
+    crm: {
+      title: 'WhatsApp-Led Funnel CRM — Next.js 16, React 19, Postgres',
+      rows: [['queries','Filtered in Postgres, not the browser'],['sessions','DB-backed, httpOnly'],['audit','Every write attributed'],['stack','Drizzle ORM, Tailwind 4']],
+      note: 'Attribution locks on first touch and never quietly rewrites itself. Drop-off is a live SQL aggregate, and worklists surface the cases needing a human.'
+    },
+    rankplus: {
+      title: 'Rankplus — exam prep for Class 8-12 / JEE / NEET',
+      rows: [['audience','Students on cheap Android handsets'],['payments','Razorpay'],['content','Live lectures, mock tests']],
+      note: 'Built for patchy home connections. The failure mode is a teenager missing a class the night before an exam.'
+    }
+  };
+  var ALIASES = {fire:'firearrest', clocked:'clockedin', 'hrm-otm':'hrm', funnel:'crm', rank:'rankplus'};
+
+  var ASSETS = ['FD-01','SP-14','FD-02','DMP-07','SP-21','FD-09','SP-33','FD-11','DMP-12','SP-40','FD-18','SP-42','CORE-1','CORE-2'];
+  var syncing = false;
+  function runSync(){
+    if(syncing) return;
+    syncing = true;
+    print('<span class="warn">offline</span> — 14 records held in the local queue');
+    var i = 0;
+    (function next(){
+      if(i >= ASSETS.length){
+        print('<span class="ok">queue drained</span> — 14 assets, 0 conflicts, 0 records lost');
+        syncing = false;
+        return;
+      }
+      var a = ASSETS[i], mb = (0.4 + Math.random()*3.1).toFixed(1);
+      print('<span class="dim">' + stamp() + '</span> queue &rsaquo; <span class="k">' + a + '</span> uploaded <span class="dim">' + mb + ' MB</span> <span class="ok">ok</span>', null, 0);
+      i++;
+      setTimeout(next, reduce ? 0 : 260);
+    })();
+  }
+
+  var COMMANDS = {
+    help: function(){
+      print('available commands:');
+      print(table([
+        ['whoami','who I am and what I do'],
+        ['work','list the six shipped products'],
+        ['open &lt;name&gt;','detail on one, e.g. <span class="k">open sentinel</span>'],
+        ['stack','tools in regular service'],
+        ['sync','watch an offline queue drain (FireArrest demo)'],
+        ['contact','how to reach me'],
+        ['clear','clear the screen']
+      ]));
+      print('<span class="dim">tab completes · &uarr;/&darr; walks history</span>');
+    },
+    whoami: function(){
+      print('<span class="k">Rahul Gupta</span> — Mobile Lead at Sublimity Softwares, Jaipur.');
+      print(table([
+        ['focus','Flutter and cross-platform, offline-first architecture'],
+        ['also','Gemini API integration, prompt engineering'],
+        ['since','Dec 2021 — Flutter Developer, then Mobile Lead'],
+        ['scale','A firm shipping business systems to 50+ clients'],
+        ['team','Mentors a team of Flutter developers']
+      ]));
+      print('I own products end to end: architecture, native integrations, release.');
+    },
+    work: function(){
+      print(table([
+        ['1 firearrest','Offline-first fire-safety compliance <span class="ok">v10.0.0</span>'],
+        ['2 sentinel','API monitoring with a Gemini assistant'],
+        ['3 clockedin','Attendance with geofencing and biometrics'],
+        ['4 hrm','Multi-tenant HR and leave management'],
+        ['5 crm','WhatsApp-led funnel CRM on Next.js and Postgres'],
+        ['6 rankplus','Exam prep with live lectures and payments']
+      ]));
+      print('<span class="dim">try <span class="k">open firearrest</span> — or scroll down for the full records</span>');
+    },
+    open: function(arg){
+      if(!arg){ print('usage: <span class="k">open &lt;name&gt;</span> — try one of: ' + Object.keys(PROJECTS).join(', ')); return; }
+      var key = ALIASES[arg] || arg;
+      var p = PROJECTS[key];
+      if(!p){ print('<span class="warn">not found:</span> ' + arg + '. try <span class="k">work</span> for the list.'); return; }
+      print('<span class="k">' + p.title + '</span>');
+      print(table(p.rows));
+      print(p.note);
+    },
+    stack: function(){
+      print(table([
+        ['Flutter · Dart','████████████ four years in production'],
+        ['BLoC · GetX','███████████ predictable state, injectable services'],
+        ['Drift · ObjectBox','███████████ local source of truth on device'],
+        ['WorkManager','███████████ sync that outlives the app process'],
+        ['Firebase','██████████ auth, messaging, crashlytics'],
+        ['Gemini API','██████████ assistants, doc Q&A, image analysis'],
+        ['Next.js · Postgres','███████ typescript, drizzle, SQL aggregates']
+      ]));
+    },
+    sync: function(){ runSync(); },
+    contact: function(){
+      print(table([
+        ['email','<a href="mailto:rahul3099gupta@gmail.com" class="k">rahul3099gupta@gmail.com</a>'],
+        ['phone','<a href="tel:+917891848737" class="k">+91 78918 48737</a>'],
+        ['linkedin','<a href="https://linkedin.com/in/rahul-gupta-894602188" target="_blank" rel="noopener noreferrer" class="k">rahul-gupta-894602188</a>'],
+        ['github','<a href="https://github.com/Rahulg1999" target="_blank" rel="noopener noreferrer" class="k">github.com/Rahulg1999</a>'],
+        ['based','Jaipur, India']
+      ]));
+    },
+    clear: function(){ if(out) out.innerHTML = ''; },
+    sudo: function(arg){
+      if(arg && arg.indexOf('hire') === 0){ print('<span class="ok">permission granted.</span> mail is two lines up — <span class="k">contact</span>'); }
+      else print('<span class="warn">nice try.</span> this shell has no root, only work.');
+    }
+  };
+  COMMANDS.ls = COMMANDS.work;
+  COMMANDS.cat = COMMANDS.open;
+  COMMANDS.about = COMMANDS.whoami;
+  COMMANDS.man = COMMANDS.help;
+
+  var NAMES = Object.keys(COMMANDS);
+  var history = [], hpos = -1;
+
+  function run(line){
+    var parts = line.trim().split(/\s+/);
+    var name = (parts.shift() || '').toLowerCase();
+    var arg = (parts.join(' ') || '').toLowerCase();
+    var echo = document.createElement('div');
+    echo.className = 'said';
+    echo.innerHTML = '<b>$</b> ' + line.replace(/[<>&]/g, function(c){ return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c]; });
+    out.appendChild(echo);
+    out.scrollTop = out.scrollHeight;
+    if(!name) return;
+    showCaret();
+    if(COMMANDS[name]) COMMANDS[name](arg);
+    else {
+      var near = NAMES.filter(function(n){ return n.indexOf(name[0]) === 0; })[0];
+      print('<span class="warn">' + name + ': command not found.</span>' + (near ? ' did you mean <span class="k">' + near + '</span>?' : '') + ' try <span class="k">help</span>.');
+    }
+  }
+
+  if(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var line = input.value;
+      if(!line.trim()) return;
+      history.unshift(line); hpos = -1;
+      input.value = '';
+      flush();
+      run(line);
+    });
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Tab'){
+        e.preventDefault();
+        var v = input.value.trim().toLowerCase();
+        if(!v) return;
+        var hit = NAMES.filter(function(n){ return n.indexOf(v) === 0; })[0]
+               || Object.keys(PROJECTS).filter(function(n){ return n.indexOf(v.split(' ').pop()) === 0; })[0];
+        if(hit) input.value = v.indexOf(' ') > -1 ? v.slice(0, v.lastIndexOf(' ') + 1) + hit : hit;
+      } else if(e.key === 'ArrowUp'){
+        e.preventDefault();
+        if(hpos < history.length - 1){ hpos++; input.value = history[hpos]; }
+      } else if(e.key === 'ArrowDown'){
+        e.preventDefault();
+        if(hpos > 0){ hpos--; input.value = history[hpos]; } else { hpos = -1; input.value = ''; }
+      }
+    });
+    document.getElementById('term').addEventListener('click', function(e){
+      if(e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') input.focus();
+    });
+  }
+
+  /* suggestion chips */
+  if(sugg){
+    ['help','whoami','work','open firearrest','stack','sync','contact'].forEach(function(c){
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = c;
+      b.addEventListener('click', function(){ run(c); input.focus(); });
+      sugg.appendChild(b);
+    });
+  }
+
+  /* opening output, typed in after the boot curtain lifts */
+  var INTRO = [
+    ['<span class="dim">last login: today · fieldops shell v4.0</span>', 0],
+    ['<span class="k">Rahul Gupta</span> — Mobile Lead. Four years of Flutter shipped to people working inside buildings.', 260],
+    ['type <span class="k">help</span>, press a chip, or just scroll — <span class="dim">the whole CV is on the page below, no commands needed.</span>', 520]
+  ];
+  INTRO.forEach(function(pair){
+    setTimeout(function(){ print(pair[0]); }, (reduce ? 0 : 2600) + pair[1]);
+  });
+
+  /* the boot curtain has served its purpose */
+  var bootCurtain = document.getElementById('boot');
+  if(bootCurtain) setTimeout(function(){ bootCurtain.remove(); }, reduce ? 0 : 3100);
+
+  /* the caret cursor, with CRT persistence trailing it */
+  if(!reduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    var docEl = document.documentElement;
+    var car = document.getElementById('tcur'), clb = car.querySelector('.lb');
+    var ps = [document.querySelector('.tp.p1'), document.querySelector('.tp.p2'), document.querySelector('.tp.p3')];
+    docEl.classList.add('cur-on');
+    var cx = innerWidth/2, cy = innerHeight/2, on = false;
+    var pos = ps.map(function(){ return {x:cx, y:cy}; });
+    window.addEventListener('pointermove', function(e){
+      cx = e.clientX; cy = e.clientY;
+      if(!on){ on = true; docEl.classList.add('cur-live'); pos.forEach(function(p){ p.x = cx; p.y = cy; }); }
+      car.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
+    }, {passive:true});
+    document.addEventListener('pointerleave', function(){ on = false; docEl.classList.remove('cur-live'); });
+    (function trail(){
+      var ease = [0.24, 0.15, 0.09];
+      pos.forEach(function(p, i){
+        p.x += (cx - p.x) * ease[i];
+        p.y += (cy - p.y) * ease[i];
+        ps[i].style.transform = 'translate(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px)';
+      });
+      requestAnimationFrame(trail);
+    })();
+    document.querySelectorAll('a, button, summary, input, .sugg button').forEach(function(el){
+      el.addEventListener('pointerenter', function(){
+        car.classList.add('wide');
+        clb.textContent = el.tagName === 'SUMMARY' ? 'open' : (el.tagName === 'INPUT' ? 'type' : 'run');
+      });
+      el.addEventListener('pointerleave', function(){ car.classList.remove('wide'); clb.textContent = ''; });
+    });
+  }
+
+  /* records expand and collapse instead of snapping */
+  document.querySelectorAll('.rec').forEach(function(rec){
+    var sum = rec.querySelector('summary'), body = rec.querySelector('.rec-body');
+    if(!sum || !body) return;
+    var anim = null;
+
+    function measure(){
+      var prev = rec.open;
+      if(!prev) rec.open = true;
+      var h = body.scrollHeight;
+      if(!prev) rec.open = false;
+      return h;
+    }
+    function play(from, to, opening){
+      if(anim) anim.cancel();
+      body.style.overflow = 'hidden';
+      anim = body.animate(
+        [{height:from + 'px', opacity:opening ? 0 : 1},
+         {height:to + 'px',   opacity:opening ? 1 : 0}],
+        {duration:opening ? 400 : 300, easing:'cubic-bezier(.32,.72,.3,1)'}
+      );
+      var finish = function(){
+        if(!anim && body.style.overflow !== 'hidden') return;
+        body.style.overflow = '';
+        anim = null;
+        if(!opening) rec.open = false;
+      };
+      anim.onfinish = finish;
+      anim.oncancel = function(){ body.style.overflow = ''; };
+      setTimeout(finish, (opening ? 400 : 300) + 160);
+    }
+    sum.addEventListener('click', function(e){
+      e.preventDefault();
+      if(reduce){ rec.open = !rec.open; return; }
+      if(rec.open){
+        play(body.scrollHeight, 0, false);
+      } else {
+        var h = measure();
+        rec.open = true;
+        play(0, h, true);
+        /* the detail lines arrive just behind the panel */
+        body.querySelectorAll('p, dl, .pkgs').forEach(function(el, i){
+          el.animate([{opacity:0, transform:'translateY(8px)'},{opacity:1, transform:'none'}],
+            {duration:340, delay:90 + i*60, easing:'cubic-bezier(.2,.8,.3,1)', fill:'backwards'});
+        });
+      }
+    });
+  });
+
+  /* hover scramble on nav */
+  document.querySelectorAll('.bar nav a').forEach(function(a){
+    a.addEventListener('mouseenter', function(){ scramble(a, 420); });
+  });
+})();
+</script>
+
+<style>
+/* "All interfaces" lives in the flow at the end of the page — a fixed chip
+   floated over the text on phones, which is the bug this replaces. */
+.rg-back{display:inline-flex;align-items:center;gap:8px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  color:inherit;text-decoration:none;padding:12px 18px;border:1px solid currentColor;border-radius:3px;
+  opacity:.65;transition:opacity .3s ease,transform .3s cubic-bezier(.2,.8,.3,1)}
+.rg-back:hover,.rg-back:focus-visible{opacity:1;transform:translateY(-2px)}
+.rg-foot{display:flex;justify-content:center;padding:10px 20px calc(40px + env(safe-area-inset-bottom))}
+/* the same link, small, in the header nav */
+.rg-top{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;color:inherit;opacity:.62;white-space:nowrap}
+.rg-top:hover{opacity:1}
+@media print{.rg-back,.rg-foot,.rg-top{display:none}}
+</style>
+<div class="rg-foot"><a class="rg-back" href="../" aria-label="Back to all five interfaces">&larr; All interfaces</a></div>
+</body>
+</html>

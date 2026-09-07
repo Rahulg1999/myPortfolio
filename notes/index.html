@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Field Notes — Rahul Gupta</title>
+<meta name="description" content="Field Notes — Rahul Gupta, Mobile Lead. Offline-first Flutter apps, set in two-ink riso print.">
+<meta name="author" content="Rahul Gupta">
+<meta name="theme-color" content="#111013">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Field Notes — Rahul Gupta">
+<meta property="og:description" content="Field Notes — Rahul Gupta, Mobile Lead. Offline-first Flutter apps, set in two-ink riso print.">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon-fieldnotes.svg">
+<style>:root{color-scheme:light dark}*{-webkit-tap-highlight-color:transparent}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<script>document.documentElement.className += " js";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#F0EDE5; --paper-2:#E6E1D5; --ink:#14110E; --ink-soft:#4A443B; --ink-faint:#8A8175;
+  --blue:#2436C7; --orange:#FF4A17; --rule:#14110E;
+  --blend:multiply; --dot:rgba(20,17,14,.16);
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"Space Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#14110E; --paper-2:#1D1915; --ink:#F0EDE5; --ink-soft:#B6AEA1; --ink-faint:#7C7367;
+    --blue:#5A6BFF; --orange:#FF6B3D; --rule:#F0EDE5;
+    --blend:screen; --dot:rgba(240,237,229,.13);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14110E; --paper-2:#1D1915; --ink:#F0EDE5; --ink-soft:#B6AEA1; --ink-faint:#7C7367;
+  --blue:#5A6BFF; --orange:#FF6B3D; --rule:#F0EDE5;
+  --blend:screen; --dot:rgba(240,237,229,.13);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* halftone tooth over the whole sheet */
+body::after{
+  content:"";position:fixed;inset:0;z-index:50;pointer-events:none;
+  background-image:radial-gradient(var(--dot) 0.7px,transparent 0.7px);
+  background-size:4px 4px;opacity:.5;
+}
+.hold{max-width:1240px;margin:0 auto;padding:0 24px}
+p{margin:0}
+a{color:inherit}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:800;line-height:.92;letter-spacing:-.03em;text-wrap:balance}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+::selection{background:var(--orange);color:var(--paper)}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+
+/* masked line reveal */
+.ln{display:block;overflow:hidden;padding-bottom:.06em}
+.ln>i{display:block;font-style:normal}
+.js .ln>i{transform:translateY(110%);transition:transform 1.05s cubic-bezier(.16,.84,.3,1)}
+.js .ln.go>i,.js .in .ln>i{transform:none}
+.js .ln:nth-child(2)>i{transition-delay:.08s}
+.js .ln:nth-child(3)>i{transition-delay:.16s}
+.js .ln:nth-child(4)>i{transition-delay:.24s}
+/* word-by-word */
+.wd{display:inline-block}
+.js .wd{opacity:0;transform:translateY(.45em) rotate(1.5deg);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.75,.3,1)}
+.js .in .wd{opacity:1;transform:none}
+.js .fade{opacity:0;transform:translateY(16px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.75,.3,1)}
+.js .fade.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .js .ln>i,.js .wd,.js .fade{transform:none;opacity:1;transition:none}
+  html{scroll-behavior:auto}
+}
+
+/* ============ press loader: two ink plates register, then the sheet lifts ============ */
+#press{position:fixed;inset:0;z-index:100;background:var(--paper);display:grid;place-items:center;
+  animation:sheet .8s cubic-bezier(.76,0,.24,1) 2.05s forwards}
+#press .plates{position:relative;width:190px;height:190px}
+#press .plates i{position:absolute;inset:0;margin:auto;width:118px;height:118px;border-radius:50%;mix-blend-mode:var(--blend)}
+#press .plates i.k1{background:var(--orange);animation:reg1 1.5s cubic-bezier(.3,.8,.3,1) forwards}
+#press .plates i.k2{background:var(--blue);animation:reg2 1.5s cubic-bezier(.3,.8,.3,1) .12s forwards}
+@keyframes reg1{from{transform:translate(-84px,-30px) scale(.7)}to{transform:translate(-22px,0) scale(1)}}
+@keyframes reg2{from{transform:translate(84px,34px) scale(.7)}to{transform:translate(22px,0) scale(1)}}
+@keyframes sheet{to{transform:translateY(-101%)}}
+#press .reg{position:absolute;width:26px;height:26px}
+#press .reg::before,#press .reg::after{content:"";position:absolute;background:var(--ink)}
+#press .reg::before{left:50%;top:0;bottom:0;width:1px}
+#press .reg::after{top:50%;left:0;right:0;height:1px}
+#press .reg.tl{left:16px;top:16px}#press .reg.br{right:16px;bottom:16px}
+#press .cap{position:absolute;left:0;right:0;bottom:34px;text-align:center}
+#press .cap b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,5vw,46px);text-transform:uppercase;letter-spacing:-.035em}
+#press .cap span{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
+html:not(.js) #press{display:none}
+@media (prefers-reduced-motion:reduce){#press{display:none}}
+
+/* the pointer is an ink dot that overprints, trailing wet ink */
+@media (hover:hover) and (pointer:fine){
+  html.cur-on,html.cur-on *{cursor:none!important}
+}
+#ink,.wet{position:fixed;top:0;left:0;pointer-events:none;border-radius:50%;opacity:0;transition:opacity .3s ease,width .3s cubic-bezier(.2,.8,.3,1),height .3s cubic-bezier(.2,.8,.3,1),margin .3s cubic-bezier(.2,.8,.3,1)}
+html.cur-live #ink{opacity:1}
+#ink{width:20px;height:20px;margin:-10px 0 0 -10px;background:var(--orange);mix-blend-mode:var(--blend);z-index:56;display:grid;place-items:center}
+#ink.big{width:96px;height:96px;margin:-48px 0 0 -48px}
+#ink .lb{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);opacity:0;transition:opacity .2s ease}
+#ink.big .lb{opacity:1}
+.wet{width:13px;height:13px;margin:-6.5px 0 0 -6.5px;background:var(--blue);mix-blend-mode:var(--blend);z-index:55}
+html.cur-live .wet{opacity:.55}
+html.cur-live .wet.w2{opacity:.3}
+@media (prefers-reduced-motion:reduce){
+  #ink,.wet{display:none!important}
+  html.cur-on,html.cur-on *{cursor:auto!important}
+}
+
+/* top rule */
+.top{position:sticky;top:0;z-index:40;padding-top:env(safe-area-inset-top);background:var(--paper);border-bottom:2px solid var(--rule)}
+.top .hold{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px}
+.top .mono{color:var(--ink)}
+.top nav{display:flex;gap:22px}
+.top nav a{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--ink-soft)}
+.top nav a:hover{color:var(--orange)}
+@media (max-width:680px){.top nav a:nth-child(-n+2){display:none}}
+
+/* hero */
+.hero{padding:48px 0 0;position:relative}
+.hero h1{font-size:clamp(58px,13.5vw,190px);text-transform:uppercase;letter-spacing:-.045em}
+.hero h1 .o{color:var(--orange)}
+.hero h1 .b{color:var(--blue)}
+.hero-sub{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px;align-items:end;margin-top:26px;padding-bottom:34px;border-bottom:2px solid var(--rule)}
+@media (max-width:880px){.hero-sub{grid-template-columns:1fr;gap:22px}}
+.hero-sub p.big{font-size:clamp(19px,2.1vw,26px);line-height:1.35;color:var(--ink)}
+.hero-sub p.big b{font-weight:500;background:linear-gradient(var(--orange),var(--orange)) bottom left/100% 3px no-repeat;padding-bottom:2px}
+.hero-sub .side{display:flex;flex-direction:column;gap:9px}
+.hero-sub .side span{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid var(--ink-faint);padding-bottom:6px;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.hero-sub .side span b{color:var(--orange);font-weight:700}
+
+/* overprint plate */
+.plate{position:relative;height:clamp(230px,27vw,340px);margin:0;overflow:hidden;border-bottom:2px solid var(--rule);background:var(--paper)}
+.plate i{position:absolute;display:block;border-radius:50%;mix-blend-mode:var(--blend);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.plate i.a{width:30vw;height:30vw;max-width:300px;max-height:300px;background:var(--orange);left:4%;top:-24%}
+.plate i.b{width:26vw;height:26vw;max-width:260px;max-height:260px;background:var(--blue);left:17%;top:-4%}
+.plate i.c{width:20vw;height:20vw;max-width:210px;max-height:210px;background:var(--orange);left:31%;top:-32%;opacity:.9}
+@media (max-width:760px){.plate i.a{width:44vw;height:44vw;left:-4%}.plate i.b{width:38vw;height:38vw;left:22%}.plate i.c{width:30vw;height:30vw;left:48%}}
+.plate .cap{position:absolute;right:24px;bottom:20px;z-index:2;max-width:40ch;text-align:right}
+.plate .cap b{font-family:var(--display);font-weight:700;font-size:clamp(17px,2vw,23px);display:block;letter-spacing:-.02em}
+
+/* marquee */
+.tape{border-bottom:2px solid var(--rule);overflow:hidden;background:var(--paper)}
+.tape-run{display:flex;gap:0;width:max-content;animation:run 42s linear infinite}
+.tape-run:hover{animation-play-state:paused}
+@keyframes run{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.tape-run{animation:none}}
+.tape-run span{font-family:var(--display);font-weight:700;font-size:clamp(22px,3.2vw,42px);text-transform:uppercase;letter-spacing:-.02em;padding:14px 0;white-space:nowrap}
+.tape-run span::after{content:"◆";color:var(--orange);margin:0 .5em;font-size:.5em;vertical-align:.35em}
+
+/* sections */
+.sec{padding:74px 0 0}
+.sec-label{display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:2px solid var(--rule);padding-bottom:10px;margin-bottom:34px}
+.sec-label h2{font-size:clamp(30px,5vw,64px);text-transform:uppercase}
+
+/* practice */
+.trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0;border-left:1px solid var(--ink-faint)}
+.tri{padding:22px 24px 30px;border-right:1px solid var(--ink-faint);transition:background .4s ease,transform .4s cubic-bezier(.2,.8,.3,1)}
+.tri:hover{background:var(--paper-2);transform:translateY(-3px)}
+.tri h3{font-size:26px;margin:12px 0 12px;letter-spacing:-.02em}
+.tri p{color:var(--ink-soft);font-size:16px}
+.tri ul{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.tri li{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-faint)}
+.tri li::before{content:"→ ";color:var(--orange)}
+
+/* work rows */
+.rows{border-top:2px solid var(--rule)}
+.row{border-bottom:2px solid var(--rule);position:relative;isolation:isolate;overflow:hidden}
+.row::before{content:"";position:absolute;inset:0;background:var(--orange);transform:translateY(101%);transition:transform .5s cubic-bezier(.2,.8,.25,1);z-index:-1}
+.row:hover::before{transform:none}
+.row:hover,.row:focus-within{color:var(--paper)}
+.row:hover .r-meta,.row:hover .r-kicker,.row:hover .r-note{color:var(--paper)}
+.row:hover .r-num{color:var(--paper);opacity:.55}
+@media (prefers-reduced-motion:reduce){.row::before{transition:none}}
+.r-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:22px;align-items:center;padding:22px 6px}
+.r-num{font-family:var(--mono);font-size:12px;color:var(--ink-faint);padding-top:6px}
+.r-name{font-family:var(--display);font-weight:800;font-size:clamp(30px,5.6vw,74px);text-transform:uppercase;letter-spacing:-.035em;line-height:.95}
+.r-kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px}
+.r-meta{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap}
+.r-body{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:34px;padding:0 6px 28px}
+@media (max-width:880px){.r-top{grid-template-columns:auto 1fr;gap:14px}.r-meta{display:none}.r-body{grid-template-columns:1fr;gap:16px}}
+.r-note{color:var(--ink-soft);max-width:62ch;font-size:16.5px}
+.r-facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-family:var(--mono);font-size:12px}
+.r-facts dt{color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.r-facts dd{margin:0}
+
+/* minor grid */
+.minor{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.min{border-top:2px solid var(--rule);padding-top:14px;transition:transform .4s cubic-bezier(.2,.8,.3,1)}
+.min:hover{transform:translateY(-4px)}
+.min:hover h4{color:var(--orange)}
+.min h4{transition:color .3s ease}
+.min h4{font-family:var(--display);font-weight:700;font-size:21px;margin:0 0 8px;letter-spacing:-.02em}
+.min p{color:var(--ink-soft);font-size:15.5px}
+.min .mono{display:block;margin-top:10px}
+
+/* index table */
+.idx{width:100%;border-collapse:collapse;font-size:15px}
+.idx th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:400;padding:0 14px 10px 0;border-bottom:2px solid var(--rule)}
+.idx td{padding:12px 14px 12px 0;border-bottom:1px solid var(--ink-faint);vertical-align:top}
+.idx tr:hover td{background:var(--paper-2)}
+.idx td:first-child{font-family:var(--display);font-weight:700;white-space:nowrap}
+.idx td:last-child{color:var(--ink-soft);font-size:14.5px}
+.idx-wrap{overflow-x:auto}
+
+/* contact */
+.end{padding:78px 0 0}
+.end h2{font-size:clamp(38px,7.6vw,104px);text-transform:uppercase;letter-spacing:-.04em}
+.end .cta{display:inline-block;margin-top:26px;font-family:var(--display);font-weight:700;font-size:clamp(22px,3.4vw,40px);text-decoration:none;border-bottom:4px solid var(--orange);letter-spacing:-.02em}
+.end .cta:hover{color:var(--orange)}
+.ends{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px;margin-top:44px;padding-top:18px;border-top:2px solid var(--rule)}
+.ends a,.ends span{display:block;text-decoration:none;font-size:15.5px}
+.ends .mono{display:block;margin-bottom:5px}
+.ends a:hover{color:var(--orange)}
+footer{padding:56px 0 42px;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+</style>
+
+<div id="press">
+  <span class="reg tl"></span><span class="reg br"></span>
+  <span class="plates"><i class="k1"></i><i class="k2"></i></span>
+  <span class="cap"><b>Field Notes</b><span>Registering plates · 2 inks</span></span>
+</div>
+
+<div id="ink" aria-hidden="true"><span class="lb">Read</span></div>
+<div class="wet w2" aria-hidden="true"></div>
+<div class="wet w1" aria-hidden="true"></div>
+
+<div class="top">
+  <div class="hold">
+    <span class="mono">Rahul Gupta — Mobile Lead</span>
+    <nav>
+      <a class="rg-top" href="../">&larr; All interfaces</a>
+      <a href="#practice">Practice</a>
+      <a href="#work">Work</a>
+      <a href="#index">Index</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</div>
+
+<main>
+<section class="hero hold">
+  <p class="mono">Sublimity Softwares · Jaipur, India · Dec 2021 → present</p>
+  <h1>
+    <span class="ln"><i>Field</i></span>
+    <span class="ln"><i class="o">Grade</i></span>
+    <span class="ln"><i>Soft<span class="b">ware</span></i></span>
+  </h1>
+  <div class="hero-sub">
+    <p class="big fade">Flutter apps for people working inside buildings, warehouses and shop floors — where the network is <b>a bonus, not a given</b>.</p>
+    <div class="side fade">
+      <span>Years shipping Flutter <b>04</b></span>
+      <span>FireArrest in service <b>v10.0.0</b></span>
+      <span>Client systems at the firm <b>50+</b></span>
+      <span>Developers mentored <b>06</b></span>
+    </div>
+  </div>
+</section>
+
+<div class="plate">
+  <i class="a"></i><i class="b"></i><i class="c"></i>
+  <p class="cap"><b>Offline-first inspection, attendance and compliance systems.</b><span class="mono">Overprint: local store × background sync × field evidence</span></p>
+</div>
+
+<div class="tape">
+  <div class="tape-run" id="tape">
+    <span>Flutter</span><span>Offline sync</span><span>BLoC</span><span>Drift</span><span>WorkManager</span><span>Gemini API</span><span>Firebase</span><span>Next.js</span><span>Postgres</span><span>GetX</span><span>ObjectBox</span>
+  </div>
+</div>
+
+<section class="sec hold" id="practice">
+  <div class="sec-label"><h2 data-words>How I build</h2><span class="mono">01 / Practice</span></div>
+  <div class="trio">
+    <article class="tri fade">
+      <span class="mono">A</span>
+      <h3>Offline is the default</h3>
+      <p>The network is treated as a bonus. Local database as the source of truth, background sync that survives the app being killed, and conflicts resolved without losing an operative's afternoon of work.</p>
+      <ul><li>Drift · sqflite · ObjectBox</li><li>WorkManager &amp; foreground services</li><li>Conflict-aware sync queues</li><li>Unsynced counts on the dashboard</li></ul>
+    </article>
+    <article class="tri fade">
+      <span class="mono">B</span>
+      <h3>Evidence, not vibes</h3>
+      <p>Compliance work needs a record of who said what, where and when. Pin-level photo evidence on drawings, on-image markup, captured signatures, dynamic forms driven by a rule engine.</p>
+      <ul><li>Pin placement on scanned drawings</li><li>Signatures &amp; re-signing intervals</li><li>Geofencing · biometrics · QR</li><li>MFA / OTP, multi-tenant access</li></ul>
+    </article>
+    <article class="tri fade">
+      <span class="mono">C</span>
+      <h3>AI where it pays rent</h3>
+      <p>Gemini put on real internal problems: an assistant inside an API-monitoring tool that answers questions and drafts test cases and documentation, plus a dozen focused tools on the same API.</p>
+      <ul><li>Google Gemini API</li><li>Prompt engineering for repeatable output</li><li>Document Q&amp;A, image analysis</li><li>Chrome MV3 automation</li></ul>
+    </article>
+  </div>
+</section>
+
+<section class="sec hold" id="work">
+  <div class="sec-label"><h2 data-words>Selected work</h2><span class="mono">02 / Six of them</span></div>
+  <div class="rows">
+
+    <article class="row fade">
+      <div class="r-top">
+        <span class="r-num">01</span>
+        <div><h3 class="r-name">FireArrest</h3><p class="r-kicker">Flutter · offline-first fire-safety compliance</p></div>
+        <span class="r-meta">v10.0.0 · in service</span>
+      </div>
+      <div class="r-body">
+        <p class="r-note">One of the team's largest mobile codebases, and the one I led. Inspectors work with no reception: pins dropped on drawing images, photo evidence with on-image markup, dynamic forms driven by a rule engine, asset QR codes, method statements signed on screen. I built the background sync engine on WorkManager and foreground services, so all of it uploads reliably — with conflict handling — the moment a signal returns.</p>
+        <dl class="r-facts">
+          <dt>Role</dt><dd>Lead developer</dd>
+          <dt>Build</dt><dd>10.0.0+62</dd>
+          <dt>Store</dt><dd>Drift + sqlite3</dd>
+          <dt>Auth</dt><dd>Company ID + MFA</dd>
+          <dt>Envs</dt><dd>dev · test · uat · live</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="row fade">
+      <div class="r-top">
+        <span class="r-num">02</span>
+        <div><h3 class="r-name">Sentinel</h3><p class="r-kicker">Internal tooling · Gemini assistant</p></div>
+        <span class="r-meta">Internal</span>
+      </div>
+      <div class="r-body">
+        <p class="r-note">An API-monitoring tool for the team with a Gemini assistant wired into it. Ask what an endpoint does and it answers from context; ask for coverage and it drafts test cases and documentation from a prompt. The real work was prompt engineering it into output consistent enough that engineers kept using it instead of writing the cases by hand.</p>
+        <dl class="r-facts">
+          <dt>Role</dt><dd>Built end to end</dd>
+          <dt>Users</dt><dd>Internal engineering</dd>
+          <dt>Does</dt><dd>Q&amp;A · tests · docs</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="row fade">
+      <div class="r-top">
+        <span class="r-num">03</span>
+        <div><h3 class="r-name">ClockedIn</h3><p class="r-kicker">Flutter · attendance &amp; time tracking</p></div>
+        <span class="r-meta">Shipped · team of 6</span>
+      </div>
+      <div class="r-body">
+        <p class="r-note">Clock-in and clock-out built for sites, not desks: PIN codes, geofencing so a shift can only start where it should, biometric login. Behind it, granular permissions, custom schedules, a real-time attendance dashboard, push notifications, in-app update checks — and offline sync, because warehouses eat signal.</p>
+        <dl class="r-facts">
+          <dt>Role</dt><dd>Core developer</dd>
+          <dt>Gates</dt><dd>PIN · geofence · biometric</dd>
+          <dt>State</dt><dd>GetX</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="row fade">
+      <div class="r-top">
+        <span class="r-num">04</span>
+        <div><h3 class="r-name">HRM OTM</h3><p class="r-kicker">Flutter · multi-tenant HR &amp; leave</p></div>
+        <span class="r-meta">Shipped</span>
+      </div>
+      <div class="r-body">
+        <p class="r-note">A multi-tenant HR app running as a two-client, multi-flavor build from one codebase. I contributed leave and balance tracking, clock-in/out and reporting, with OAuth2 auth and MinIO/S3 document storage — ObjectBox keeping it responsive on the device rather than round-tripping every list.</p>
+        <dl class="r-facts">
+          <dt>Role</dt><dd>Feature developer</dd>
+          <dt>Tenancy</dt><dd>Two clients, one codebase</dd>
+          <dt>Store</dt><dd>ObjectBox · MinIO/S3</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="row fade">
+      <div class="r-top">
+        <span class="r-num">05</span>
+        <div><h3 class="r-name">Funnel CRM</h3><p class="r-kicker">Next.js 16 · React 19 · Postgres</p></div>
+        <span class="r-meta">Phase 1</span>
+      </div>
+      <div class="r-body">
+        <p class="r-note">The web side. A CRM for a business that sells over WhatsApp, where attribution locks on first touch and never quietly rewrites itself. The funnel is a live SQL aggregate with per-step drop-off, filtering happens in Postgres rather than the browser, and every write lands in an audit trail recording who or what said so.</p>
+        <dl class="r-facts">
+          <dt>Queries</dt><dd>Filtered in Postgres</dd>
+          <dt>Sessions</dt><dd>DB-backed, httpOnly</dd>
+          <dt>Audit</dt><dd>Every write attributed</dd>
+        </dl>
+      </div>
+    </article>
+
+    <article class="row fade">
+      <div class="r-top">
+        <span class="r-num">06</span>
+        <div><h3 class="r-name">Rankplus</h3><p class="r-kicker">Flutter · exam prep for Class 8–12 / JEE / NEET</p></div>
+        <span class="r-meta">Earlier</span>
+      </div>
+      <div class="r-body">
+        <p class="r-note">A consumer education app: live lectures, mock tests and Razorpay payments, built for students on cheap Android handsets and patchy home connections. Different pressure from enterprise field work — the failure mode isn't a lost inspection, it's a teenager missing a class the night before an exam.</p>
+        <dl class="r-facts">
+          <dt>Audience</dt><dd>Class 8–12 · JEE · NEET</dd>
+          <dt>Payments</dt><dd>Razorpay</dd>
+          <dt>Content</dt><dd>Live lectures · mock tests</dd>
+        </dl>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="sec hold">
+  <div class="sec-label"><h2 data-words>Also made</h2><span class="mono">03 / Side of the desk</span></div>
+  <div class="minor">
+    <div class="min fade"><h4>NurseryToolbox</h4><p>Contributed to a nursery staff-attendance app — Cubit/BLoC, go_router, and every failure modelled as an Either rather than a thrown exception.</p><span class="mono">Flutter · fpdart</span></div>
+    <div class="min fade"><h4>Lead extension</h4><p>A Manifest V3 Chrome extension extracting and filtering B2B sales leads with rule-based heuristics, so sales stops copying rows by hand.</p><span class="mono">Chrome MV3</span></div>
+    <div class="min fade"><h4>AI app collection</h4><p>Around a dozen small Gemini tools: chatbots, content generators, a document Q&amp;A helper, an image-analysis demo.</p><span class="mono">Python · Gemini</span></div>
+    <div class="min fade"><h4>Reception &amp; delivery</h4><p>Earlier client apps — visitor and reception management, and an ordering product — where the Flutter and Firebase habits were formed.</p><span class="mono">Flutter · Firebase</span></div>
+  </div>
+</section>
+
+<section class="sec hold" id="index">
+  <div class="sec-label"><h2 data-words>Index</h2><span class="mono">04 / Tools in service</span></div>
+  <div class="idx-wrap fade">
+    <table class="idx">
+      <thead><tr><th>Tool</th><th>Layer</th><th>What it does here</th></tr></thead>
+      <tbody>
+        <tr><td>Flutter · Dart</td><td>Mobile</td><td>iOS and Android from one codebase, four years in production</td></tr>
+        <tr><td>BLoC · GetX · get_it</td><td>Architecture</td><td>Predictable state, injectable services, testable boundaries</td></tr>
+        <tr><td>Drift · sqflite · ObjectBox</td><td>Device data</td><td>Local source of truth so the app never blocks on a request</td></tr>
+        <tr><td>WorkManager</td><td>Background</td><td>Sync that keeps running after the user closes the app</td></tr>
+        <tr><td>Firebase</td><td>Operations</td><td>Auth, Realtime DB, Messaging, Crashlytics on live builds</td></tr>
+        <tr><td>Gemini API</td><td>AI</td><td>Assistants, document Q&amp;A, image analysis, prompt engineering</td></tr>
+        <tr><td>Next.js · Postgres</td><td>Web</td><td>TypeScript, Drizzle ORM, aggregates computed in SQL</td></tr>
+        <tr><td>Native integrations</td><td>Device</td><td>Geolocation, biometrics, camera, QR, Razorpay purchases</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="end hold" id="contact">
+  <h2>
+    <span class="ln"><i>Build it so</i></span>
+    <span class="ln"><i>it works <span class="o">off</span></i></span>
+    <span class="ln"><i><span class="o">line</span> too.</i></span>
+  </h2>
+  <a class="cta" href="mailto:rahul3099gupta@gmail.com">rahul3099gupta@gmail.com →</a>
+  <p class="mono" style="margin-top:16px;max-width:52ch">Building something for the field? Tell me what your team is doing when they open the app — I reply within 24 hours.</p>
+  <div class="ends">
+    <div><span class="mono">Résumé</span><a href="../assets/Rahul-Gupta-CV.pdf" download>Rahul-Gupta-CV.pdf</a></div>
+    <div><span class="mono">Phone</span><a href="tel:+917891848737">+91 78918 48737</a></div>
+    <div><span class="mono">LinkedIn</span><a href="https://linkedin.com/in/rahul-gupta-894602188" target="_blank" rel="noopener noreferrer">rahul-gupta-894602188</a></div>
+    <div><span class="mono">GitHub</span><a href="https://github.com/Rahulg1999" target="_blank" rel="noopener noreferrer">github.com/Rahulg1999</a></div>
+    <div><span class="mono">Based</span><span>Jaipur, India</span></div>
+  </div>
+</section>
+</main>
+
+<footer class="hold">Rahul Gupta · Mobile Lead · Flutter &amp; cross-platform · AI integration</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* hero lines run once the display face is ready */
+  var heroLines = document.querySelectorAll('.hero h1 .ln');
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(function(){
+    heroLines.forEach(function(l, i){ setTimeout(function(){ l.classList.add('go'); }, 80 + i*120); });
+  });
+
+  /* split section headings into words for a stagger */
+  document.querySelectorAll('[data-words]').forEach(function(el){
+    el.innerHTML = el.textContent.split(/(\s+)/).map(function(t){
+      return /^\s+$/.test(t) ? t : '<span class="wd">' + t + '</span>';
+    }).join('');
+    el.querySelectorAll('.wd').forEach(function(w, i){ w.style.transitionDelay = (i*0.06) + 's'; });
+  });
+
+  /* reveal on entry: headings, cards, rows */
+  var targets = document.querySelectorAll('.fade, [data-words], .end h2 .ln');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        en.target.classList.add('in','go');
+        io.unobserve(en.target);
+      });
+    }, {rootMargin:'0px 0px -10% 0px', threshold:0.12});
+    targets.forEach(function(t){ io.observe(t); });
+  } else {
+    targets.forEach(function(t){ t.classList.add('in','go'); });
+  }
+
+  /* clear the press once the sheet has lifted */
+  var press = document.getElementById('press');
+  if(press) setTimeout(function(){ press.remove(); }, reduce ? 0 : 3000);
+
+  /* the ink-dot pointer, with wet ink trailing it */
+  if(!reduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    var docEl = document.documentElement;
+    var ink = document.getElementById('ink'), ilb = ink.querySelector('.lb');
+    var wets = [document.querySelector('.wet.w1'), document.querySelector('.wet.w2')];
+    docEl.classList.add('cur-on');
+    var ix = innerWidth/2, iy = innerHeight/2, seen = false;
+    var wp = wets.map(function(){ return {x:ix, y:iy}; });
+    window.addEventListener('pointermove', function(e){
+      ix = e.clientX; iy = e.clientY;
+      if(!seen){ seen = true; docEl.classList.add('cur-live'); wp.forEach(function(w){ w.x = ix; w.y = iy; }); }
+      ink.style.transform = 'translate(' + ix + 'px,' + iy + 'px)';
+    }, {passive:true});
+    document.addEventListener('pointerleave', function(){ seen = false; docEl.classList.remove('cur-live'); });
+    (function wetLoop(){
+      var e = [0.16, 0.09];
+      wp.forEach(function(w, i){
+        w.x += (ix - w.x) * e[i]; w.y += (iy - w.y) * e[i];
+        wets[i].style.transform = 'translate(' + w.x.toFixed(1) + 'px,' + w.y.toFixed(1) + 'px)';
+      });
+      requestAnimationFrame(wetLoop);
+    })();
+    document.querySelectorAll('.row').forEach(function(r){
+      r.addEventListener('pointerenter', function(){ ink.classList.add('big'); ilb.textContent = 'Read'; });
+      r.addEventListener('pointerleave', function(){ ink.classList.remove('big'); });
+    });
+    document.querySelectorAll('a, .tri, .min').forEach(function(el){
+      el.addEventListener('pointerenter', function(){ ink.classList.add('big'); ilb.textContent = el.tagName === 'A' ? 'Open' : 'Note'; });
+      el.addEventListener('pointerleave', function(){ ink.classList.remove('big'); });
+    });
+  }
+
+  /* duplicate the tape so the loop is seamless */
+  var tape = document.getElementById('tape');
+  if(tape && !reduce) tape.innerHTML = tape.innerHTML + tape.innerHTML;
+
+  /* overprint plate drifts with the pointer */
+  var plate = document.querySelector('.plate');
+  if(plate && !reduce && window.matchMedia('(pointer:fine)').matches){
+    var blobs = plate.querySelectorAll('i');
+    plate.addEventListener('pointermove', function(e){
+      var r = plate.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      blobs.forEach(function(b, i){
+        var k = (i + 1) * 14;
+        b.style.transform = 'translate(' + (x*k).toFixed(1) + 'px,' + (y*k*0.6).toFixed(1) + 'px)';
+      });
+    });
+  }
+})();
+</script>
+
+<style>
+/* "All interfaces" lives in the flow at the end of the page — a fixed chip
+   floated over the text on phones, which is the bug this replaces. */
+.rg-back{display:inline-flex;align-items:center;gap:8px;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  color:inherit;text-decoration:none;padding:12px 18px;border:1px solid currentColor;border-radius:3px;
+  opacity:.65;transition:opacity .3s ease,transform .3s cubic-bezier(.2,.8,.3,1)}
+.rg-back:hover,.rg-back:focus-visible{opacity:1;transform:translateY(-2px)}
+.rg-foot{display:flex;justify-content:center;padding:10px 20px calc(40px + env(safe-area-inset-bottom))}
+/* the same link, small, in the header nav */
+.rg-top{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;color:inherit;opacity:.62;white-space:nowrap}
+.rg-top:hover{opacity:1}
+@media print{.rg-back,.rg-foot,.rg-top{display:none}}
+</style>
+<div class="rg-foot"><a class="rg-back" href="../" aria-label="Back to all five interfaces">&larr; All interfaces</a></div>
+</body>
+</html>
