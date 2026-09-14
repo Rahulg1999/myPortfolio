@@ -115,6 +115,11 @@ html:not(.js) #press{display:none}
 #ink,.wet{position:fixed;top:0;left:0;pointer-events:none;border-radius:50%;opacity:0;transition:opacity .3s ease,width .3s cubic-bezier(.2,.8,.3,1),height .3s cubic-bezier(.2,.8,.3,1),margin .3s cubic-bezier(.2,.8,.3,1)}
 html.cur-live #ink{opacity:1}
 #ink{width:20px;height:20px;margin:-10px 0 0 -10px;background:var(--orange);mix-blend-mode:var(--blend);z-index:56;display:grid;place-items:center}
+/* the crop-and-registration mark a press operator lines the inks up with */
+#ink::before,#ink::after{content:"";position:absolute;background:var(--orange);transition:opacity .25s ease}
+#ink::before{left:50%;top:-11px;width:1px;height:42px;margin-left:-.5px}
+#ink::after{top:50%;left:-11px;height:1px;width:42px;margin-top:-.5px}
+#ink.big::before,#ink.big::after{opacity:0}
 #ink.big{width:96px;height:96px;margin:-48px 0 0 -48px}
 #ink .lb{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);opacity:0;transition:opacity .2s ease}
 #ink.big .lb{opacity:1}

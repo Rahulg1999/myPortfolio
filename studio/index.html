@@ -83,6 +83,13 @@ html:not(.js) #pre{display:none}
 #ring .lbl{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);opacity:0;transition:opacity .2s ease}
 #ring.big .lbl{opacity:1}
 @media (hover:none),(prefers-reduced-motion:reduce){#dot,#ring{display:none!important}}
+/* the ring IS the pointer here — hand the arrow back if it never switches on */
+@media (hover:hover) and (pointer:fine){
+  html.cur-on,html.cur-on *{cursor:none!important}
+}
+@media (hover:none),(prefers-reduced-motion:reduce){
+  html.cur-on,html.cur-on *{cursor:auto!important}
+}
 
 /* ---------- header ---------- */
 .hdr{position:fixed;top:0;left:0;right:0;z-index:70;padding-top:env(safe-area-inset-top);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
@@ -555,6 +562,7 @@ footer{padding:70px 0 44px;display:flex;justify-content:space-between;gap:16px;f
   /* custom cursor + magnetic buttons — pointer devices only */
   if(window.matchMedia('(hover:hover) and (pointer:fine)').matches && !reduce){
     var dot = document.getElementById('dot'), ring = document.getElementById('ring'), lbl = ring.querySelector('.lbl');
+    document.documentElement.classList.add('cur-on');
     var mx = innerWidth/2, my = innerHeight/2, rx = mx, ry = my;
     document.addEventListener('pointermove', function(e){
       mx = e.clientX; my = e.clientY;

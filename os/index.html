@@ -124,16 +124,19 @@ html:not(.js) #bootos{display:none}
 @media (hover:hover) and (pointer:fine){
   html.cur-on,html.cur-on *{cursor:none!important}
 }
-#touch{position:fixed;top:0;left:0;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+#touch{position:fixed;top:0;left:0;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:8px;
   border:1.5px solid var(--accent);pointer-events:none;z-index:95;opacity:0;
   transition:opacity .3s ease,width .28s cubic-bezier(.2,.8,.3,1),height .28s cubic-bezier(.2,.8,.3,1),margin .28s cubic-bezier(.2,.8,.3,1),background .28s ease}
 html.cur-live #touch{opacity:1}
 #touch.press{background:color-mix(in srgb,var(--accent) 35%,transparent)}
-#touch.grab{width:58px;height:58px;margin:-29px 0 0 -29px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+#touch.grab{width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:15px;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+/* a home-screen tile has a corner notch, so this one does too */
+#touch::after{content:"";position:absolute;right:-1px;bottom:-1px;width:7px;height:7px;
+  border-right:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);border-bottom-right-radius:8px}
 #tdot{position:fixed;top:0;left:0;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--accent);
   pointer-events:none;z-index:96;opacity:0;transition:opacity .3s ease}
 html.cur-live #tdot{opacity:1}
-.tap{position:fixed;z-index:94;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;
+.tap{position:fixed;z-index:94;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:7px;
   border:1.5px solid var(--accent);pointer-events:none;animation:tapOut .55s cubic-bezier(.2,.8,.3,1) forwards}
 @keyframes tapOut{to{transform:scale(3.4);opacity:0}}
 @media (prefers-reduced-motion:reduce){
