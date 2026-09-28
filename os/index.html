@@ -409,12 +409,11 @@ footer a:hover{color:var(--accent)}
     </div>
 
     <div class="rail-rest">
-    <p class="lede li li-4">I build apps for people doing physical work — offline-first inspections, attendance, compliance — so <b>here's my portfolio as one</b>. Tap the apps on the phone, or read the long version below.</p>
+    <p class="lede li li-4">I build apps for people who work with no signal, so <b>this portfolio is one</b>. Tap the apps on the phone, or read the long version below.</p>
 
     <div class="facts li li-5">
       <div><b><span class="cnt" data-to="4">4</span>+</b><span>Years Flutter</span></div>
       <div><b><span class="cnt" data-to="10">10</span></b><span>Major releases</span></div>
-      <div><b><span class="cnt" data-to="50">50</span>+</b><span>Client systems</span></div>
       <div><b><span class="cnt" data-to="6">6</span>+</b><span>Devs mentored</span></div>
     </div>
 
@@ -493,27 +492,27 @@ footer a:hover{color:var(--accent)}
   /* ---------- content ---------- */
   var PROJECTS = [
     {id:'firearrest', icon:'🧯', img:'firearrest', name:'FireArrest', kicker:'Flutter · offline-first compliance', status:'v10.0.0 · in service',
-     problem:"Inspectors work in plant rooms, risers and basements with no reception. An app that needs the network does not function \u2014 and a lost inspection means a second site visit.", built:"A local-first architecture: every form, pin and photo is written to the device database immediately, then drained by a background sync engine that survives the app being killed and resolves conflicts on the way up.", owned:"Architecture \u00b7 sync engine \u00b7 drawing annotation \u00b7 dynamic forms \u00b7 release", result:"Ten major versions in production, on iOS and Android, across four environments.",
+     problem:"Inspectors work in plant rooms, risers and basements with no signal. A lost inspection means a second site visit.", built:"Every form, pin and photo saves to the phone first. A background sync engine sends it later, survives a force-quit, and settles conflicts.", owned:"Architecture · sync engine · drawing annotation · rule-driven forms · release", result:"Ten major versions in production, on iOS and Android, across four environments.",
      facts:[['Role','Lead developer'],['Build','10.0.0+62'],['Store','Drift + sqlite3'],['Sync','WorkManager / BackgroundFetch'],['Auth','Company ID + MFA / OTP']],
      tags:['flutter_bloc','drift','workmanager','dio','firebase','crashlytics','signature']},
     {id:'sentinel', icon:'🛰', name:'Sentinel', kicker:'Internal tooling · Gemini assistant', status:'Internal',
-     problem:"The team needed to know which endpoints were failing and why \u2014 and writing test cases and documentation by hand was the work nobody got to.", built:"An API-monitoring tool with a Gemini assistant wired in: it answers questions about an endpoint from context, and drafts test cases and documentation from a prompt.", owned:"Built end to end \u00b7 prompt engineering \u00b7 integration", result:"In internal use; about a dozen further Gemini tools followed.",
+     problem:"The team needed to know which endpoints failed and why. Writing tests and docs by hand kept slipping.", built:"API monitoring with a Gemini assistant. It answers questions about an endpoint and drafts test cases and docs from a prompt.", owned:"Built end to end · prompt engineering · integration", result:"In internal use. About a dozen more Gemini tools followed.",
      facts:[['Role','Built end to end'],['Users','Internal engineering'],['Does','Q&A · test cases · docs'],['Model','Google Gemini']],
      tags:['gemini api','prompt engineering','python']},
     {id:'clockedin', icon:'⏱', img:'clockedin', name:'ClockedIn', kicker:'Flutter · attendance & time tracking', status:'Shipped · team of 6+',
-     problem:"Shifts start on sites and in warehouses, not at desks \u2014 and afterwards, who was actually on site has to hold up.", built:"Clock-in gated three ways \u2014 PIN, geofence and biometrics \u2014 with granular permissions, custom schedules, a real-time dashboard and offline sync.", owned:"Core developer in a team of 6+ \u00b7 gating \u00b7 dashboard \u00b7 notifications", result:"Shipped as an enterprise product, in daily use by client staff.",
+     problem:"Shifts start on sites and in warehouses, not at desks. Later, who was on site has to hold up.", built:"Every clock-in is checked three ways. PIN. Geofence. Biometrics. Offline sync and a live dashboard sit behind it.", owned:"Core developer in a team of 6+ · gating · dashboard · notifications", result:"Shipped as an enterprise product, in daily use by client staff.",
      facts:[['Role','Core developer'],['Gates','PIN · geofence · biometric'],['Live','Real-time dashboard'],['State','GetX']],
      tags:['getx','geolocator','local_auth','firebase']},
     {id:'hrm', icon:'🗂', img:'hrm', name:'HRM OTM', kicker:'Flutter · multi-tenant HR & leave', status:'Shipped',
-     problem:"Two clients needed the same HR app with different branding, rules and storage \u2014 without maintaining two codebases.", built:"A multi-tenant, multi-flavor build from one codebase \u2014 separate application IDs and signing per client. Leave and balance tracking, clock-in/out and reporting, OAuth2 login that injects the tenant header from the cached company record, and face attendance that runs entirely on the handset: MobileFaceNet embeddings and a MiniFASNetV2-SE anti-spoof classifier, so no face image leaves the phone. The session policy coaches framing and head tilt rather than failing people, and is covered by unit tests.", owned:"Feature developer \u00b7 auth and tenancy \u00b7 face attendance and liveness \u00b7 release builds", result:"Shipped for both clients from a single codebase.",
+     problem:"Two clients needed the same HR app with different branding, rules and storage. Neither wanted to pay for two codebases.", built:"Face check-in that runs entirely on the phone. MobileFaceNet matches the face and a MiniFASNet model checks it is real, so no face image leaves the device. If the framing is off, it coaches the person instead of failing them. Around it: leave, clock-in, reports and a tenant-aware login, shipped as two client builds from one codebase.", owned:"Feature developer · auth and tenancy · face attendance and liveness · release builds", result:"Shipped for both clients from a single codebase.",
      facts:[['Role','Feature developer'],['Tenancy','Two clients, one codebase'],['Store','ObjectBox · MinIO/S3'],['Auth','OAuth2 · tenant header'],['Liveness','On device · no image leaves the phone']],
      tags:['getx','objectbox','oauth2','tflite','onnx runtime','minio/s3']},
     {id:'crm', icon:'📈', name:'Funnel CRM', kicker:'Next.js 16 · React 19 · Postgres', status:'In development',
-     problem:"A business selling over WhatsApp could not see where enquiries died, and lead attribution kept getting overwritten as records were touched.", built:"Attribution that locks on first touch and never rewrites itself, a funnel computed as a live SQL aggregate with per-step drop-off, filtering in Postgres rather than the browser, and an audit trail on every write.", owned:"Built the Phase 1 console end to end", result:"Phase 1 delivered: worklists surface the cases needing a human.",
+     problem:"A business selling over WhatsApp could not see where enquiries died. Each lead's source kept getting overwritten.", built:"Every lead keeps the source it first came from. The funnel is a live SQL query that shows drop-off at each step, and every write records who made it.", owned:"Built the Phase 1 console end to end", result:"Phase 1 built. Worklists show the cases that need a person.",
      facts:[['Queries','Filtered in Postgres'],['Sessions','DB-backed, httpOnly'],['Audit','Every write attributed'],['Status','Phase 1 built · not released']],
      tags:['next 16','react 19','typescript','drizzle','postgres']},
     {id:'rankplus', icon:'🎓', name:'Rankplus', kicker:'Flutter · exam prep, Class 8–12 / JEE / NEET', status:'Delisted · rebranding',
-     problem:"Students on cheap Android handsets and patchy home connections needed live classes and mock tests that did not fall over.", built:"A consumer education app with live lectures, mock tests and Razorpay payments, tuned for low-end devices.", owned:"Consumer app development \u00b7 payments \u00b7 live video", result:"Shipped to Class 8\u201312 / JEE / NEET students.",
+     problem:"Students on cheap Android phones and patchy home wifi needed live classes and mock tests that kept working.", built:"Live lectures, mock tests and Razorpay payments, tuned for low-end phones.", owned:"Consumer app development · payments · live video", result:"Shipped to Class 8–12 / JEE / NEET students.",
      facts:[['Audience','Class 8–12 · JEE · NEET'],['Payments','Razorpay'],['Content','Live lectures · mock tests'],['Status','Pulled from Google Play for a rebrand']],
      tags:['flutter','firebase','razorpay']}
   ];
@@ -530,10 +529,10 @@ footer a:hover{color:var(--accent)}
     about: function(){
       return '<div class="body">' +
         '<h4>Mobile Lead, Sublimity Softwares</h4>' +
-        '<p>Four years building and shipping production cross-platform apps, currently leading mobile at a custom-software firm delivering business systems to <b>50+ clients</b> across healthcare, logistics, hospitality and fintech.</p>' +
-        '<p>I own products end to end — from offline-first architecture and native device integrations through to release — and mentor the Flutter developers who build them.</p>' +
-        '<div class="card"><span class="t">Why offline-first</span><p>My users are inside buildings, warehouses and shop floors. If the app needs the network to function, it does not function. So the device is the source of truth and sync is a background job that expects to fail and retry.</p></div>' +
-        '<div class="card"><span class="t">Where AI earns its place</span><p>Gemini on real internal problems: an assistant that answers questions about our APIs and drafts test cases and documentation, plus around a dozen smaller tools built on the same API.</p></div>' +
+        '<p>Four years shipping Flutter apps to production. I lead mobile at a custom-software firm that builds business systems for healthcare, logistics, hospitality and fintech.</p>' +
+        '<p>I own each app from architecture to release, and mentor the Flutter developers who build them.</p>' +
+        '<div class="card"><span class="t">Why offline-first</span><p>My users work in basements, warehouses and shop floors. The phone holds the data. Sync is a background job that expects to fail, and retries.</p></div>' +
+        '<div class="card"><span class="t">AI only where it saves hours</span><p>Gemini answers questions about our APIs and drafts test cases and docs. About a dozen smaller tools followed.</p></div>' +
         kv([['Based','Jaipur, India'],['Since','Dec 2021'],['Education','B.Tech CS, GIT Jaipur'],['Languages','Hindi, English']]) +
       '</div>';
     },
@@ -556,19 +555,19 @@ footer a:hover{color:var(--accent)}
     sync: function(){
       return '<div class="body">' +
         '<div class="ring" id="ring" style="--p:0"><i id="ringN">0%</i></div>' +
-        '<p style="text-align:center">A live demo of the pattern behind FireArrest and ClockedIn: work is written locally first, then drained to the server when a signal appears.</p>' +
+        '<p style="text-align:center">The pattern behind FireArrest and ClockedIn. Work saves on the phone first, then goes to the server when a signal appears.</p>' +
         '<button class="cta" type="button" id="syncBtn" style="border:0;width:100%;cursor:pointer">Start sync<span>▸</span></button>' +
-        '<div class="card"><div class="logline" id="log"><span class="no">offline</span> — 14 records held locally</div></div>' +
+        '<div class="card"><div class="logline" id="log"><span class="no">offline</span> · 14 records held on the phone</div></div>' +
       '</div>';
     },
     cv: function(){
       return '<div class="body">' +
         '<div class="card"><span class="t">Mobile Lead</span><span class="s">Sublimity Softwares · Dec 2021 → present</span>' +
-        '<p>Led development of one of the team\'s largest mobile codebases; built the offline background-sync engine, dynamic form rendering, on-image annotation, QR scanning and in-app PDF reports. Shipped and maintained to v10.x as a production client product.</p></div>' +
+        '<p>Lead developer on one of the team\'s largest mobile codebases. I built the background sync engine, rule-driven forms, photo annotation, QR scanning and PDF reports. It is on v10 in production.</p></div>' +
         '<div class="card"><span class="t">Flutter Developer</span><span class="s">Promoted to Lead · same firm, earlier</span>' +
-        '<p>Employee clock-in/out with PIN codes, geofencing and biometric login; custom schedules, real-time attendance dashboard, push notifications and in-app update checks for a shipped enterprise product with a team of 6+.</p></div>' +
+        '<p>Clock-in with PIN, geofence and biometrics, plus schedules, a live attendance dashboard and push notifications. Shipped as an enterprise product with a team of six.</p></div>' +
         '<div class="card"><span class="t">Self-driven</span><span class="s">AI · extensions</span>' +
-        '<p>A Manifest V3 Chrome extension that extracts and filters B2B sales leads with rule-based heuristics, and around a dozen small Gemini-API tools — chatbots, content generators, a document Q&amp;A helper and an image-analysis demo.</p></div>' +
+        '<p>A Chrome extension that finds and filters B2B sales leads. About a dozen small Gemini tools: chatbots, a document Q&amp;A helper, an image-analysis demo.</p></div>' +
         '<div class="card"><span class="t">B.Tech, Computer Science</span><span class="s">Global Institute of Technology, Jaipur · 2017–2021</span>' +
         '<p>Training: Python &amp; Django, 45-day summer program.</p></div>' +
       '</div>';
@@ -576,7 +575,7 @@ footer a:hover{color:var(--accent)}
     game: function(){
       return '<div class="body">' +
         '<div class="card"><span class="t">🎮 Neon Runner</span><span class="s">Browser FPS · three.js · vanilla JS</span>' +
-        '<p>A first-person shooter that runs in a browser tab — no engine, no framework. Five maps, an arsenal built from parametric geometry, enemies that path on a generated walkable grid with a flow field, a day/night cycle, adaptive resolution, and LAN multiplayer for deathmatch and duels.</p></div>' +
+        '<p>A first-person shooter that runs in a browser tab, with no engine and no framework. Five maps, weapons built from code, enemies that find their way around each map, and LAN multiplayer.</p></div>' +
         '<a class="cta" href="../game/" target="_blank" rel="noopener noreferrer">Play it<span>▸</span></a>' +
         kv([['Renderer','three.js + post-processing'],['AI','walkable grid, flow-field nav'],['Modes','Single-player, LAN PvP'],['Code','~12 modules, plain JS'],['Built','Nights and weekends']]) +
         '<p class="dim" style="font-size:11.6px;opacity:.7">Runs on the deployed site. Written to see how far plain JavaScript goes before you need an engine.</p>' +
@@ -584,7 +583,7 @@ footer a:hover{color:var(--accent)}
     },
     contact: function(){
       return '<div class="body">' +
-        '<p>Building something for the field — inspections, attendance, compliance, logistics? Tell me what your team is doing when they open the app. <b>I reply to every message within 24 hours.</b></p>' +
+        '<p>Building a field app? Tell me what your team does when they open it. <b>I reply to every message within 24 hours.</b></p>' +
         '<a class="cta" href="mailto:rahul3099gupta@gmail.com">Email me<span>›</span></a>' +
         '<a class="cta" href="tel:+917891848737" style="background:var(--panel);color:var(--fg);border:1px solid var(--line)">+91 78918 48737<span>›</span></a>' +
         '<a class="cta" href="https://linkedin.com/in/rahul-gupta-894602188" target="_blank" rel="noopener noreferrer" style="background:var(--panel);color:var(--fg);border:1px solid var(--line)">LinkedIn<span>↗</span></a>' +
@@ -742,11 +741,11 @@ footer a:hover{color:var(--accent)}
     btn.addEventListener('click', function(){
       if(running) return;
       running = true;
-      log.innerHTML = '<span class="ok">connection restored</span> — draining queue';
+      log.innerHTML = '<span class="ok">signal back</span> · sending queue';
       var i = 0;
       (function next(){
         if(i >= ASSETS.length){
-          log.innerHTML += '<br><span class="ok">queue drained</span> — 14 assets, 0 conflicts';
+          log.innerHTML += '<br><span class="ok">synced</span> · 14 records, 0 conflicts';
           running = false;
           return;
         }

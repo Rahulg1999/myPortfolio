@@ -11,7 +11,9 @@ no server-side code. Every page is a single self-contained file.
     fieldops/index.html fieldops — a terminal you can type into
     notes/index.html    Field Notes — riso print, oversized type
     drawing/index.html  Drawing 001 — a CAD sheet with three live drawings
-    assets/             SVG favicons
+    assets/             favicons, app icons, brand marks, real screenshots, 3D models
+    COPY.md             how every line on the site is written — read before editing copy
+    DESIGN.md           the hub's design system: references, type, colour, motion
     robots.txt
     .nojekyll           tells GitHub Pages to serve the folder as-is
 
@@ -51,9 +53,9 @@ Two things worth adding once the URL is known:
 
 ## Notes
 
-- Fonts load from Google Fonts; everything else (the FireArrest app icon, all
-  brand logos) is embedded directly in the HTML, so the pages work offline
-  apart from the type.
+- The hub's type comes from Fontshare (Clash Grotesk, Switzer, JetBrains Mono),
+  one `<link>` per family because the API only serves the first family in a
+  combined request. The five inner pages still load their own Google Fonts.
 - The FireArrest launcher icon came from your own repo
   (`android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png`).
 - Every page respects `prefers-reduced-motion` and `prefers-color-scheme`.

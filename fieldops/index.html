@@ -257,7 +257,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
 
     <h1 class="name" data-scramble>Rahul <span>Gupta</span></h1>
     <p class="role" data-scramble-late>Mobile Lead · Flutter &amp; cross-platform · AI integration · Jaipur, India</p>
-    <p class="tagline">I build mobile systems that keep working when the network doesn't.</p>
+    <p class="tagline">I build apps that keep working with no signal.</p>
     <nav class="quicknav" aria-label="Sections">
       <a href="#practice">About</a>
       <a href="#work">Work</a>
@@ -268,8 +268,8 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
 
     <div class="hero-body">
       <div>
-        <p data-type-block>Four years building apps for people who work inside buildings, not browsers. Offline-first inspection and attendance systems where the local database is the source of truth and the network is a bonus. I own products end to end — architecture, native integrations, release — and mentor the Flutter team at a firm shipping to <b>50+ clients</b> across healthcare, logistics, hospitality and fintech.</p>
-        <p style="margin-top:14px" class="dim">Lately: putting the <b>Gemini API</b> to work on internal tooling that engineers keep using instead of abandoning.</p>
+        <p data-type-block>Four years of apps for people who work inside buildings, not browsers. Inspection and attendance apps where the phone holds the data and the network is optional. I own each app from architecture to release, and mentor the Flutter team.</p>
+        <p style="margin-top:14px" class="dim">Lately: internal tools on the <b>Gemini API</b> that engineers keep using.</p>
       </div>
 
       <div class="win term" id="term">
@@ -293,17 +293,17 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
     <div class="cards">
       <article class="card">
         <h3>Offline is the default</h3>
-        <p>The network is treated as a bonus. Local database as the source of truth, background sync that survives the app being killed, conflicts resolved without losing an operative's afternoon of work.</p>
+        <p>The phone holds the data. Sync runs in the background, survives a force-quit, and settles conflicts without losing anyone's work.</p>
         <ul><li>Drift · sqflite · ObjectBox</li><li>WorkManager &amp; foreground services</li><li>Conflict-aware sync queues</li><li>Unsynced counts on the dashboard</li></ul>
       </article>
       <article class="card">
-        <h3>Evidence, not vibes</h3>
-        <p>Compliance work needs a record of who said what, where and when. Pin-level photo evidence on drawings, on-image markup, captured signatures, dynamic forms driven by a rule engine.</p>
+        <h3>Every record can be proven</h3>
+        <p>Compliance gets checked later. Photos pinned to drawings, markup, signatures and rule-driven forms show who did what, where and when.</p>
         <ul><li>Pin placement on scanned drawings</li><li>Signatures &amp; re-signing intervals</li><li>Geofencing · biometrics · QR</li><li>MFA / OTP, multi-tenant access</li></ul>
       </article>
       <article class="card">
-        <h3>AI where it pays rent</h3>
-        <p>Gemini put on real internal problems: an assistant inside an API-monitoring tool that answers questions and drafts test cases and documentation, plus a dozen focused tools on the same API.</p>
+        <h3>AI only where it saves hours</h3>
+        <p>Gemini answers questions inside our API-monitoring tool and drafts test cases and docs. About a dozen small tools followed.</p>
         <ul><li>Google Gemini API integration</li><li>Prompt engineering for repeatable output</li><li>Document Q&amp;A, image analysis</li><li>Chrome MV3 automation</li></ul>
       </article>
     </div>
@@ -319,7 +319,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">01</span><span class="nm">FireArrest<em>Flutter · offline-first fire-safety compliance</em></span><span class="st">v10.0.0 · in service</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>One of the team's largest mobile codebases, and the one I led. Inspectors work with no reception: pins dropped on drawing images, photo evidence with on-image markup, dynamic forms driven by a rule engine, asset QR codes, method statements signed on screen. I built the background sync engine on WorkManager and foreground services so all of it uploads reliably — with conflict handling — the moment a signal returns.</p>
+          <p>One of the team's largest mobile codebases, and the one I led. Inspectors work with no signal. They drop pins on drawings, mark up photos, fill rule-driven forms and sign on screen. I built the background sync engine that uploads all of it, and settles conflicts, when the signal returns.</p>
           <p class="pkgs"><b>flutter_bloc</b> <b>drift</b> <b>sqflite</b> <b>workmanager</b> <b>background_fetch</b> <b>dio</b> <b>firebase_messaging</b> <b>crashlytics</b> <b>pro_image_editor</b> <b>signature</b></p>
         </div>
         <dl class="kv">
@@ -337,7 +337,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">02</span><span class="nm">Sentinel<em>Internal tooling · Gemini assistant</em></span><span class="st">internal</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>An API-monitoring tool for the team with a Gemini assistant wired into it. Ask what an endpoint does and it answers from context; ask for coverage and it drafts test cases and documentation from a prompt. The real work was prompt engineering it into output consistent enough that engineers kept using it instead of writing the cases by hand.</p>
+          <p>API monitoring for the team, with a Gemini assistant inside. Ask what an endpoint does and it answers. Ask for coverage and it drafts the test cases and docs. The hard part was output consistent enough that engineers kept using it.</p>
           <p class="pkgs"><b>gemini api</b> <b>prompt engineering</b> <b>python</b></p>
         </div>
         <dl class="kv">
@@ -352,7 +352,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">03</span><span class="nm">ClockedIn Mobile<em>Flutter · attendance &amp; time tracking</em></span><span class="st">shipped</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>Clock-in and clock-out built for sites, not desks: PIN codes, geofencing so a shift can only start where it should, biometric login. Behind it, granular permissions, custom schedules, a real-time attendance dashboard, push notifications, in-app update checks — and offline sync, because warehouses eat signal.</p>
+          <p>Clock-in built for sites, not desks. PIN. Geofence. Biometrics. A shift can only start where it should. Offline sync sits behind it, because warehouses eat signal.</p>
           <p class="pkgs"><b>getx</b> <b>geolocator</b> <b>local_auth</b> <b>firebase</b></p>
         </div>
         <dl class="kv">
@@ -367,7 +367,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">04</span><span class="nm">HRM OTM<em>Flutter · multi-tenant HR &amp; leave</em></span><span class="st">shipped</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>A multi-tenant HR app running as a two-client, multi-flavor build from one codebase, with separate application IDs and signing per client. I contributed leave and balance tracking, clock-in/out and reporting, and OAuth2 login that injects the tenant header from the cached company record. I also built the face-attendance path: Face attendance runs entirely on the handset — MobileFaceNet embeddings and a MiniFASNetV2-SE anti-spoof classifier, so no face image leaves the phone, with a session policy that coaches framing and head tilt instead of failing people, covered by unit tests.</p>
+          <p>Face check-in that runs entirely on the phone. MobileFaceNet matches the face and a MiniFASNet model checks it is real, so no face image leaves the device. If the framing is off, it coaches the person instead of failing them. I also built leave, clock-in and reports for the two client builds that share this codebase.</p>
           <p class="pkgs"><b>getx</b> <b>objectbox</b> <b>oauth2</b> <b>tflite</b> <b>onnxruntime</b> <b>minio/s3</b></p>
         </div>
         <dl class="kv">
@@ -382,7 +382,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">05</span><span class="nm">WhatsApp-Led Funnel CRM<em>Next.js 16 · React 19 · Postgres</em></span><span class="st">in development</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>The web side. A CRM for a business that sells over WhatsApp, where attribution locks on first touch and never quietly rewrites itself. The funnel is a live SQL aggregate with per-step drop-off, filtering happens in Postgres rather than the browser, and worklists surface the cases needing a human. Every write lands in an audit trail recording who or what said so.</p>
+          <p>The web side. A CRM for a business that sells over WhatsApp. Every lead keeps the source it first came from, and every write records who made it.</p>
           <p class="not">Phase 1 is built end to end. It is still in development and has not been released.</p>
           <p class="pkgs"><b>next 16</b> <b>react 19</b> <b>typescript</b> <b>drizzle-orm</b> <b>postgres</b> <b>tailwind 4</b></p>
         </div>
@@ -398,7 +398,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <summary class="rec-btn"><span class="idx">06</span><span class="nm">Rankplus &amp; earlier<em>Flutter · exam prep, reception, delivery</em></span><span class="st">delisted · rebranding</span><span class="tog">▾</span></summary>
       <div class="rec-body">
         <div>
-          <p>Consumer work: Rankplus, a Class 8–12 / JEE / NEET app with live lectures, mock tests and Razorpay payments, built for cheap Android handsets on patchy home connections. Plus reception-management and food-delivery apps, a Manifest V3 Chrome extension that extracts and filters B2B leads, and around a dozen small Gemini tools.</p>
+          <p>Rankplus: live lectures, mock tests and payments for Class 8–12, JEE and NEET students on cheap Android phones. Also a reception app, a food-delivery app, a Chrome extension for B2B leads, and about a dozen small Gemini tools.</p>
           <p class="not">Rankplus has since been pulled from Google Play by the client for a rebrand, so there is no live listing to link.</p>
           <p class="pkgs"><b>flutter</b> <b>firebase</b> <b>razorpay</b> <b>chrome mv3</b> <b>gemini api</b></p>
         </div>
@@ -435,7 +435,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
       <h2 data-scramble-in>Say hello</h2>
     </div>
     <div class="out">
-      <p class="dim" style="margin-bottom:16px">Building something for the field — inspections, attendance, compliance, logistics? Tell me what your team is doing when they open the app. <span class="amber">I reply to every message within 24 hours.</span></p>
+      <p class="dim" style="margin-bottom:16px">Building a field app? Tell me what your team does when they open it. <span class="amber">I reply to every message within 24 hours.</span></p>
       <dl class="kv">
         <dt>email</dt><dd><a href="mailto:rahul3099gupta@gmail.com">rahul3099gupta@gmail.com</a></dd>
         <dt>phone</dt><dd><a href="tel:+917891848737">+91 78918 48737</a></dd>
@@ -629,27 +629,27 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
     firearrest: {
       title: 'FireArrest — Flutter, offline-first fire-safety compliance',
       rows: [['role','Lead developer'],['build','10.0.0+62, in service'],['store','Drift + sqlite3'],['sync','WorkManager / BackgroundFetch'],['auth','Company ID + MFA/OTP']],
-      note: 'Inspectors work with no reception: pins on drawing images, photo evidence with markup, dynamic forms driven by a rule engine, signed method statements. I built the background sync engine that uploads it all, conflict-aware, when a signal returns.'
+      note: 'Inspectors work with no signal. Pins on drawings, photo markup, rule-driven forms, signed method statements. I built the sync engine that uploads it all, and settles conflicts, when the signal returns.'
     },
     sentinel: {
       title: 'Sentinel — internal API monitoring with a Gemini assistant',
       rows: [['role','Built end to end'],['users','Internal engineering'],['does','Q&A, test cases, documentation'],['model','Google Gemini']],
-      note: 'Ask what an endpoint does and it answers from context. Ask for coverage and it drafts the cases. The work was prompt engineering it into output consistent enough that engineers kept using it.'
+      note: 'Ask what an endpoint does and it answers. Ask for coverage and it drafts the cases. The hard part was output consistent enough that engineers kept using it.'
     },
     clockedin: {
       title: 'ClockedIn Mobile — attendance and time tracking',
       rows: [['role','Core developer, team of 6+'],['gates','PIN, geofence, biometric'],['live','Real-time attendance dashboard'],['state','GetX']],
-      note: 'Clock-in built for sites, not desks. Granular permissions, custom schedules, push notifications, in-app update checks, and offline sync because warehouses eat signal.'
+      note: 'Clock-in built for sites, not desks. Offline sync, because warehouses eat signal.'
     },
     hrm: {
       title: 'HRM OTM — multi-tenant HR and leave management',
       rows: [['role','Feature developer'],['tenancy','Two clients, one codebase'],['store','ObjectBox, MinIO/S3'],['auth','OAuth2 + tenant header'],['liveness','On device, no image leaves the phone']],
-      note: 'Leave, clock-in/out and reporting across a two-client multi-flavor build, plus face attendance with on-device liveness and passive anti-spoofing.'
+      note: 'Face check-in that runs on the phone, so no face image leaves it. Plus leave, clock-in and reports, across two client builds from one codebase.'
     },
     crm: {
       title: 'WhatsApp-Led Funnel CRM — Next.js 16, React 19, Postgres',
       rows: [['queries','Filtered in Postgres, not the browser'],['sessions','DB-backed, httpOnly'],['audit','Every write attributed'],['stack','Drizzle ORM, Tailwind 4']],
-      note: 'Attribution locks on first touch and never quietly rewrites itself. Drop-off is a live SQL aggregate. Phase 1 is built end to end, still in development, not released.'
+      note: 'Every lead keeps the source it first came from. Drop-off is a live SQL query. Phase 1 is built end to end. Not released.'
     },
     rankplus: {
       title: 'Rankplus — exam prep for Class 8-12 / JEE / NEET',
@@ -664,11 +664,11 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
   function runSync(){
     if(syncing) return;
     syncing = true;
-    print('<span class="warn">offline</span> — 14 records held in the local queue');
+    print('<span class="warn">offline</span> · 14 records held on the phone');
     var i = 0;
     (function next(){
       if(i >= ASSETS.length){
-        print('<span class="ok">queue drained</span> — 14 assets, 0 conflicts, 0 records lost');
+        print('<span class="ok">synced</span> · 14 records, 0 conflicts, 0 lost');
         syncing = false;
         return;
       }
@@ -699,8 +699,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
         ['focus','Flutter and cross-platform, offline-first architecture'],
         ['also','Gemini API integration, prompt engineering'],
         ['since','Dec 2021 — Flutter Developer, then Mobile Lead'],
-        ['scale','A firm shipping business systems to 50+ clients'],
-        ['team','Mentors a team of Flutter developers']
+                ['team','Mentors a team of Flutter developers']
       ]));
       print('I own products end to end: architecture, native integrations, release.');
     },
@@ -713,7 +712,7 @@ footer{padding:34px 0 40px;color:var(--faint);font-size:12px}
         ['5 crm','WhatsApp-led funnel CRM on Next.js and Postgres (in development)'],
         ['6 rankplus','Exam prep with live lectures and payments (delisted, rebranding)']
       ]));
-      print('<span class="dim">try <span class="k">open firearrest</span> — or scroll down for the full records</span>');
+      print('<span class="dim">try <span class="k">open firearrest</span>, or scroll down for the full records</span>');
     },
     open: function(arg){
       if(!arg){ print('usage: <span class="k">open &lt;name&gt;</span> — try one of: ' + Object.keys(PROJECTS).join(', ')); return; }
